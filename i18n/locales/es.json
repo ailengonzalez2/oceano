@@ -1,0 +1,96 @@
+{
+  "meta": {
+    "title": "Ailen Gonzalez — Fotografía submarina",
+    "description": "Fotógrafa marina y documentalista del océano. Un descenso desde la superficie iluminada hasta el abismo."
+  },
+  "loader": {
+    "tagline": "Fotografía submarina y documental",
+    "loading": "Sumergiendo",
+    "enter": "Comenzar",
+    "audioPrompt": "Usamos audio para enriquecer tu experiencia.",
+    "audioEnable": "Activar sonido ambiente",
+    "audioNote": "Desactivado por defecto · podés silenciarlo cuando quieras"
+  },
+  "hud": {
+    "depth": "Profundidad",
+    "temp": "Temp",
+    "progress": "Progreso",
+    "diveTime": "Tiempo de inmersión",
+    "ndl": "Límite de no descompresión",
+    "safety": "Parada de seguridad",
+    "air": "Gestión de aire",
+    "scrollHint": "Desplazá para descender"
+  },
+  "nav": {
+    "surface": "Superficie",
+    "portfolio": "Portafolio",
+    "stories": "Historias",
+    "about": "Sobre mí",
+    "contact": "Contacto"
+  },
+  "surface": {
+    "name": "Ailen Gonzalez",
+    "role": "Fotógrafa marina · Documentalista",
+    "tagline": "El océano no se mira. Se desciende.",
+    "hint": "Mantené presionado para revelar"
+  },
+  "portfolio": {
+    "zone": "Epipelágico · 0–200 m",
+    "title": "Donde todavía llega la luz",
+    "intro": "Una selección de la zona iluminada: cardúmenes, arrecifes y el primer azul.",
+    "items": {
+      "1": "Cardumen en luz matinal",
+      "2": "Arrecife somero",
+      "3": "Tortuga verde",
+      "4": "Bosque de kelp",
+      "5": "Medusa a contraluz",
+      "6": "Tiburón en aguas abiertas"
+    }
+  },
+  "stories": {
+    "zone": "Mesopelágico · 200–1000 m",
+    "title": "Historias de la penumbra",
+    "items": {
+      "1": {
+        "kicker": "Proyecto documental · 2023",
+        "title": "La zona crepuscular",
+        "body": "Tres semanas siguiendo la migración vertical más grande del planeta: cada noche, millones de criaturas suben desde la penumbra hacia la superficie y vuelven a hundirse antes del amanecer."
+      },
+      "2": {
+        "kicker": "Proyecto documental · 2024",
+        "title": "Los últimos corales",
+        "body": "Un registro del blanqueamiento en arrecifes remotos. Lo que parece nieve es un funeral: el coral expulsa el alga que lo alimenta y lo mantiene vivo."
+      },
+      "3": {
+        "kicker": "En curso",
+        "title": "Bioluminiscencia",
+        "body": "Donde el sol ya no llega, la vida fabrica su propia luz. Un año persiguiendo destellos en la oscuridad total."
+      }
+    }
+  },
+  "about": {
+    "zone": "Batial · 1000–4000 m",
+    "title": "Sobre mí",
+    "body": "Soy fotógrafa marina y documentalista. Hace doce años que cambié el estudio por el agua fría. Trabajo con luz natural y aliento contenido: bajo, observo, espero. El resto lo hace el océano.",
+    "reveal": "Mové el cursor para iluminar",
+    "stats": {
+      "dives": "Inmersiones",
+      "depth": "Profundidad máx.",
+      "years": "Años bajo el agua"
+    }
+  },
+  "contact": {
+    "zone": "Abisal · +4000 m",
+    "title": "En la oscuridad, un punto de luz",
+    "body": "¿Una comisión, una expedición, una historia que contar? Escribime.",
+    "email": "Escribir un correo",
+    "instagram": "Seguir en Instagram",
+    "commission": "Solicitar una comisión",
+    "back": "Volver a la superficie"
+  },
+  "a11y": {
+    "audioToggle": "Activar o silenciar sonido ambiente",
+    "langToggle": "Cambiar idioma",
+    "skip": "Saltar al contenido"
+  }
+}

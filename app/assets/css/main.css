@@ -1,0 +1,128 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+/* ============================================================================
+   OCEANO — design tokens
+   The descent palette: 5 depth zones from sunlit surface to pitch-black abyss.
+   Bioluminescent teal accent is reserved for the abyssal zone + key CTAs ONLY.
+   ========================================================================== */
+@theme static {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Cormorant', ui-serif, Georgia, serif;
+
+  /* Zone fills ------------------------------------------------------------- */
+  /* 01 Surface */
+  --color-surface-100: #EAFBFF;
+  --color-surface-200: #A9E8F2;
+  --color-surface-300: #7FD8E8;
+  /* 02 Epipelagic */
+  --color-epi-300: #5FC8E0;
+  --color-epi-400: #3FB5D6;
+  --color-epi-500: #1E80B0;
+  /* 03 Mesopelagic */
+  --color-meso-400: #1E6E9E;
+  --color-meso-500: #125A87;
+  --color-meso-700: #0A3A5C;
+  /* 04 Bathyal */
+  --color-bathyal-400: #0E4A6E;
+  --color-bathyal-600: #0A3A5C;
+  --color-bathyal-900: #061F36;
+  /* 05 Abyssal */
+  --color-abyss-700: #061F36;
+  --color-abyss-950: #020A14;
+
+  /* Bioluminescent accent — abyssal zone + CTAs only */
+  --color-biolum: #3FE0BC;
+
+  /* Map Nuxt UI primary onto the ocean blue so any UI chrome stays in-palette */
+  --color-primary-400: #5FC8E0;
+  --color-primary-500: #3FB5D6;
+  --color-primary-600: #1E80B0;
+}
+
+/* ============================================================================
+   Continuous depth gradient — the single backdrop for the whole descent.
+   Stops top→bottom mirror the 5 zones (surface → abyss). Fixed so it reads as
+   one uninterrupted water column while zones scroll over it.
+   ========================================================================== */
+:root {
+  --depth-gradient: linear-gradient(
+    180deg,
+    #7FD8E8 0%,
+    #3FB5D6 16%,
+    #1E80B0 33%,
+    #125A87 50%,
+    #0A3A5C 68%,
+    #061F36 85%,
+    #020A14 100%
+  );
+}
+
+html {
+  scroll-behavior: auto; /* Lenis owns smooth scrolling; never double up */
+}
+
+body {
+  /* Solid abyss base; the descent gradient lives on .dive so it spans the whole
+     document height — scrolling literally moves you down through it. */
+  background: #020A14;
+  color: #EAFBFF;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* The continuous depth gradient, stretched across the full descent (the .dive
+   wrapper is as tall as all five zones combined). NOT fixed — so the viewport
+   passes from sunlit surface to black abyss as you scroll. */
+.dive {
+  background: var(--depth-gradient) no-repeat;
+  background-size: 100% 100%;
+}
+
+/* Thin serif headlines, high contrast over photography */
+.font-display {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  letter-spacing: -0.01em;
+}
+
+/* Light spaced sans for nav / labels / HUD */
+.tracking-hud {
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+/* Lenis recommended styles ------------------------------------------------- */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+/* While the intro gate is up, lock scrolling underneath it */
+body.is-locked {
+  overflow: hidden;
+}
+
+/* ============================================================================
+   Reduced motion: the descent still works, but as a calm vertical scroll with
+   simple fades — no parallax, no pinning, no looping shader animation.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

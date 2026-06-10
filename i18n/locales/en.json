@@ -1,0 +1,96 @@
+{
+  "meta": {
+    "title": "Ailen Gonzalez — Underwater photography",
+    "description": "Marine photographer and ocean documentarian. A descent from the sunlit surface to the abyss."
+  },
+  "loader": {
+    "tagline": "Underwater photography & documentary",
+    "loading": "Submerging",
+    "enter": "Begin",
+    "audioPrompt": "We use audio to enrich your experience.",
+    "audioEnable": "Enable ambient sound",
+    "audioNote": "Off by default · mute it whenever you like"
+  },
+  "hud": {
+    "depth": "Depth",
+    "temp": "Temp",
+    "progress": "Progress",
+    "diveTime": "Dive time",
+    "ndl": "No-decompression limit",
+    "safety": "Safety stop",
+    "air": "Air management",
+    "scrollHint": "Scroll to descend"
+  },
+  "nav": {
+    "surface": "Surface",
+    "portfolio": "Portfolio",
+    "stories": "Stories",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "surface": {
+    "name": "Ailen Gonzalez",
+    "role": "Marine photographer · Documentarian",
+    "tagline": "You don't look at the ocean. You descend into it.",
+    "hint": "Press and hold to reveal"
+  },
+  "portfolio": {
+    "zone": "Epipelagic · 0–200 m",
+    "title": "Where light still reaches",
+    "intro": "A selection from the sunlit zone: schooling fish, reefs, and the first blue.",
+    "items": {
+      "1": "School in morning light",
+      "2": "Shallow reef",
+      "3": "Green turtle",
+      "4": "Kelp forest",
+      "5": "Jellyfish backlit",
+      "6": "Shark in open water"
+    }
+  },
+  "stories": {
+    "zone": "Mesopelagic · 200–1000 m",
+    "title": "Stories from the twilight",
+    "items": {
+      "1": {
+        "kicker": "Documentary project · 2023",
+        "title": "The twilight zone",
+        "body": "Three weeks tracking the largest vertical migration on Earth: every night, millions of creatures rise from the gloom toward the surface and sink back before dawn."
+      },
+      "2": {
+        "kicker": "Documentary project · 2024",
+        "title": "The last corals",
+        "body": "A record of bleaching on remote reefs. What looks like snow is a funeral: the coral expels the algae that feeds and keeps it alive."
+      },
+      "3": {
+        "kicker": "Ongoing",
+        "title": "Bioluminescence",
+        "body": "Where the sun no longer reaches, life makes its own light. A year chasing flashes in total darkness."
+      }
+    }
+  },
+  "about": {
+    "zone": "Bathyal · 1000–4000 m",
+    "title": "About",
+    "body": "I'm a marine photographer and documentarian. Twelve years ago I traded the studio for cold water. I work with natural light and held breath: I descend, I watch, I wait. The ocean does the rest.",
+    "reveal": "Move your cursor to illuminate",
+    "stats": {
+      "dives": "Dives",
+      "depth": "Max depth",
+      "years": "Years underwater"
+    }
+  },
+  "contact": {
+    "zone": "Abyssal · +4000 m",
+    "title": "In the dark, a single point of light",
+    "body": "A commission, an expedition, a story to tell? Write to me.",
+    "email": "Send an email",
+    "instagram": "Follow on Instagram",
+    "commission": "Request a commission",
+    "back": "Back to the surface"
+  },
+  "a11y": {
+    "audioToggle": "Enable or mute ambient sound",
+    "langToggle": "Change language",
+    "skip": "Skip to content"
+  }
+}
