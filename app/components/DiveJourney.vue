@@ -451,7 +451,7 @@ em { font-weight: 300; color: #b4e6e7; }
 .perspective__photo { width: 100%; height: 65svh; }
 .perspective__photo img { mask-image: radial-gradient(ellipse, #000 22%, transparent 71%); }
 .perspective__orb { position: absolute; inset: 10% 0; background: radial-gradient(ellipse at 70% 50%, #1c897719, transparent 65%); pointer-events: none; }
-.journey-end { min-height: 110svh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 1.5rem 3rem; background: #000; }
+.journey-end { min-height: 110svh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 1.5rem 3rem; background: linear-gradient(to bottom, transparent, #0005 40svh, #000d 95svh, #000 140svh); }
 .journey-end__wreck { width: calc(100% + 3rem); flex-shrink: 0; }
 .journey-end h2 { max-width: 65rem; font-size: clamp(3rem, 6vw, 6rem); line-height: 1.05; margin: 2rem 0; }
 .journey-end__disciplines { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin-top: 2.5rem; font-size: .5rem; }

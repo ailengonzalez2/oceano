@@ -21,7 +21,7 @@ let disposed = false
 let frame = 0
 let previous = 0
 const scene = new THREE.Scene()
-scene.background = new THREE.Color(0x000000)
+scene.background = null
 scene.fog = new THREE.FogExp2(0x000000, 0.025)
 const camera = new THREE.PerspectiveCamera(43, 1, 0.1, 100)
 const pointer = new THREE.Vector2(0, 0)
@@ -76,8 +76,8 @@ function resize() {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5, 1500 / Math.max(width, height)))
   renderer.setSize(width, height, false)
   camera.aspect = width / height
-  const distance = camera.aspect < 1 ? 27 : 20
-  camera.position.set(0, distance * 0.72, distance)
+  const distance = camera.aspect < 1 ? 29 : 20
+  camera.position.set(0, distance * 0.22, distance)
   camera.lookAt(0, 0, 0)
   camera.updateProjectionMatrix()
   camera.updateMatrixWorld()
@@ -115,12 +115,12 @@ async function load() {
     const bounds = new THREE.Box3().setFromObject(model)
     const size = bounds.getSize(new THREE.Vector3())
     const center = bounds.getCenter(new THREE.Vector3())
-    const scale = 21 / Math.max(size.x, size.z)
+    const scale = 30 / Math.max(size.x, size.z)
     const group = new THREE.Group()
     model.position.sub(center)
     group.add(model)
     group.scale.setScalar(scale)
-    group.rotation.y = -0.35
+    group.rotation.y = -Math.PI / 2
     scene.add(group)
     model.traverse((node) => {
       if (!(node instanceof THREE.Mesh)) return
@@ -152,7 +152,8 @@ onMounted(async () => {
   await nextTick()
   if (!canvas.value || !host.value) return
   try {
-    renderer = new THREE.WebGLRenderer({ canvas: canvas.value, antialias: true, powerPreference: 'low-power' })
+    renderer = new THREE.WebGLRenderer({ canvas: canvas.value, alpha: true, antialias: true, powerPreference: 'low-power' })
+    renderer.setClearColor(0x000000, 0)
     renderer.toneMapping = THREE.ACESFilmicToneMapping
     renderer.toneMappingExposure = 1.2
     resizeObserver = new ResizeObserver(resize)
@@ -215,9 +216,9 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-.wreck { position: relative; width: 100%; height: 95svh; min-height: 32rem; background: #000; outline: none; touch-action: pan-y; }
+.wreck { position: relative; width: 100%; height: 95svh; min-height: 32rem; background: transparent; outline: none; touch-action: pan-y; }
 .wreck:focus-visible { outline: 1px solid #6aa0ae; outline-offset: -3px; }
-.wreck canvas { width: 100%; height: 100%; display: block; }
+.wreck canvas { width: 100%; height: 100%; display: block; mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 85%, transparent); }
 .wreck__caption { position: absolute; bottom: 2.5rem; inset-inline: 1rem; color: #7a949b; pointer-events: none; }
 .wreck__caption p { margin-top: .7rem; font-size: .75rem; }
 .wreck__cursor { position: absolute; left: 0; top: 0; width: 20px; height: 20px; margin: -10px; border: 1px solid #c4e7f266; border-radius: 50%; pointer-events: none; }
