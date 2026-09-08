@@ -24,7 +24,7 @@ const photos = [
   { src: '/img/turtle.jpg', w: 800, h: 1000, key: '3', speed: 1.3 },
   { src: '/img/kelp.jpg', w: 900, h: 1200, key: '4', speed: 0.8 },
   { src: '/img/jellyfish.jpg', w: 800, h: 800, key: '5', speed: 1.2 },
-  { src: '/img/shark.jpg', w: 1100, h: 800, key: '6', speed: 0.5 }
+  { src: '/img/shark-front.jpg', w: 1920, h: 1280, key: '6', speed: 0.5 }
 ]
 
 onMounted(() => {

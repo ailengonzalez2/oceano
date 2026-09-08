@@ -160,10 +160,10 @@ onBeforeUnmount(() => media?.revert())
         @click="selected = 'shark'"
       >
         <img
-          src="/img/shark.jpg"
+          src="/img/shark-front-cutout.png"
           :alt="t('journey.photos.shark')"
-          width="1920"
-          height="1280"
+          width="1536"
+          height="1024"
           loading="lazy"
         >
         <span class="photo__caption"><span>{{ t('journey.open.caption') }}</span><span aria-hidden="true">↗</span></span>
@@ -382,7 +382,7 @@ onBeforeUnmount(() => media?.revert())
         <img
           v-if="selected && photoKeys.includes(selected)"
           class="full-photo"
-          :src="`/img/${selected}.jpg`"
+          :src="selected === 'shark' ? '/img/shark-front.jpg' : `/img/${selected}.jpg`"
           :alt="photoTitle"
         >
       </template>
@@ -419,8 +419,14 @@ em { font-weight: 300; color: #b4e6e7; }
 .chapter__word { position: absolute; bottom: 0; left: 24vw; font-size: 16vw; line-height: 1; color: #c1f0e6; opacity: .08; pointer-events: none; }
 .open-water { min-height: 155svh; display: grid; grid-template-columns: 1fr 1fr; gap: 8vw; align-items: center; }
 .open-water__label { position: absolute; top: 18svh; left: 25vw; }
-.open-water__photo { width: 100%; height: 70svh; }
-.open-water__photo img { mask-image: radial-gradient(ellipse at 50% 50%, #000 35%, transparent 73%); }
+.open-water__photo { width: 116%; margin-left: -8%; height: auto; aspect-ratio: 3 / 2; }
+.open-water__photo img {
+  object-fit: contain;
+  opacity: .76;
+  filter: saturate(.55) brightness(.85) blur(.35px);
+  mask-image: linear-gradient(to right, transparent, #000 24%, #000 78%, transparent), radial-gradient(ellipse at 55% 49%, #000 30%, transparent 73%);
+  mask-composite: intersect;
+}
 .open-water__photo .photo__caption { padding-left: 10%; }
 .open-water__copy { padding-top: 24svh; }
 .whale { min-height: 190svh; padding-top: 0; }
@@ -465,7 +471,7 @@ em { font-weight: 300; color: #b4e6e7; }
   .reef__detail { left: 6vw; top: auto; bottom: 14svh; width: 34vw; height: 45vw; }
   .open-water { min-height: 165svh; gap: 4vw; }
   .open-water__label { top: 28svh; left: 16vw; }
-  .open-water__photo { height: 52svh; }
+
   .open-water__copy { padding-top: 15svh; }
   .whale { padding-top: 0; }
   .whale__copy { margin-left: 10vw; }
@@ -483,7 +489,7 @@ em { font-weight: 300; color: #b4e6e7; }
   .chapter__word { bottom: 2svh; left: 15vw; }
   .open-water { display: flex; flex-direction: column; min-height: 165svh; }
   .open-water__label { left: 6vw; top: 32svh; }
-  .open-water__photo { width: 100%; height: 48svh; }
+  .open-water__photo { width: 116%; height: auto; flex-shrink: 0; margin-left: 0; }
   .open-water__copy { padding-top: 4svh; align-self: flex-start; }
   .whale { padding-top: 0; min-height: 175svh; }
   .whale__stage { top: 25svh; height: 62svh; }
