@@ -57,13 +57,20 @@ onBeforeUnmount(() => ctx?.revert())
 </script>
 
 <template>
-  <section id="stories" ref="root" class="meso" :class="{ 'is-reduced': reduced }" :aria-label="t('nav.stories')">
-    <!-- Suspended particles drifting across the whole twilight zone -->
-    <Particles :count="36" class="meso__particles" />
-
+  <section
+    id="stories"
+    ref="root"
+    class="meso"
+    :class="{ 'is-reduced': reduced }"
+    :aria-label="t('nav.stories')"
+  >
     <header class="meso__header">
-      <p class="meso__zone tracking-hud">{{ t('stories.zone') }}</p>
-      <h2 class="meso__title font-display">{{ t('stories.title') }}</h2>
+      <p class="meso__zone tracking-hud">
+        {{ t('stories.zone') }}
+      </p>
+      <h2 class="meso__title font-display">
+        {{ t('stories.title') }}
+      </h2>
     </header>
 
     <article
@@ -83,10 +90,19 @@ onBeforeUnmount(() => ctx?.revert())
       </div>
 
       <!-- Editorial copy that passes over the pinned photo -->
-      <div class="meso__copy" :class="{ left: i % 2 === 0 }">
-        <p class="meso__kicker tracking-hud">{{ t(`stories.items.${s.key}.kicker`) }}</p>
-        <h3 class="meso__story-title font-display">{{ t(`stories.items.${s.key}.title`) }}</h3>
-        <p class="meso__body">{{ t(`stories.items.${s.key}.body`) }}</p>
+      <div
+        class="meso__copy"
+        :class="{ left: i % 2 === 0 }"
+      >
+        <p class="meso__kicker tracking-hud">
+          {{ t(`stories.items.${s.key}.kicker`) }}
+        </p>
+        <h3 class="meso__story-title font-display">
+          {{ t(`stories.items.${s.key}.title`) }}
+        </h3>
+        <p class="meso__body">
+          {{ t(`stories.items.${s.key}.body`) }}
+        </p>
       </div>
     </article>
   </section>
@@ -121,13 +137,21 @@ onBeforeUnmount(() => ctx?.revert())
 /* Each story is tall; the media pins (sticky) for its duration */
 .meso__story {
   position: relative;
-  min-height: 200vh;
+  min-height: 150svh;
+  padding: 8svh clamp(1rem, 6vw, 7rem);
 }
 .meso__media {
   position: sticky;
-  top: 0;
-  height: 100svh;
+  top: 18svh;
+  width: min(66vw, 1000px);
+  height: 66svh;
   overflow: hidden;
+  margin-left: auto;
+  opacity: 0.78;
+  mask-image: radial-gradient(ellipse, #000 35%, transparent 73%);
+}
+.meso__story:nth-of-type(even) .meso__media {
+  margin-left: 0;
 }
 .meso__media :deep(.ph) {
   height: 100%;
@@ -142,11 +166,12 @@ onBeforeUnmount(() => ctx?.revert())
   position: relative;
   z-index: 3;
   /* Start the copy below the first viewport so it scrolls up over the pinned photo */
-  margin-top: -60vh;
+  margin-top: -28svh;
   max-width: 30rem;
   padding: clamp(1.5rem, 4vw, 3rem);
   margin-left: auto;
   margin-right: clamp(1rem, 8vw, 8rem);
+  background: radial-gradient(ellipse, rgba(2, 15, 28, 0.65), transparent 75%);
 }
 .meso__copy.left {
   margin-left: clamp(1rem, 8vw, 8rem);
@@ -177,4 +202,9 @@ onBeforeUnmount(() => ctx?.revert())
 .meso.is-reduced .meso__story { min-height: auto; }
 .meso.is-reduced .meso__media { position: static; height: 70vh; }
 .meso.is-reduced .meso__copy { margin-top: 2rem; margin-bottom: 4rem; }
+@media (max-width: 640px) {
+  .meso__media { width: 100%; height: 55svh; }
+  .meso__copy { margin-top: -10svh; margin-left: 0; margin-right: 0; }
+  .meso__copy.left { margin-left: 0; }
+}
 </style>

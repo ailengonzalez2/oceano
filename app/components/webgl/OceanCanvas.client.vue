@@ -1,11 +1,19 @@
 <script setup lang="ts">
 import * as THREE from 'three'
+import { createDiveLife } from '~/utils/createDiveLife'
 
 // Procedural sea: world-space wave intersections, sky reflection and Fresnel.
 // The viewpoint floats just above the local surface, like a swimmer's eyes.
 const canvas = ref<HTMLCanvasElement | null>(null)
 const reduced = useReducedMotion()
+const { progress } = useScrollDepth()
 const ready = ref(false)
+const entry = ref(0)
+const fallbackStyle = computed(() => ({
+  backgroundColor: `hsl(204 80% ${Math.max(3, 28 - progress.value * 25)}%)`,
+  backgroundImage: entry.value < 0.5 ? 'url(/img/hero.jpg)' : 'none'
+}))
+let life: ReturnType<typeof createDiveLife> | undefined
 let renderer: THREE.WebGLRenderer | undefined
 let geometry: THREE.PlaneGeometry | undefined
 let material: THREE.ShaderMaterial | undefined
@@ -15,12 +23,15 @@ let frame = 0
 let visible = true
 let elapsed = 0
 let previous = 0
+let depth = 0
 const pointer = new THREE.Vector2()
 const look = new THREE.Vector2()
 const scene = new THREE.Scene()
 const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
 const uniforms = {
   uTime: { value: 0 },
+  uDepth: { value: 0 },
+  uEntry: { value: 0 },
   uResolution: { value: new THREE.Vector2(1, 1) },
   uLook: { value: look }
 }
@@ -29,6 +40,8 @@ const fragmentShader = /* glsl */ `
 precision highp float;
 varying vec2 vUv;
 uniform float uTime;
+uniform float uDepth;
+uniform float uEntry;
 uniform vec2 uResolution;
 uniform vec2 uLook;
 
@@ -62,12 +75,10 @@ vec3 sky(vec3 rd) {
   col = mix(col, vec3(.89, .91, .87), smoothstep(.51, .77, clouds) * smoothstep(.0, .15, y) * .55);
   return col;
 }
-void main() {
-  vec2 uv = vUv * 2.0 - 1.0;
-  uv.x *= uResolution.x / uResolution.y;
+vec3 aboveWater(vec2 uv) {
   float t = uTime;
   vec3 ro = vec3(t * .035, 0.0, t * -.10);
-  ro.y = sea(ro.xz) + .30 + sin(t * .8) * .045;
+  ro.y = sea(ro.xz) + .30 - min(uEntry, 1.0) * .16 + sin(t * .8) * .045;
   float roll = sin(t * .43) * .012;
   uv = mat2(cos(roll), -sin(roll), sin(roll), cos(roll)) * uv;
   vec3 rd = normalize(vec3(uv.x + uLook.x * .16, uv.y * .78 + .025 + uLook.y * .055, -1.55));
@@ -111,10 +122,61 @@ void main() {
     color += vec3(1.0, .88, .65) * sparkle * .85;
     color = mix(color, vec3(.57, .74, .76), 1.0 - exp(-distance * .005));
   }
-  // Gentle photographic contrast and edge shading, without a photo texture.
-  color *= 1.0 - .16 * smoothstep(.35, 1.5, length(vUv - .5) * 2.0);
-  color = pow(max(color, vec3(0)), vec3(.93));
-  gl_FragColor = vec4(color, 1.0);
+  return color;
+}
+
+vec3 underWater(vec2 uv) {
+  float d = uDepth;
+  float t = uTime;
+  float daylight = exp(-d * 5.5);
+  vec3 shallow = mix(vec3(.008, .11, .19), vec3(.025, .38, .47), pow(vUv.y, 1.6));
+  vec3 deep = mix(vec3(.001, .006, .015), vec3(.003, .028, .060), vUv.y);
+  vec3 color = mix(shallow, deep, smoothstep(.05, .88, d));
+
+  // The bright, rippling ceiling recedes upward as the camera descends.
+  vec2 ceiling = vec2(uv.x, 1.0) / max(.10, vUv.y - .35 + d * .3);
+  float caustic = sin(ceiling.x * 5.0 + t * .45 + sin(ceiling.y * 3.0 - t * .3));
+  caustic *= sin(ceiling.y * 8.0 + t * .7 + sin(ceiling.x * 2.0));
+  float surface = pow(vUv.y, 9.0 + d * 16.0) * exp(-d * 9.0);
+  color += vec3(.14, .48, .46) * surface * (.4 + .6 * pow(abs(caustic), 5.0));
+
+  // Broad shafts fan out from the moving surface, with depth-dependent scattering.
+  float shaftCoord = (uv.x + .45 - uLook.x * .08) / (1.7 - vUv.y);
+  float shafts = 0.0;
+  for (int i = 0; i < 4; i++) {
+    float f = float(i);
+    float beam = sin(shaftCoord * (13.0 + f * 8.0) + t * (.15 + f * .025) + f * 2.3);
+    shafts += pow(max(beam, 0.0), 12.0 + f * 4.0) / (4.0 + f * 2.0);
+  }
+  float haze = noise(vec2(uv.x * 2.0 + t * .035, uv.y * 2.0 + d * 12.0));
+  color += vec3(.10, .38, .43) * shafts * daylight * (.35 + .65 * vUv.y) * (.6 + haze * .4);
+  vec2 lightPos = vec2(-.38 + uLook.x * .06, 1.18 + d * 2.0);
+  color += vec3(.08, .24, .27) * exp(-length(uv - lightPos) * 2.1) * daylight;
+
+  // At depth, a soft diver's torch replaces the vanishing sunlight.
+  float torch = exp(-length((uv - uLook * vec2(.65, .35)) * vec2(.85, 1.0)) * 3.0);
+  color += vec3(.005, .038, .050) * torch * smoothstep(.45, .85, d) * (.8 + haze * .2);
+  color += vec3(.0, .008, .016) * haze;
+  return color;
+}
+
+void main() {
+  vec2 uv = vUv * 2.0 - 1.0;
+  uv.x *= uResolution.x / uResolution.y;
+  float crossing = smoothstep(.06, .96, uEntry);
+  float line = mix(-.22, 1.25, crossing);
+  line += (sin(uv.x * 3.8 + uTime * .9) * .035 + sin(uv.x * 9.0 - uTime * 1.1) * .012)
+    * sin(crossing * 3.14159);
+  float wet = 1.0 - smoothstep(line - .012, line + .012, vUv.y);
+  vec3 color;
+  // Avoid paying for the expensive ocean intersection once fully submerged.
+  if (wet > .999) color = underWater(uv);
+  else if (wet < .001) color = aboveWater(uv);
+  else color = mix(aboveWater(uv), underWater(uv), wet);
+  float lip = exp(-abs(vUv.y - line) * 180.0) * sin(crossing * 3.14159);
+  color += vec3(.15, .42, .43) * lip;
+  color *= 1.0 - mix(.16, .38, wet) * smoothstep(.3, 1.45, length(vUv - .5) * 2.0);
+  gl_FragColor = vec4(pow(max(color, vec3(0)), vec3(.93)), 1.0);
 }
 `
 
@@ -124,9 +186,19 @@ function draw(now: number) {
   const delta = previous ? Math.min((now - previous) / 1000, 0.05) : 0
   previous = now
   if (!reduced.value) elapsed += delta
+  depth = reduced.value ? progress.value : THREE.MathUtils.lerp(depth, progress.value, 1 - Math.exp(-delta * 9))
   uniforms.uTime.value = elapsed
-  look.lerp(reduced.value ? new THREE.Vector2() : pointer, 0.025)
+  uniforms.uDepth.value = depth
+  uniforms.uEntry.value = entry.value
+  if (reduced.value) look.set(0, 0)
+  else look.lerp(pointer, 1 - Math.exp(-delta * 2))
+  renderer.clear()
   renderer.render(scene, camera)
+  if (life && entry.value > 0.65) {
+    life.update(depth, entry.value, elapsed, look)
+    renderer.clearDepth()
+    renderer.render(life.scene, life.camera)
+  }
   if (!reduced.value) frame = requestAnimationFrame(draw)
 }
 function resume() {
@@ -141,7 +213,13 @@ function resize() {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25, 1500 / Math.max(width, height)))
   renderer.setSize(width, height, false)
   uniforms.uResolution.value.set(width, height)
+  life?.resize(width, height, renderer.getPixelRatio())
+  syncScroll()
   resume()
+}
+function syncScroll() {
+  entry.value = Math.min(1, window.scrollY / Math.max(1, window.innerHeight * 0.95))
+  if (reduced.value) resume()
 }
 function move(event: PointerEvent) {
   if (event.pointerType !== 'mouse') return
@@ -160,10 +238,14 @@ function contextRestored() {
   resume()
 }
 
-onMounted(() => {
+onMounted(async () => {
+  // Nuxt renders `.client.vue` templates only after mount, so the ref is empty until the next tick.
+  await nextTick()
   if (!canvas.value) return
   try {
     renderer = new THREE.WebGLRenderer({ canvas: canvas.value, antialias: false, powerPreference: 'low-power' })
+    renderer.autoClear = false
+    life = createDiveLife()
     material = new THREE.ShaderMaterial({
       uniforms, fragmentShader,
       vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }',
@@ -181,22 +263,28 @@ onMounted(() => {
     })
     observer.observe(canvas.value)
     window.addEventListener('pointermove', move, { passive: true })
+    window.addEventListener('scroll', syncScroll, { passive: true })
     document.addEventListener('pointerleave', resetLook)
     document.addEventListener('visibilitychange', resume)
     canvas.value.addEventListener('webglcontextlost', contextLost)
     canvas.value.addEventListener('webglcontextrestored', contextRestored)
-  } catch {
+  } catch (error) {
+    console.error('[OceanCanvas] WebGL init failed, using photo fallback', error)
     ready.value = false
     renderer?.dispose()
     renderer = undefined
   }
 })
 watch(reduced, resume)
+watch(progress, () => {
+  if (reduced.value) resume()
+})
 onBeforeUnmount(() => {
   cancelAnimationFrame(frame)
   observer?.disconnect()
   resizeObserver?.disconnect()
   window.removeEventListener('pointermove', move)
+  window.removeEventListener('scroll', syncScroll)
   document.removeEventListener('pointerleave', resetLook)
   document.removeEventListener('visibilitychange', resume)
   canvas.value?.removeEventListener('webglcontextlost', contextLost)
@@ -204,12 +292,14 @@ onBeforeUnmount(() => {
   geometry?.dispose()
   material?.dispose()
   renderer?.dispose()
+  life?.dispose()
 })
 </script>
 
 <template>
   <div
     class="ocean"
+    :style="fallbackStyle"
     aria-hidden="true"
   >
     <canvas
@@ -221,8 +311,9 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .ocean {
-  position: absolute;
+  position: fixed;
   inset: 0;
+  z-index: 0;
   pointer-events: none;
   background: #12606a url('/img/hero.jpg') center / cover;
 }

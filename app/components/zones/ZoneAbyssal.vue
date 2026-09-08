@@ -52,14 +52,28 @@ function backToSurface() {
 </script>
 
 <template>
-  <section id="contact" ref="root" class="abyss" :aria-label="t('nav.contact')">
+  <section
+    id="contact"
+    ref="root"
+    class="abyss"
+    :aria-label="t('nav.contact')"
+  >
     <!-- The single point of light -->
-    <div class="abyss__bloom" aria-hidden="true" />
+    <div
+      class="abyss__bloom"
+      aria-hidden="true"
+    />
 
     <div class="abyss__content">
-      <p class="abyss__zone tracking-hud">{{ t('contact.zone') }}</p>
-      <h2 class="abyss__title font-display">{{ t('contact.title') }}</h2>
-      <p class="abyss__body">{{ t('contact.body') }}</p>
+      <p class="abyss__zone tracking-hud">
+        {{ t('contact.zone') }}
+      </p>
+      <h2 class="abyss__title font-display">
+        {{ t('contact.title') }}
+      </h2>
+      <p class="abyss__body">
+        {{ t('contact.body') }}
+      </p>
 
       <!-- Glowing primary CTA -->
       <a
@@ -71,7 +85,12 @@ function backToSurface() {
 
       <!-- Secondary contact links -->
       <div class="abyss__links">
-        <a :href="INSTAGRAM_URL" target="_blank" rel="noopener" class="abyss__link tracking-hud">
+        <a
+          :href="INSTAGRAM_URL"
+          target="_blank"
+          rel="noopener"
+          class="abyss__link tracking-hud"
+        >
           {{ t('contact.instagram') }}
         </a>
         <a
@@ -82,7 +101,11 @@ function backToSurface() {
         </a>
       </div>
 
-      <button type="button" class="abyss__back tracking-hud" @click="backToSurface">
+      <button
+        type="button"
+        class="abyss__back tracking-hud"
+        @click="backToSurface"
+      >
         ↑ {{ t('contact.back') }}
       </button>
     </div>
@@ -98,7 +121,7 @@ function backToSurface() {
   place-items: center;
   text-align: center;
   padding: clamp(6rem, 16vh, 12rem) 1.5rem;
-  background: radial-gradient(120% 80% at 50% 60%, #061f36 0%, #020a14 55%, #000 100%);
+  background: transparent;
   overflow: hidden;
 }
 .abyss__bloom {

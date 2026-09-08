@@ -64,11 +64,22 @@ onBeforeUnmount(() => ctx?.revert())
 </script>
 
 <template>
-  <section id="portfolio" ref="root" class="epi" :aria-label="t('nav.portfolio')">
+  <section
+    id="portfolio"
+    ref="root"
+    class="epi"
+    :aria-label="t('nav.portfolio')"
+  >
     <header class="epi__header">
-      <p class="epi__zone tracking-hud">{{ t('portfolio.zone') }}</p>
-      <h2 class="epi__title font-display">{{ t('portfolio.title') }}</h2>
-      <p class="epi__intro">{{ t('portfolio.intro') }}</p>
+      <p class="epi__zone tracking-hud">
+        {{ t('portfolio.zone') }}
+      </p>
+      <h2 class="epi__title font-display">
+        {{ t('portfolio.title') }}
+      </h2>
+      <p class="epi__intro">
+        {{ t('portfolio.intro') }}
+      </p>
     </header>
 
     <div class="epi__grid">
@@ -85,7 +96,9 @@ onBeforeUnmount(() => ctx?.revert())
             :h="p.h"
             :alt="t(`portfolio.items.${p.key}`)"
           >
-            <template #caption>{{ t(`portfolio.items.${p.key}`) }}</template>
+            <template #caption>
+              {{ t(`portfolio.items.${p.key}`) }}
+            </template>
           </PlaceholderPhoto>
         </div>
       </div>
@@ -127,18 +140,21 @@ onBeforeUnmount(() => ctx?.revert())
 
 /* Curated columns; items keep their own aspect ratios via PlaceholderPhoto */
 .epi__grid {
-  columns: 3;
-  column-gap: clamp(1rem, 2.5vw, 2rem);
+  columns: 2;
+  column-gap: clamp(3rem, 12vw, 12rem);
+  max-width: 1100px;
+  margin: 0 auto;
 }
 .epi__item {
   break-inside: avoid;
-  margin-bottom: clamp(1rem, 2.5vw, 2rem);
+  margin-bottom: clamp(5rem, 20vh, 12rem);
 }
 .epi__media {
   will-change: transform;
 }
 .epi__media :deep(.ph) {
   box-shadow: 0 20px 50px -20px rgba(2, 10, 20, 0.6);
+  mask-image: linear-gradient(transparent, #000 7%, #000 90%, transparent);
 }
 
 @media (max-width: 900px) {

@@ -12,7 +12,6 @@ const { t } = useI18n()
 const reduced = useReducedMotion()
 
 const root = ref<HTMLElement | null>(null)
-const hero = ref<HTMLElement | null>(null)
 const content = ref<HTMLElement | null>(null)
 
 let ctx: gsap.Context | null = null
@@ -36,9 +35,7 @@ onMounted(() => {
         scrub: true
       }
     })
-    tl.to(hero.value, { yPercent: 18, ease: 'none' }, 0) // background drifts down slowly
-      .to(content.value, { yPercent: -10, opacity: 0, ease: 'none' }, 0) // text lifts + fades
-      .to(root.value, { opacity: 0.35, ease: 'none' }, 0) // dissolve into next zone
+    tl.to(content.value, { yPercent: -10, opacity: 0, ease: 'none' }, 0)
   }, root.value!)
 })
 
@@ -52,14 +49,6 @@ onBeforeUnmount(() => ctx?.revert())
     class="surface"
     :aria-label="t('nav.surface')"
   >
-    <!-- Eye-level procedural ocean, with the original photo as WebGL fallback. -->
-    <div
-      ref="hero"
-      class="surface__hero"
-    >
-      <OceanCanvas />
-    </div>
-
     <!-- Name + tagline -->
     <div
       ref="content"
@@ -95,11 +84,6 @@ onBeforeUnmount(() => ctx?.revert())
   place-items: center;
   overflow: hidden;
   isolation: isolate;
-}
-.surface__hero {
-  position: absolute;
-  inset: -8% 0;
-  z-index: 1;
 }
 .surface__content {
   position: relative;
