@@ -276,17 +276,11 @@ onBeforeUnmount(() => media?.revert())
     <section
       id="contact"
       class="journey-end"
-      :aria-label="t('journey.contact.label')"
+      :aria-label="t('journey.contact.title')"
     >
-      <p class="eyebrow">
-        {{ t('journey.contact.label') }}
-      </p>
       <h2 class="font-display">
         {{ t('journey.contact.title') }}<br><em>{{ t('journey.contact.end') }}</em>
       </h2>
-      <p class="journey-end__body">
-        {{ t('journey.contact.body') }}
-      </p>
       <div class="journey-end__disciplines eyebrow">
         <span>{{ t('journey.contact.editorial') }}</span><span>{{ t('journey.contact.expeditions') }}</span><span>{{ t('journey.contact.conservation') }}</span>
       </div>
@@ -445,8 +439,7 @@ em { font-weight: 300; color: #b4e6e7; }
 .perspective__photo img { mask-image: radial-gradient(ellipse, #000 22%, transparent 71%); }
 .perspective__orb { position: absolute; inset: 10% 0; background: radial-gradient(ellipse at 70% 50%, #1c897719, transparent 65%); pointer-events: none; }
 .journey-end { min-height: 110svh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30svh 1.5rem 3rem; background: radial-gradient(ellipse at 50% 70%, #215f6522, transparent 65%); }
-.journey-end h2 { font-size: clamp(3.5rem, 7.5vw, 8rem); line-height: .98; margin: 2rem 0; }
-.journey-end__body { max-width: 29rem; color: #bed6db; font-size: 1rem; line-height: 1.8; }
+.journey-end h2 { max-width: 65rem; font-size: clamp(3rem, 6vw, 6rem); line-height: 1.05; margin: 2rem 0; }
 .journey-end__disciplines { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin-top: 2.5rem; font-size: .5rem; }
 .surface-link { margin-top: 4rem; display: flex; align-items: center; gap: 1.1rem; font-size: .7rem; letter-spacing: .14em; cursor: pointer; }
 .surface-link > span { display: grid; place-items: center; border: 1px solid #9fcbd366; border-radius: 50%; width: 3rem; height: 3rem; font-size: 1.2rem; transition: transform .3s; }
