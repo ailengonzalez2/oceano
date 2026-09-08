@@ -146,6 +146,9 @@
     "view": "Ver fotografía: {photo}",
     "photoDescription": "Una pausa en el descenso para mirar la imagen completa.",
     "photos": {
+      "reef-texture": "Coral / un laberinto vivo",
+      "reef-squid": "Calamar / suspendido en el azul",
+      "reef-window": "Arrecife / una ventana a la vida",
       "coral": "Formas y colores del arrecife",
       "reef": "Detalle de un coral naranja",
       "turtle": "Encuentro con una tortuga marina",

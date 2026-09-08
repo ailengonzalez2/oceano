@@ -13,7 +13,12 @@ const photoOpen = computed({
     if (!value) selected.value = null
   }
 })
-const photoKeys = ['coral', 'reef', 'shark', 'whale', 'jellyfish']
+const reefPhotos = [
+  { key: 'reef-texture', drift: 100 },
+  { key: 'reef-squid', drift: -70 },
+  { key: 'reef-window', drift: 65 }
+]
+const photoKeys = [...reefPhotos.map(photo => photo.key), 'shark', 'whale', 'jellyfish']
 const photoTitle = computed(() => selected.value ? t(`journey.photos.${selected.value}`) : '')
 let context: gsap.Context | undefined
 let media: gsap.MatchMedia | undefined
@@ -108,36 +113,25 @@ onBeforeUnmount(() => media?.revert())
           <span />{{ t('journey.reef.note') }}
         </p>
       </div>
-      <button
-        class="photo reef__wide"
-        data-drift="100"
-        :aria-label="t('journey.view', { photo: t('journey.photos.coral') })"
-        @click="selected = 'coral'"
-      >
-        <img
-          src="/img/coral.jpg"
-          :alt="t('journey.photos.coral')"
-          width="1824"
-          height="1368"
-          loading="lazy"
+      <div class="reef__photos">
+        <button
+          v-for="photo in reefPhotos"
+          :key="photo.key"
+          class="photo reef__photo"
+          :data-drift="photo.drift"
+          :aria-label="t('journey.view', { photo: t(`journey.photos.${photo.key}`) })"
+          @click="selected = photo.key"
         >
-        <span class="photo__caption"><span>{{ t('journey.reef.caption') }}</span><span aria-hidden="true">↗</span></span>
-      </button>
-      <button
-        class="photo reef__detail"
-        data-drift="-70"
-        :aria-label="t('journey.view', { photo: t('journey.photos.reef') })"
-        @click="selected = 'reef'"
-      >
-        <img
-          src="/img/reef.jpg"
-          :alt="t('journey.photos.reef')"
-          width="1260"
-          height="1680"
-          loading="lazy"
-        >
-        <span class="photo__caption"><span>{{ t('journey.reef.detail') }}</span><span aria-hidden="true">↗</span></span>
-      </button>
+          <img
+            :src="`/img/${photo.key}.jpg`"
+            :alt="t(`journey.photos.${photo.key}`)"
+            width="1200"
+            height="800"
+            loading="lazy"
+          >
+          <span class="photo__caption"><span>{{ t(`journey.photos.${photo.key}`) }}</span><span aria-hidden="true">↗</span></span>
+        </button>
+      </div>
       <span
         class="chapter__word font-display"
         aria-hidden="true"
@@ -419,10 +413,11 @@ em { font-weight: 300; color: #b4e6e7; }
 .photo img { transition: filter .5s; }
 .photo:hover img { filter: brightness(1.1); }
 .reef__copy { margin-left: 17vw; max-width: 39rem; }
-.reef__wide { width: 44vw; height: 34vw; max-height: 68svh; margin: 8svh 0 0 auto; }
-.reef__wide img { mask-image: linear-gradient(180deg, transparent, #000 8%, #000 94%, transparent); }
-.reef__detail { position: absolute; left: 12vw; top: 104svh; width: 22vw; height: 30vw; }
-.reef__detail img { border-radius: 48% 48% 2px 2px; }
+.reef__photos { display: grid; grid-template-columns: 1fr 1.4fr; gap: 8svh 8vw; align-items: start; margin-top: 12svh; padding-bottom: 12svh; }
+.reef__photo img { height: auto; aspect-ratio: 3 / 2; mask-image: linear-gradient(180deg, transparent, #000 6%, #000 95%, transparent); }
+.reef__photo:nth-child(1) { grid-column: 2; grid-row: 1; width: 85%; justify-self: end; }
+.reef__photo:nth-child(2) { grid-column: 1; grid-row: 1 / 3; margin-top: 24svh; }
+.reef__photo:nth-child(3) { grid-column: 2; grid-row: 2; width: 88%; justify-self: end; }
 .chapter__word { position: absolute; bottom: 0; left: 24vw; font-size: 16vw; line-height: 1; color: #c1f0e6; opacity: .08; pointer-events: none; }
 .open-water { min-height: 155svh; display: grid; grid-template-columns: 1fr 1fr; gap: 8vw; align-items: center; }
 .open-water__label { position: absolute; top: 18svh; left: 25vw; }
@@ -474,8 +469,7 @@ em { font-weight: 300; color: #b4e6e7; }
   .chapter__title { font-size: clamp(3rem, 10vw, 5rem); }
   .reef { min-height: 175svh; }
   .reef__copy { margin-left: 10vw; }
-  .reef__wide { width: 66vw; height: 50vw; margin-top: 12svh; }
-  .reef__detail { left: 6vw; top: auto; bottom: 14svh; width: 34vw; height: 45vw; }
+  .reef__photos { column-gap: 5vw; grid-template-columns: 1fr 1.2fr; }
   .open-water { min-height: 165svh; gap: 4vw; }
   .open-water__label { top: 28svh; left: 16vw; }
 
@@ -491,8 +485,10 @@ em { font-weight: 300; color: #b4e6e7; }
   .chapter { padding-top: 38svh; }
   .reef { min-height: 185svh; }
   .reef__copy { margin-left: 0; }
-  .reef__wide { width: 76vw; height: 57vw; margin-top: 8svh; }
-  .reef__detail { bottom: 12svh; width: 43vw; height: 56vw; }
+  .reef__photos { display: flex; flex-direction: column; gap: 18svh; margin-top: 12svh; }
+  .reef__photo:nth-child(1) { width: 78%; align-self: flex-end; }
+  .reef__photo:nth-child(2) { width: 82%; margin-top: 0; }
+  .reef__photo:nth-child(3) { width: 94%; align-self: flex-end; }
   .chapter__word { bottom: 2svh; left: 15vw; }
   .open-water { display: flex; flex-direction: column; min-height: 165svh; }
   .open-water__label { left: 6vw; top: 32svh; }

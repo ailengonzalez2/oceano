@@ -146,6 +146,9 @@
     "view": "View photograph: {photo}",
     "photoDescription": "Pause the descent to see the full image.",
     "photos": {
+      "reef-texture": "Coral / a living labyrinth",
+      "reef-squid": "Squid / suspended in the blue",
+      "reef-window": "Reef / a window into life",
       "coral": "Reef shapes and colors",
       "reef": "Orange coral in detail",
       "turtle": "Encounter with a sea turtle",
