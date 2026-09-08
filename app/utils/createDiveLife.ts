@@ -5,7 +5,7 @@ import { createDiveHabitat } from './createDiveHabitat'
  * Camera descent is reversible; ambient swimming uses a separate clock.
  * Everything is procedural, with deterministic placement and no asset fetches.
  */
-export function createDiveLife() {
+export function createDiveLife(onReady?: () => void) {
   const scene = new THREE.Scene()
   const camera = new THREE.PerspectiveCamera(58, 1, 0.1, 90)
   const uniforms = {
@@ -170,7 +170,7 @@ export function createDiveLife() {
   scene.add(jellyfish)
   resources.push(jellyGeometry, jellyMaterial)
 
-  const habitat = createDiveHabitat(scene)
+  const habitat = createDiveHabitat(scene, onReady)
 
   return {
     scene, camera,

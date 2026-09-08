@@ -155,6 +155,8 @@
       "jellyfish": "Medusa a contraluz",
       "shark": "Tiburón ballena en aguas abiertas"
     },
-    "close": "Cerrar fotografía"
+    "close": "Cerrar fotografía",
+    "modelCredits": "Créditos de los corales 3D",
+    "modelAdaptations": "Detalle de las adaptaciones y licencias"
   }
 }

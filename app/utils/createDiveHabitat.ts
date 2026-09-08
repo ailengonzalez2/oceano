@@ -1,9 +1,11 @@
 import * as THREE from 'three'
+import { createCoralReef } from './createCoralReef'
 
 /** Small, shared-draw-call reef and swimming rays inside the existing water column. */
-export function createDiveHabitat(scene: THREE.Scene) {
+export function createDiveHabitat(scene: THREE.Scene, onReady?: () => void) {
   const group = new THREE.Group()
   scene.add(group)
+  const corals = createCoralReef(group, onReady)
   const uniforms = { uTime: { value: 0 }, uWet: { value: 0 }, uReefWet: { value: 0 } }
   const material = new THREE.ShaderMaterial({
     uniforms,
@@ -43,7 +45,7 @@ export function createDiveHabitat(scene: THREE.Scene) {
   const tipGeometry = new THREE.SphereGeometry(1, 6, 4)
   const tips = new THREE.InstancedMesh(tipGeometry, material, 700)
   const branches = new THREE.InstancedMesh(branchGeometry, material, 700)
-  const rocks = new THREE.InstancedMesh(rockGeometry, material, 32)
+  const rocks = new THREE.InstancedMesh(rockGeometry, material, corals.banks.length)
   const dummy = new THREE.Object3D()
   const up = new THREE.Vector3(0, 1, 0)
   const color = new THREE.Color()
@@ -76,15 +78,19 @@ export function createDiveHabitat(scene: THREE.Scene) {
   }
   branches.count = branchIndex
   tips.count = branchIndex
-  for (let i = 0; i < 32; i++) {
-    const side = i % 2 ? 1 : -1
-    dummy.position.set(side * (7 + random() * 12), -8 - random() * 2, -9 - random() * 16)
-    dummy.rotation.set(random(), random(), random())
-    dummy.scale.set(2 + random() * 3, 1 + random() * 2, 1 + random() * 2)
-    dummy.updateMatrix()
-    rocks.setMatrixAt(i, dummy.matrix)
-    rocks.setColorAt(i, color.setHSL(0.48, 0.2, 0.11 + random() * 0.1))
+  function arrangeRocks() {
+    corals.banks.forEach((bank, i) => {
+      dummy.position.set(bank.x * corals.spread, bank.y, bank.z)
+      dummy.rotation.set(0, i * 1.37, 0)
+      dummy.scale.set(2.7 * Math.sqrt(corals.spread), 1.2, 2.6)
+      dummy.updateMatrix()
+      rocks.setMatrixAt(i, dummy.matrix)
+      rocks.setColorAt(i, color.setHSL(0.48, 0.2, 0.14 + (i % 4) * 0.02))
+    })
+    rocks.instanceMatrix.needsUpdate = true
+    rocks.computeBoundingSphere()
   }
+  arrangeRocks()
   group.add(rocks, branches, tips)
 
   // Curved wing sections form a volumetric manta silhouette; the wings flap in the shader.
@@ -138,6 +144,8 @@ export function createDiveHabitat(scene: THREE.Scene) {
   let openDepth = 0.4
   return {
     resize() {
+      corals.resize(window.innerWidth / window.innerHeight)
+      arrangeRocks()
       const max = document.documentElement.scrollHeight - window.innerHeight
       const anchorDepth = (id: string, fallback: number) => {
         const el = document.getElementById(id)
@@ -151,6 +159,9 @@ export function createDiveHabitat(scene: THREE.Scene) {
       uniforms.uTime.value = time
       uniforms.uWet.value = wet * (1 - THREE.MathUtils.smoothstep(Math.abs(depth - openDepth), 0.1, 0.2))
       uniforms.uReefWet.value = wet * (1 - THREE.MathUtils.smoothstep(Math.abs(depth - reefDepth), 0.045, 0.13))
+      corals.update(time, uniforms.uReefWet.value)
+      branches.visible = !corals.ready
+      tips.visible = !corals.ready
       group.visible = wet > 0 && Math.abs(depth - reefDepth) < 0.22
       rays.forEach((ray, i) => {
         ray.visible = wet > 0 && Math.abs(depth - openDepth) < 0.2
@@ -159,6 +170,7 @@ export function createDiveHabitat(scene: THREE.Scene) {
       })
     },
     dispose() {
+      corals.dispose()
       branchGeometry.dispose()
       tipGeometry.dispose()
       tips.dispose()

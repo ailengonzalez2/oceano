@@ -305,6 +305,38 @@ onBeforeUnmount(() => media?.revert())
       <p class="journey-end__footer eyebrow">
         {{ t('surface.name') }} <span>·</span> {{ t('journey.about.role') }}
       </p>
+      <details class="model-credits">
+        <summary>{{ t('journey.modelCredits') }}</summary>
+        <p>
+          <a
+            href="https://sketchfab.com/3d-models/corals-by-rayaa-8e1e9eec16094494967b9a6d731cde3b"
+            target="_blank"
+            rel="noopener noreferrer"
+          >Corals by Rayaa — Rayaa</a>
+          · <a
+            href="https://creativecommons.org/licenses/by-sa/4.0/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >CC BY-SA 4.0</a>
+        </p>
+        <p>
+          <a
+            href="https://sketchfab.com/3d-models/soft-coral-set-256355f15fcb4095af17b75ae572bff0"
+            target="_blank"
+            rel="noopener noreferrer"
+          >Soft Coral Set — Kanna-Nakajima</a>
+          · <a
+            href="https://creativecommons.org/licenses/by/4.0/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >CC BY 4.0</a>
+        </p>
+        <a
+          href="/models/CREDITS.md"
+          target="_blank"
+          rel="noopener noreferrer"
+        >{{ t('journey.modelAdaptations') }}</a>
+      </details>
     </section>
 
     <UModal
@@ -395,6 +427,10 @@ em { font-weight: 300; color: #b4e6e7; }
 .contact-link { display: inline-flex; gap: 1rem; align-items: center; margin-top: 2.8rem; font-size: 1.8rem; border-bottom: 1px solid #b4dce177; padding-bottom: .45rem; }
 .story-link:hover, .contact-link:hover { color: #b4e6e7; }
 .story-link:focus-visible, .contact-link:focus-visible { outline: 2px solid #b4e6e7; outline-offset: 6px; }
+.model-credits { margin-top: 1.4rem; max-width: 36rem; font-size: .65rem; line-height: 1.9; color: #b4dce1; }
+.model-credits summary { cursor: pointer; }
+.model-credits p { margin-top: .6rem; }
+.model-credits a { text-decoration: underline; text-underline-offset: 3px; }
 .full-photo { display: block; width: 100%; max-height: 75svh; object-fit: contain; }
 @media (max-width: 800px) {
   .chapter { padding: 32svh 6vw 12svh; }

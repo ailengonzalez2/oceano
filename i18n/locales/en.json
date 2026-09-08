@@ -155,6 +155,8 @@
       "jellyfish": "Backlit jellyfish",
       "shark": "Whale shark in open water"
     },
-    "close": "Close photograph"
+    "close": "Close photograph",
+    "modelCredits": "3D coral credits",
+    "modelAdaptations": "Adaptations and license details"
   }
 }
