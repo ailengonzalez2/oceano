@@ -23,9 +23,9 @@
   },
   "nav": {
     "surface": "Superficie",
-    "portfolio": "Portafolio",
-    "stories": "Historias",
-    "about": "Sobre mí",
+    "portfolio": "Arrecife",
+    "stories": "Encuentros",
+    "about": "La mirada",
     "contact": "Contacto"
   },
   "surface": {
@@ -93,5 +93,65 @@
     "audioToggle": "Activar o silenciar sonido ambiente",
     "langToggle": "Cambiar idioma",
     "skip": "Saltar al contenido"
+  },
+  "journey": {
+    "entry": {
+      "label": "Una mirada bajo el agua",
+      "title": "Bajá el ritmo.",
+      "end": "Entrá en el azul.",
+      "note": "Seguí el descenso. Dejá que la vida se acerque."
+    },
+    "reef": {
+      "label": "El jardín sumergido",
+      "title": "Todo parece quieto.",
+      "end": "Todo está vivo.",
+      "body": "Un paisaje dentro de otro. Formas diminutas, texturas y encuentros que aparecen cuando nos detenemos a mirar. La primera imagen empieza mucho antes del disparo.",
+      "note": "Explorá las fotografías para ver cada detalle.",
+      "caption": "Arrecife / formas de la vida",
+      "detail": "Coral / otra escala",
+      "word": "habitar"
+    },
+    "open": {
+      "label": "Aguas abiertas",
+      "title": "Compartir",
+      "end": "el azul.",
+      "body": "La distancia también forma parte de una fotografía. Flotar, observar, dejar espacio. Hay encuentros que se construyen sin avanzar un centímetro.",
+      "note": "Mové el cursor: la mirada acompaña tu movimiento.",
+      "caption": "Encuentros / a su ritmo"
+    },
+    "whale": {
+      "label": "La zona crepuscular",
+      "title": "De pronto,",
+      "end": "somos pequeños.",
+      "body": "El encuadre se abre. Una silueta atraviesa el agua y, por un instante, todo encuentra su escala. Fotografiar el océano también es aprender a esperar.",
+      "caption": "Un encuentro en el azul"
+    },
+    "about": {
+      "label": "Detrás de la mirada",
+      "title": "Primero, bucear.",
+      "end": "Después, contar.",
+      "body": "La cámara es parte de la inmersión. La flotabilidad, la paciencia y la atención al entorno definen desde dónde mirar. Fotografía marina para acercar a la superficie aquello que sucede bajo ella.",
+      "role": "Fotógrafa marina · Buzo",
+      "caption": "Luz / lo que permanece"
+    },
+    "contact": {
+      "label": "Historias que vuelven a la superficie",
+      "title": "El próximo descenso",
+      "end": "empieza con una idea.",
+      "body": "Fotografía para historias vinculadas al mar: una mirada bajo el agua, del encuentro a la imagen.",
+      "editorial": "Fotografía editorial",
+      "expeditions": "Expediciones",
+      "conservation": "Conservación"
+    },
+    "view": "Ver fotografía: {photo}",
+    "photoDescription": "Una pausa en el descenso para mirar la imagen completa.",
+    "photos": {
+      "coral": "Formas y colores del arrecife",
+      "reef": "Detalle de un coral naranja",
+      "turtle": "Encuentro con una tortuga marina",
+      "whale": "Ballena en el azul",
+      "jellyfish": "Medusa a contraluz"
+    },
+    "close": "Cerrar fotografía"
   }
 }

@@ -23,9 +23,9 @@
   },
   "nav": {
     "surface": "Surface",
-    "portfolio": "Portfolio",
-    "stories": "Stories",
-    "about": "About",
+    "portfolio": "Reef",
+    "stories": "Encounters",
+    "about": "Perspective",
     "contact": "Contact"
   },
   "surface": {
@@ -93,5 +93,65 @@
     "audioToggle": "Enable or mute ambient sound",
     "langToggle": "Change language",
     "skip": "Skip to content"
+  },
+  "journey": {
+    "entry": {
+      "label": "A view beneath the surface",
+      "title": "Slow down.",
+      "end": "Enter the blue.",
+      "note": "Follow the descent. Let life come closer."
+    },
+    "reef": {
+      "label": "The submerged garden",
+      "title": "Everything seems still.",
+      "end": "Everything is alive.",
+      "body": "A landscape within a landscape. Tiny forms, textures and encounters emerge when we pause to look. The first image begins long before the shutter.",
+      "note": "Explore the photographs to see every detail.",
+      "caption": "Reef / forms of life",
+      "detail": "Coral / another scale",
+      "word": "inhabit"
+    },
+    "open": {
+      "label": "Open water",
+      "title": "Sharing",
+      "end": "the blue.",
+      "body": "Distance is part of a photograph, too. Float, observe, give space. Some encounters happen without moving an inch closer.",
+      "note": "Move your cursor: your viewpoint follows.",
+      "caption": "Encounters / at their pace"
+    },
+    "whale": {
+      "label": "The twilight zone",
+      "title": "Suddenly,",
+      "end": "we are small.",
+      "body": "The frame opens up. A silhouette crosses the water and, for a moment, everything finds its scale. Photographing the ocean is also learning to wait.",
+      "caption": "An encounter in the blue"
+    },
+    "about": {
+      "label": "Behind the gaze",
+      "title": "First, dive.",
+      "end": "Then, tell the story.",
+      "body": "The camera is part of the dive. Buoyancy, patience and awareness shape the point of view. Marine photography that brings what happens below a little closer to the surface.",
+      "role": "Marine photographer · Diver",
+      "caption": "Light / what remains"
+    },
+    "contact": {
+      "label": "Stories that return to the surface",
+      "title": "The next descent",
+      "end": "begins with an idea.",
+      "body": "Photography for stories connected to the sea: a view beneath the surface, from encounter to image.",
+      "editorial": "Editorial photography",
+      "expeditions": "Expeditions",
+      "conservation": "Conservation"
+    },
+    "view": "View photograph: {photo}",
+    "photoDescription": "Pause the descent to see the full image.",
+    "photos": {
+      "coral": "Reef shapes and colors",
+      "reef": "Orange coral in detail",
+      "turtle": "Encounter with a sea turtle",
+      "whale": "Whale in the blue",
+      "jellyfish": "Backlit jellyfish"
+    },
+    "close": "Close photograph"
   }
 }

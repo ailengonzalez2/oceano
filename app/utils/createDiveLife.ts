@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { createDiveHabitat } from './createDiveHabitat'
 
 /** World-space marine snow, bubbles, fish and deep-water jellyfish.
  * Camera descent is reversible; ambient swimming uses a separate clock.
@@ -169,23 +170,28 @@ export function createDiveLife() {
   scene.add(jellyfish)
   resources.push(jellyGeometry, jellyMaterial)
 
+  const habitat = createDiveHabitat(scene)
+
   return {
     scene, camera,
     resize(width: number, height: number, pixelRatio: number) {
       camera.aspect = width / height
       camera.updateProjectionMatrix()
       uniforms.uPixelRatio.value = pixelRatio
+      habitat.resize()
     },
     update(depth: number, entry: number, time: number, look: THREE.Vector2) {
       uniforms.uTime.value = time
       uniforms.uDepth.value = depth
       uniforms.uWet.value = THREE.MathUtils.smoothstep(entry, 0.65, 1)
+      habitat.update(depth, uniforms.uWet.value, time)
       camera.position.set(look.x * 0.3, -depth * 82, 0)
       camera.lookAt(look.x * 0.65, camera.position.y + look.y * 0.25, -15)
     },
     dispose() {
       resources.forEach(resource => resource.dispose())
       fish.dispose()
+      habitat.dispose()
       scene.clear()
     }
   }
