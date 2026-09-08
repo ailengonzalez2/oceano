@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Ailen Gonzalez — Underwater photography",
-    "description": "Marine photographer and ocean documentarian. A descent from the sunlit surface to the abyss."
+    "title": "Martina Álvarez — Underwater photography",
+    "description": "Underwater photography and filmmaking by Martina Álvarez. A journey through the ocean, sharks and the stories that connect us to marine life."
   },
   "loader": {
     "tagline": "Underwater photography & documentary",
@@ -29,8 +29,8 @@
     "contact": "Contact"
   },
   "surface": {
-    "name": "Ailen Gonzalez",
-    "role": "Marine photographer · Documentarian",
+    "name": "Martina Álvarez",
+    "role": "Marine photographer · Underwater filmmaker",
     "tagline": "You don't look at the ocean. You descend into it.",
     "hint": "Press and hold to reveal",
     "descent": "The surface slips away. The blue surrounds us."
@@ -112,12 +112,13 @@
       "word": "inhabit"
     },
     "open": {
-      "label": "Open water",
-      "title": "Sharing",
-      "end": "the blue.",
-      "body": "Distance is part of a photograph, too. Float, observe, give space. Some encounters happen without moving an inch closer.",
-      "note": "Move your cursor: your viewpoint follows.",
-      "caption": "Encounters / at their pace"
+      "label": "In the world of sharks",
+      "title": "Sharks.",
+      "end": "A different perspective.",
+      "body": "Sharks are central to Martina’s work. As a photographer, diver and underwater filmmaker specializing in them, she brings us closer through observation, respect and the stories of the people who protect them.",
+      "note": "Getting to know them changes how we see the ocean.",
+      "caption": "Whale shark / an open-water encounter",
+      "project": "A story of love for sharks"
     },
     "whale": {
       "label": "The twilight zone",
@@ -130,18 +131,19 @@
       "label": "Behind the gaze",
       "title": "First, dive.",
       "end": "Then, tell the story.",
-      "body": "The camera is part of the dive. Buoyancy, patience and awareness shape the point of view. Marine photography that brings what happens below a little closer to the surface.",
-      "role": "Marine photographer · Diver",
+      "body": "Martina Álvarez is a marine photographer, diver and underwater filmmaker with a particular focus on sharks. The creator of Women of the Ocean Club, she brings exploration and ocean stories together to connect more people with life beneath the surface.",
+      "role": "Photographer · Diver · Underwater filmmaker",
       "caption": "Light / what remains"
     },
     "contact": {
       "label": "Stories that return to the surface",
       "title": "The next descent",
       "end": "begins with an idea.",
-      "body": "Photography for stories connected to the sea: a view beneath the surface, from encounter to image.",
+      "body": "Photography, underwater films and stories about sharks and marine life. Discover Martina’s work and get in touch through Instagram.",
       "editorial": "Editorial photography",
       "expeditions": "Expeditions",
-      "conservation": "Conservation"
+      "conservation": "Conservation",
+      "instagram": "Connect with Martina"
     },
     "view": "View photograph: {photo}",
     "photoDescription": "Pause the descent to see the full image.",
@@ -150,7 +152,8 @@
       "reef": "Orange coral in detail",
       "turtle": "Encounter with a sea turtle",
       "whale": "Whale in the blue",
-      "jellyfish": "Backlit jellyfish"
+      "jellyfish": "Backlit jellyfish",
+      "shark": "Whale shark in open water"
     },
     "close": "Close photograph"
   }

@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Ailen Gonzalez — Fotografía submarina",
-    "description": "Fotógrafa marina y documentalista del océano. Un descenso desde la superficie iluminada hasta el abismo."
+    "title": "Martina Álvarez — Fotografía submarina",
+    "description": "Fotografía y cine submarino de Martina Álvarez. Un recorrido por el océano, los tiburones y las historias que nos conectan con la vida marina."
   },
   "loader": {
     "tagline": "Fotografía submarina y documental",
@@ -29,8 +29,8 @@
     "contact": "Contacto"
   },
   "surface": {
-    "name": "Ailen Gonzalez",
-    "role": "Fotógrafa marina · Documentalista",
+    "name": "Martina Álvarez",
+    "role": "Fotógrafa marina · Realizadora submarina",
     "tagline": "El océano no se mira. Se desciende.",
     "hint": "Mantené presionado para revelar",
     "descent": "La superficie queda atrás. El azul nos rodea."
@@ -112,12 +112,13 @@
       "word": "habitar"
     },
     "open": {
-      "label": "Aguas abiertas",
-      "title": "Compartir",
-      "end": "el azul.",
-      "body": "La distancia también forma parte de una fotografía. Flotar, observar, dejar espacio. Hay encuentros que se construyen sin avanzar un centímetro.",
-      "note": "Mové el cursor: la mirada acompaña tu movimiento.",
-      "caption": "Encuentros / a su ritmo"
+      "label": "En el mundo de los tiburones",
+      "title": "Tiburones.",
+      "end": "Otra mirada.",
+      "body": "Los tiburones ocupan un lugar central en el trabajo de Martina. Como fotógrafa, buzo y realizadora submarina especializada en ellos, busca acercarnos a su mundo desde la observación, el respeto y las historias de quienes los protegen.",
+      "note": "Conocerlos cambia nuestra forma de mirar el océano.",
+      "caption": "Tiburón ballena / encuentro en aguas abiertas",
+      "project": "Una historia de amor por los tiburones"
     },
     "whale": {
       "label": "La zona crepuscular",
@@ -130,18 +131,19 @@
       "label": "Detrás de la mirada",
       "title": "Primero, bucear.",
       "end": "Después, contar.",
-      "body": "La cámara es parte de la inmersión. La flotabilidad, la paciencia y la atención al entorno definen desde dónde mirar. Fotografía marina para acercar a la superficie aquello que sucede bajo ella.",
-      "role": "Fotógrafa marina · Buzo",
+      "body": "Martina Álvarez es fotógrafa marina, buzo y realizadora submarina, con una mirada especialmente dedicada a los tiburones. Creadora de Women of the Ocean Club, une exploración e historias del mar para acercar a más personas a la vida bajo el agua.",
+      "role": "Fotógrafa · Buzo · Realizadora submarina",
       "caption": "Luz / lo que permanece"
     },
     "contact": {
       "label": "Historias que vuelven a la superficie",
       "title": "El próximo descenso",
       "end": "empieza con una idea.",
-      "body": "Fotografía para historias vinculadas al mar: una mirada bajo el agua, del encuentro a la imagen.",
+      "body": "Fotografía, cine submarino e historias sobre tiburones y vida marina. Conocé el trabajo de Martina y contactala a través de su Instagram.",
       "editorial": "Fotografía editorial",
       "expeditions": "Expediciones",
-      "conservation": "Conservación"
+      "conservation": "Conservación",
+      "instagram": "Conectá con Martina"
     },
     "view": "Ver fotografía: {photo}",
     "photoDescription": "Una pausa en el descenso para mirar la imagen completa.",
@@ -150,7 +152,8 @@
       "reef": "Detalle de un coral naranja",
       "turtle": "Encuentro con una tortuga marina",
       "whale": "Ballena en el azul",
-      "jellyfish": "Medusa a contraluz"
+      "jellyfish": "Medusa a contraluz",
+      "shark": "Tiburón ballena en aguas abiertas"
     },
     "close": "Cerrar fotografía"
   }

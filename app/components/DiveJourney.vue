@@ -13,7 +13,7 @@ const photoOpen = computed({
     if (!value) selected.value = null
   }
 })
-const photoKeys = ['coral', 'reef', 'turtle', 'whale', 'jellyfish']
+const photoKeys = ['coral', 'reef', 'shark', 'whale', 'jellyfish']
 const photoTitle = computed(() => selected.value ? t(`journey.photos.${selected.value}`) : '')
 let context: gsap.Context | undefined
 let media: gsap.MatchMedia | undefined
@@ -31,9 +31,17 @@ onMounted(() => {
         })
       })
       gsap.utils.toArray<HTMLElement>('.chapter__copy').forEach((el) => {
-        gsap.fromTo(el, { opacity: 0.2, y: 45 }, {
-          opacity: 1, y: 0, ease: 'none',
-          scrollTrigger: { trigger: el, start: 'top 90%', end: 'top 58%', scrub: true }
+        // Only the drift tween owns y. Measure entry against the stationary section,
+        // so the reveal cannot overwrite the parallax or measure its moving target.
+        gsap.fromTo(el, { opacity: 0.2 }, {
+          opacity: 1, ease: 'none',
+          scrollTrigger: {
+            trigger: el.closest('section'),
+            start: () => `top+=${el.offsetTop} 90%`,
+            end: () => `top+=${el.offsetTop} 58%`,
+            scrub: true,
+            invalidateOnRefresh: true
+          }
         })
       })
       gsap.fromTo('.whale__image', { xPercent: 10, scale: 0.91 }, {
@@ -148,14 +156,14 @@ onBeforeUnmount(() => media?.revert())
       <button
         class="photo open-water__photo"
         data-drift="95"
-        :aria-label="t('journey.view', { photo: t('journey.photos.turtle') })"
-        @click="selected = 'turtle'"
+        :aria-label="t('journey.view', { photo: t('journey.photos.shark') })"
+        @click="selected = 'shark'"
       >
         <img
-          src="/img/turtle.jpg"
-          :alt="t('journey.photos.turtle')"
-          width="1625"
-          height="1536"
+          src="/img/shark.jpg"
+          :alt="t('journey.photos.shark')"
+          width="1920"
+          height="1280"
           loading="lazy"
         >
         <span class="photo__caption"><span>{{ t('journey.open.caption') }}</span><span aria-hidden="true">↗</span></span>
@@ -173,6 +181,12 @@ onBeforeUnmount(() => media?.revert())
         <p class="field-note">
           <span />{{ t('journey.open.note') }}
         </p>
+        <a
+          class="story-link"
+          href="https://www.instagram.com/oceanomartina/reel/DSVPFHQEXGj/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >{{ t('journey.open.project') }} <span aria-hidden="true">↗</span></a>
       </div>
     </section>
 
@@ -238,7 +252,7 @@ onBeforeUnmount(() => media?.revert())
           {{ t('journey.about.body') }}
         </p>
         <div class="perspective__signature">
-          <span class="font-display">Ailen Gonzalez</span>
+          <span class="font-display">{{ t('surface.name') }}</span>
           <span class="eyebrow">{{ t('journey.about.role') }}</span>
         </div>
       </div>
@@ -276,6 +290,12 @@ onBeforeUnmount(() => media?.revert())
       <div class="journey-end__disciplines eyebrow">
         <span>{{ t('journey.contact.editorial') }}</span><span>{{ t('journey.contact.expeditions') }}</span><span>{{ t('journey.contact.conservation') }}</span>
       </div>
+      <a
+        class="contact-link font-display"
+        href="https://www.instagram.com/oceanomartina/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >{{ t('journey.contact.instagram') }} <span aria-hidden="true">↗</span></a>
       <button
         class="surface-link"
         @click="scrollTo(0)"
@@ -283,7 +303,7 @@ onBeforeUnmount(() => media?.revert())
         <span aria-hidden="true">↑</span>{{ t('contact.back') }}
       </button>
       <p class="journey-end__footer eyebrow">
-        Ailen Gonzalez <span>·</span> {{ t('journey.about.role') }}
+        {{ t('surface.name') }} <span>·</span> {{ t('journey.about.role') }}
       </p>
     </section>
 
@@ -371,6 +391,10 @@ em { font-weight: 300; color: #b4e6e7; }
 .surface-link:hover > span { transform: translateY(-5px); }
 .journey-end__footer { margin-top: 12svh; font-size: .48rem; }
 .journey-end__footer span { margin: 0 1rem; }
+.story-link { display: inline-flex; align-items: center; gap: 1rem; margin-top: 1.6rem; padding-bottom: .4rem; border-bottom: 1px solid #b4dce155; font-size: .75rem; color: #d4e8eb; }
+.contact-link { display: inline-flex; gap: 1rem; align-items: center; margin-top: 2.8rem; font-size: 1.8rem; border-bottom: 1px solid #b4dce177; padding-bottom: .45rem; }
+.story-link:hover, .contact-link:hover { color: #b4e6e7; }
+.story-link:focus-visible, .contact-link:focus-visible { outline: 2px solid #b4e6e7; outline-offset: 6px; }
 .full-photo { display: block; width: 100%; max-height: 75svh; object-fit: contain; }
 @media (max-width: 800px) {
   .chapter { padding: 32svh 6vw 12svh; }
