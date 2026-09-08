@@ -4,10 +4,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 /**
  * ZONE 01 — SURFACE (hero)
- * Palette: #7FD8E8 / #A9E8F2 / #EAFBFF · Behaviour: WebGL god rays + caustics.
- *
- * The arrival. Photographer name + tagline over a full-bleed, fully-opaque hero
- * image (the ocean surface), with the only WebGL in the site layered on top.
+ * Eye-level procedural ocean with a floating camera and reflective waves.
+ * Photographer name + tagline sit above the hero's Three.js canvas.
  * Motion: a parallax + dissolve handoff to the portfolio as you start to descend.
  */
 const { t } = useI18n()
@@ -54,30 +52,35 @@ onBeforeUnmount(() => ctx?.revert())
     class="surface"
     :aria-label="t('nav.surface')"
   >
-    <!-- Full-bleed hero photo (fully opaque) -->
-    <div ref="hero" class="surface__hero">
-      <PlaceholderPhoto
-        src="/img/hero.jpg"
-        :w="1600"
-        :h="2000"
-        eager
-        :alt="t('surface.tagline')"
-      />
+    <!-- Eye-level procedural ocean, with the original photo as WebGL fallback. -->
+    <div
+      ref="hero"
+      class="surface__hero"
+    >
+      <OceanCanvas />
     </div>
 
-    <!-- WebGL caustics + god rays (hero only) -->
-    <CausticsCanvas class="surface__caustics" />
-    <LightRays :opacity="0.4" class="surface__rays" />
-
     <!-- Name + tagline -->
-    <div ref="content" class="surface__content">
-      <p class="surface__role tracking-hud">{{ t('surface.role') }}</p>
-      <h1 class="surface__name font-display">{{ t('surface.name') }}</h1>
-      <p class="surface__tagline font-display">{{ t('surface.tagline') }}</p>
+    <div
+      ref="content"
+      class="surface__content"
+    >
+      <p class="surface__role tracking-hud">
+        {{ t('surface.role') }}
+      </p>
+      <h1 class="surface__name font-display">
+        {{ t('surface.name') }}
+      </h1>
+      <p class="surface__tagline font-display">
+        {{ t('surface.tagline') }}
+      </p>
     </div>
 
     <!-- Scroll-to-descend hint -->
-    <div class="surface__scroll tracking-hud" aria-hidden="true">
+    <div
+      class="surface__scroll tracking-hud"
+      aria-hidden="true"
+    >
       {{ t('hud.scrollHint') }}
       <span class="surface__scroll-line" />
     </div>
@@ -98,20 +101,12 @@ onBeforeUnmount(() => ctx?.revert())
   inset: -8% 0;
   z-index: 1;
 }
-.surface__hero :deep(.ph) {
-  height: 100%;
-  border-radius: 0;
-}
-.surface__caustics {
-  z-index: 2;
-  opacity: 0.5; /* toned down so it doesn't wash out the bright surface photo */
-}
-.surface__rays { z-index: 2; }
 .surface__content {
   position: relative;
   z-index: 4;
   text-align: center;
   padding: 1.5rem;
+  padding-top: 18vh;
 }
 .surface__role {
   font-size: 0.66rem;
