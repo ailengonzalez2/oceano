@@ -47,3 +47,13 @@ Attribution and license information above are preserved from each GLB's embedded
 - License URL: https://creativecommons.org/licenses/by-nc/4.0/
 - File: hammerhead_shark.glb (original download, unchanged)
 - Scene adaptation: scaled, given underwater shading and a foreground swimming path that crosses the shark chapter and approaches the camera. The original skeletal animation is retained.
+
+## Wreckage of the Linda Rose
+
+- Author: MBARI — https://sketchfab.com/mbari
+- Source: https://sketchfab.com/3d-models/wreckage-of-the-linda-rose-e8cd4cfbfe5e44c79ccd7a7b1f01d86d
+- License: Creative Commons Attribution 4.0 (CC BY 4.0)
+- License URL: https://creativecommons.org/licenses/by/4.0/
+- File: linda_rose.glb
+- Adaptation: legacy materials converted, geometry and textures optimized for the web, scaled and lit with an interactive flashlight in the footer.
+- Reproduction: `python3 scripts/prepare-wreck-model.py /path/to/wreckage_of_the_linda_rose.glb /tmp/wreck-materials.glb`, then `npx --yes @gltf-transform/cli@4.5.0 optimize /tmp/wreck-materials.glb public/models/linda_rose.glb --compress meshopt --texture-compress webp --texture-size 2048 --simplify-ratio 0.15 --simplify-error 0.002`. See https://gltf-transform.dev/cli.

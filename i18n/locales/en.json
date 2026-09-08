@@ -154,6 +154,11 @@
       "shark": "Shark seen head-on underwater"
     },
     "close": "Close photograph",
+    "wreck": {
+      "instructions": "Move the light to explore. On mobile, slide your finger; with a keyboard, use the arrows.",
+      "loading": "Discovering the wreck…",
+      "unavailable": "The wreck is currently unavailable."
+    },
     "modelCredits": "3D model credits",
     "modelAdaptations": "Adaptations and license details"
   }
