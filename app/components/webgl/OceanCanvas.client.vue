@@ -10,7 +10,7 @@ const { progress } = useScrollDepth()
 const ready = ref(false)
 const entry = ref(0)
 const fallbackStyle = computed(() => ({
-  backgroundColor: `hsl(204 80% ${Math.max(3, 28 - progress.value * 25)}%)`,
+  backgroundColor: `hsl(204 80% ${Math.max(3, 34 - Math.pow(progress.value, 1.7) * 31)}%)`,
   backgroundImage: entry.value < 0.5 ? 'url(/img/hero.jpg)' : 'none'
 }))
 let life: ReturnType<typeof createDiveLife> | undefined
@@ -128,34 +128,44 @@ vec3 aboveWater(vec2 uv) {
 vec3 underWater(vec2 uv) {
   float d = uDepth;
   float t = uTime;
-  float daylight = exp(-d * 5.5);
-  vec3 shallow = mix(vec3(.008, .11, .19), vec3(.025, .38, .47), pow(vUv.y, 1.6));
-  vec3 deep = mix(vec3(.001, .006, .015), vec3(.003, .028, .060), vUv.y);
-  vec3 color = mix(shallow, deep, smoothstep(.05, .88, d));
+  // Keep the first half sunlit; reserve near-darkness for the final descent.
+  float darkness = smoothstep(.12, 1.0, pow(d, 1.55));
+  float daylight = exp(-pow(d, 2.0) * 3.2);
+  // Two slow currents deform the light field, even when scrolling stops.
+  vec2 flow = vec2(
+    sin(uv.y * 3.2 + t * .42) + sin(uv.x * 2.1 - t * .27),
+    cos(uv.x * 2.8 + t * .34) + sin(uv.y * 2.4 - t * .31)
+  ) * .035;
+  vec2 waterUv = uv + flow;
+  float height = clamp(vUv.y + flow.y, 0.0, 1.0);
+  vec3 shallow = mix(vec3(.015, .25, .34), vec3(.07, .52, .59), pow(height, 1.25));
+  vec3 deep = mix(vec3(.001, .006, .015), vec3(.003, .028, .060), height);
+  vec3 color = mix(shallow, deep, darkness);
 
   // The bright, rippling ceiling recedes upward as the camera descends.
-  vec2 ceiling = vec2(uv.x, 1.0) / max(.10, vUv.y - .35 + d * .3);
+  vec2 ceiling = vec2(waterUv.x, 1.0) / max(.10, height - .35 + d * .3);
   float caustic = sin(ceiling.x * 5.0 + t * .45 + sin(ceiling.y * 3.0 - t * .3));
   caustic *= sin(ceiling.y * 8.0 + t * .7 + sin(ceiling.x * 2.0));
-  float surface = pow(vUv.y, 9.0 + d * 16.0) * exp(-d * 9.0);
+  float surface = pow(height, 5.0 + d * 12.0) * exp(-pow(d, 1.6) * 5.0);
   color += vec3(.14, .48, .46) * surface * (.4 + .6 * pow(abs(caustic), 5.0));
 
   // Broad shafts fan out from the moving surface, with depth-dependent scattering.
-  float shaftCoord = (uv.x + .45 - uLook.x * .08) / (1.7 - vUv.y);
+  float shaftCoord = (waterUv.x + .45 - uLook.x * .08) / (1.7 - height);
   float shafts = 0.0;
   for (int i = 0; i < 4; i++) {
     float f = float(i);
     float beam = sin(shaftCoord * (13.0 + f * 8.0) + t * (.15 + f * .025) + f * 2.3);
     shafts += pow(max(beam, 0.0), 12.0 + f * 4.0) / (4.0 + f * 2.0);
   }
-  float haze = noise(vec2(uv.x * 2.0 + t * .035, uv.y * 2.0 + d * 12.0));
+  float haze = noise(waterUv * vec2(2.5, 3.5) + vec2(t * .09, d * 12.0 - t * .12));
+  color *= 1.0 + (haze - .5) * .16 * daylight;
   color += vec3(.10, .38, .43) * shafts * daylight * (.35 + .65 * vUv.y) * (.6 + haze * .4);
-  vec2 lightPos = vec2(-.38 + uLook.x * .06, 1.18 + d * 2.0);
+  vec2 lightPos = vec2(-.38 + uLook.x * .06, 1.18 + d * .9);
   color += vec3(.08, .24, .27) * exp(-length(uv - lightPos) * 2.1) * daylight;
 
   // At depth, a soft diver's torch replaces the vanishing sunlight.
   float torch = exp(-length((uv - uLook * vec2(.65, .35)) * vec2(.85, 1.0)) * 3.0);
-  color += vec3(.005, .038, .050) * torch * smoothstep(.45, .85, d) * (.8 + haze * .2);
+  color += vec3(.005, .038, .050) * torch * smoothstep(.7, 1.0, d) * (.8 + haze * .2);
   color += vec3(.0, .008, .016) * haze;
   return color;
 }
@@ -175,7 +185,7 @@ void main() {
   else color = mix(aboveWater(uv), underWater(uv), wet);
   float lip = exp(-abs(vUv.y - line) * 180.0) * sin(crossing * 3.14159);
   color += vec3(.15, .42, .43) * lip;
-  color *= 1.0 - mix(.16, .38, wet) * smoothstep(.3, 1.45, length(vUv - .5) * 2.0);
+  color *= 1.0 - mix(.16, .20 + .18 * pow(uDepth, 1.7), wet) * smoothstep(.3, 1.45, length(vUv - .5) * 2.0);
   gl_FragColor = vec4(pow(max(color, vec3(0)), vec3(.93)), 1.0);
 }
 `
