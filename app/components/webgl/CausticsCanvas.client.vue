@@ -21,6 +21,10 @@ const useFallback = ref(false)
 let renderer: THREE.WebGLRenderer | null = null
 let scene: THREE.Scene | null = null
 let camera: THREE.OrthographicCamera | null = null
+const uniforms = {
+  uTime: { value: 0 },
+  uResolution: { value: new THREE.Vector2(1, 1) }
+}
 let material: THREE.ShaderMaterial | null = null
 let raf = 0
 let startTime = 0
@@ -99,10 +103,7 @@ function init() {
     fragmentShader,
     transparent: true,
     depthWrite: false,
-    uniforms: {
-      uTime: { value: 0 },
-      uResolution: { value: new THREE.Vector2(1, 1) }
-    }
+    uniforms
   })
 
   const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material)
@@ -121,12 +122,12 @@ function resize() {
   const w = canvas.value.clientWidth
   const h = canvas.value.clientHeight
   renderer.setSize(w, h, false)
-  material.uniforms.uResolution.value.set(w, h)
+  uniforms.uResolution.value.set(w, h)
 }
 
 function loop() {
   if (!renderer || !scene || !camera || !material) return
-  material.uniforms.uTime.value = (performance.now() - startTime) / 1000
+  uniforms.uTime.value = (performance.now() - startTime) / 1000
   renderer.render(scene, camera)
   raf = requestAnimationFrame(loop)
 }
@@ -161,10 +162,20 @@ onBeforeUnmount(dispose)
 </script>
 
 <template>
-  <div class="caustics" aria-hidden="true">
-    <canvas v-show="!useFallback" ref="canvas" class="caustics__canvas" />
+  <div
+    class="caustics"
+    aria-hidden="true"
+  >
+    <canvas
+      v-show="!useFallback"
+      ref="canvas"
+      class="caustics__canvas"
+    />
     <!-- CSS fallback: static layered caustic glow -->
-    <div v-if="useFallback" class="caustics__fallback" />
+    <div
+      v-if="useFallback"
+      class="caustics__fallback"
+    />
   </div>
 </template>
 

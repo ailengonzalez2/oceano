@@ -40,7 +40,12 @@ onBeforeUnmount(() => ctx?.revert())
 </script>
 
 <template>
-  <section id="about" ref="root" class="bathyal" :aria-label="t('nav.about')">
+  <section
+    id="about"
+    ref="root"
+    class="bathyal"
+    :aria-label="t('nav.about')"
+  >
     <div class="bathyal__inner">
       <!-- Torch-revealed B/W portrait -->
       <div class="bathyal__portrait">
@@ -53,19 +58,35 @@ onBeforeUnmount(() => ctx?.revert())
             :alt="t('about.title')"
           />
         </TorchCursor>
-        <p class="bathyal__reveal-hint tracking-hud">{{ t('about.reveal') }}</p>
+        <p class="bathyal__reveal-hint tracking-hud">
+          {{ t('about.reveal') }}
+        </p>
       </div>
 
       <!-- Bio -->
       <div class="bathyal__text">
-        <p class="bathyal__zone tracking-hud">{{ t('about.zone') }}</p>
-        <h2 class="bathyal__title font-display">{{ t('about.title') }}</h2>
-        <p class="bathyal__body">{{ t('about.body') }}</p>
+        <p class="bathyal__zone tracking-hud">
+          {{ t('about.zone') }}
+        </p>
+        <h2 class="bathyal__title font-display">
+          {{ t('about.title') }}
+        </h2>
+        <p class="bathyal__body">
+          {{ t('about.body') }}
+        </p>
 
         <dl class="bathyal__stats">
-          <div v-for="s in stats" :key="s.key" class="bathyal__stat">
-            <dt class="bathyal__stat-value font-display">{{ s.value }}</dt>
-            <dd class="bathyal__stat-label tracking-hud">{{ t(`about.stats.${s.key}`) }}</dd>
+          <div
+            v-for="s in stats"
+            :key="s.key"
+            class="bathyal__stat"
+          >
+            <dt class="bathyal__stat-value font-display">
+              {{ s.value }}
+            </dt>
+            <dd class="bathyal__stat-label tracking-hud">
+              {{ t(`about.stats.${s.key}`) }}
+            </dd>
           </div>
         </dl>
       </div>

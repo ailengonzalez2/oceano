@@ -9,7 +9,7 @@
  * load-in and any failure. Pass `grayscale` for the dark bathyal B/W treatment.
  * Swap the files in /public/img for the photographer's real shots for production.
  */
-const props = withDefaults(defineProps<{
+withDefaults(defineProps<{
   /** Image URL — typically a local /img/*.jpg asset. */
   src: string
   w: number
@@ -29,7 +29,10 @@ const failed = ref(false)
 </script>
 
 <template>
-  <figure class="ph" :style="{ aspectRatio: `${w} / ${h}` }">
+  <figure
+    class="ph"
+    :style="{ aspectRatio: `${w} / ${h}` }"
+  >
     <div class="ph__block">
       <span class="ph__tag tracking-hud">{{ label }}</span>
     </div>
@@ -45,7 +48,10 @@ const failed = ref(false)
       @load="loaded = true"
       @error="failed = true"
     >
-    <figcaption v-if="$slots.caption" class="ph__caption">
+    <figcaption
+      v-if="$slots.caption"
+      class="ph__caption"
+    >
       <slot name="caption" />
     </figcaption>
   </figure>

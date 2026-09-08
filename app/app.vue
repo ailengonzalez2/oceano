@@ -35,7 +35,10 @@ onBeforeUnmount(() => stop())
 
 <template>
   <UApp>
-    <a href="#contenido" class="skip-link">{{ t('a11y.skip') }}</a>
+    <a
+      href="#contenido"
+      class="skip-link"
+    >{{ t('a11y.skip') }}</a>
 
     <!-- Persistent HUD: depth / temp / progress + nav + language toggle -->
     <DepthHUD />

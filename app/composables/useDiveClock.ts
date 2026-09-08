@@ -23,7 +23,9 @@ export function useDiveClock() {
     startMs.value = performance.now()
     now.value = startMs.value
     if (!timer) {
-      timer = setInterval(() => { now.value = performance.now() }, 1000)
+      timer = setInterval(() => {
+        now.value = performance.now()
+      }, 1000)
     }
   }
 

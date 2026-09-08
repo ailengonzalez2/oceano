@@ -59,7 +59,8 @@ export function useAudio() {
   }
 
   function toggle() {
-    enabled.value ? disable() : enable()
+    if (enabled.value) disable()
+    else enable()
   }
 
   return { enabled, enable, disable, toggle }

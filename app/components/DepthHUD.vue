@@ -56,7 +56,10 @@ onMounted(() => {
     let bestRatio = -1
     for (const item of navItems) {
       const r = ratios.get(item.id) ?? 0
-      if (r > bestRatio) { bestRatio = r; best = item.id }
+      if (r > bestRatio) {
+        bestRatio = r
+        best = item.id
+      }
     }
     activeId.value = best
   }, { threshold: [0, 0.25, 0.5, 0.75, 1], rootMargin: '-45% 0px -45% 0px' })
@@ -70,44 +73,85 @@ onBeforeUnmount(() => observer?.disconnect())
 </script>
 
 <template>
-  <div class="hud" aria-live="polite">
+  <div
+    class="hud"
+    aria-live="polite"
+  >
     <!-- Instruments (top-left) -->
     <dl class="hud__instruments">
       <div class="hud__row">
-        <dt class="hud__label tracking-hud">{{ t('hud.depth') }}</dt>
-        <dd class="hud__value font-display">{{ depth }}<span class="hud__unit">m</span></dd>
+        <dt class="hud__label tracking-hud">
+          {{ t('hud.depth') }}
+        </dt>
+        <dd class="hud__value font-display">
+          {{ depth }}<span class="hud__unit">m</span>
+        </dd>
       </div>
       <div class="hud__row">
-        <dt class="hud__label tracking-hud">{{ t('hud.temp') }}</dt>
-        <dd class="hud__value font-display">{{ temp }}<span class="hud__unit">°C</span></dd>
+        <dt class="hud__label tracking-hud">
+          {{ t('hud.temp') }}
+        </dt>
+        <dd class="hud__value font-display">
+          {{ temp }}<span class="hud__unit">°C</span>
+        </dd>
       </div>
       <div class="hud__row">
-        <dt class="hud__label tracking-hud">{{ t('hud.progress') }}</dt>
-        <dd class="hud__value font-display">{{ discovery }}<span class="hud__unit">%</span></dd>
+        <dt class="hud__label tracking-hud">
+          {{ t('hud.progress') }}
+        </dt>
+        <dd class="hud__value font-display">
+          {{ discovery }}<span class="hud__unit">%</span>
+        </dd>
       </div>
       <!-- Discovery meter -->
-      <div class="hud__meter" aria-hidden="true">
-        <div class="hud__meter-fill" :style="{ width: discovery + '%' }" />
+      <div
+        class="hud__meter"
+        aria-hidden="true"
+      >
+        <div
+          class="hud__meter-fill"
+          :style="{ width: discovery + '%' }"
+        />
       </div>
 
-      <div class="hud__divider" aria-hidden="true" />
+      <div
+        class="hud__divider"
+        aria-hidden="true"
+      />
 
       <!-- Dive-computer readouts -->
       <div class="hud__sub-row">
-        <dt class="hud__sub-label tracking-hud">{{ t('hud.diveTime') }}</dt>
-        <dd class="hud__sub-value">{{ diveTime }}</dd>
+        <dt class="hud__sub-label tracking-hud">
+          {{ t('hud.diveTime') }}
+        </dt>
+        <dd class="hud__sub-value">
+          {{ diveTime }}
+        </dd>
       </div>
       <div class="hud__sub-row">
-        <dt class="hud__sub-label tracking-hud">{{ t('hud.ndl') }}</dt>
-        <dd class="hud__sub-value">{{ ndl }}</dd>
+        <dt class="hud__sub-label tracking-hud">
+          {{ t('hud.ndl') }}
+        </dt>
+        <dd class="hud__sub-value">
+          {{ ndl }}
+        </dd>
       </div>
       <div class="hud__sub-row">
-        <dt class="hud__sub-label tracking-hud">{{ t('hud.safety') }}</dt>
-        <dd class="hud__sub-value">{{ safety }}</dd>
+        <dt class="hud__sub-label tracking-hud">
+          {{ t('hud.safety') }}
+        </dt>
+        <dd class="hud__sub-value">
+          {{ safety }}
+        </dd>
       </div>
       <div class="hud__sub-row">
-        <dt class="hud__sub-label tracking-hud">{{ t('hud.air') }}</dt>
-        <dd class="hud__sub-value" :class="{ 'is-warn': airLow }">
+        <dt class="hud__sub-label tracking-hud">
+          {{ t('hud.air') }}
+        </dt>
+        <dd
+          class="hud__sub-value"
+          :class="{ 'is-warn': airLow }"
+        >
           {{ air }}<span class="hud__unit">bar</span>
         </dd>
       </div>
@@ -116,7 +160,10 @@ onBeforeUnmount(() => observer?.disconnect())
     <!-- Controls (top-right) -->
     <div class="hud__controls">
       <!-- Section nav — same frosted-pill UI as the language toggle -->
-      <nav class="hud__btn hud__nav tracking-hud" :aria-label="t('nav.surface')">
+      <nav
+        class="hud__btn hud__nav tracking-hud"
+        :aria-label="t('nav.surface')"
+      >
         <button
           v-for="item in navItems"
           :key="item.id"
@@ -148,7 +195,10 @@ onBeforeUnmount(() => observer?.disconnect())
         :aria-pressed="audioOn"
         @click="toggleAudio"
       >
-        <UIcon :name="audioOn ? 'i-lucide-volume-2' : 'i-lucide-volume-x'" class="size-4" />
+        <UIcon
+          :name="audioOn ? 'i-lucide-volume-2' : 'i-lucide-volume-x'"
+          class="size-4"
+        />
       </button>
     </div>
   </div>

@@ -11,14 +11,12 @@ export default defineNuxtConfig({
   // and suits a non-SEO-critical immersive experience.
   ssr: false,
 
+  // Flat component names regardless of subfolder: ZoneSurface, not ZonesZoneSurface.
+  components: [{ path: '~/components', pathPrefix: false }],
+
   devtools: {
     enabled: true
   },
-
-  css: ['~/assets/css/main.css'],
-
-  // Flat component names regardless of subfolder: ZoneSurface, not ZonesZoneSurface.
-  components: [{ path: '~/components', pathPrefix: false }],
 
   app: {
     head: {
@@ -35,6 +33,19 @@ export default defineNuxtConfig({
     }
   },
 
+  css: ['~/assets/css/main.css'],
+
+  compatibilityDate: '2025-01-15',
+
+  eslint: {
+    config: {
+      stylistic: {
+        commaDangle: 'never',
+        braceStyle: '1tbs'
+      }
+    }
+  },
+
   // Bilingual ES/EN, default Spanish. `no_prefix` keeps it a single-page URL.
   i18n: {
     defaultLocale: 'es',
@@ -45,17 +56,6 @@ export default defineNuxtConfig({
     ],
     bundle: {
       optimizeTranslationDirective: false
-    }
-  },
-
-  compatibilityDate: '2025-01-15',
-
-  eslint: {
-    config: {
-      stylistic: {
-        commaDangle: 'never',
-        braceStyle: '1tbs'
-      }
     }
   }
 })

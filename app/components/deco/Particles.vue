@@ -20,18 +20,21 @@ function rand(seed: number, salt: number) {
 </script>
 
 <template>
-  <div class="particles" aria-hidden="true">
+  <div
+    class="particles"
+    aria-hidden="true"
+  >
     <span
       v-for="i in count"
       :key="i"
       class="particle"
       :class="{ still: reduced }"
       :style="{
-        left: rand(i, 1) * 100 + '%',
-        top: rand(i, 2) * 100 + '%',
-        width: (1 + rand(i, 3) * 3) + 'px',
-        height: (1 + rand(i, 3) * 3) + 'px',
-        background: color,
+        'left': rand(i, 1) * 100 + '%',
+        'top': rand(i, 2) * 100 + '%',
+        'width': (1 + rand(i, 3) * 3) + 'px',
+        'height': (1 + rand(i, 3) * 3) + 'px',
+        'background': color,
         '--dur': (8 + rand(i, 4) * 10) + 's',
         '--delay': (rand(i, 5) * -12) + 's',
         '--drift': (rand(i, 6) * 30 - 15) + 'px'

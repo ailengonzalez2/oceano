@@ -11,8 +11,18 @@ const reduced = useReducedMotion()
 </script>
 
 <template>
-  <div class="rays" :style="{ opacity }" aria-hidden="true">
-    <span v-for="i in 6" :key="i" class="ray" :class="{ still: reduced }" :style="{ '--i': i }" />
+  <div
+    class="rays"
+    :style="{ opacity }"
+    aria-hidden="true"
+  >
+    <span
+      v-for="i in 6"
+      :key="i"
+      class="ray"
+      :class="{ still: reduced }"
+      :style="{ '--i': i }"
+    />
   </div>
 </template>
 

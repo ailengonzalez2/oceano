@@ -80,7 +80,8 @@ export function useLenis() {
   /** Pause/resume scrolling — used while the intro gate is up. */
   function setLocked(locked: boolean) {
     if (lenis) {
-      locked ? lenis.stop() : lenis.start()
+      if (locked) lenis.stop()
+      else lenis.start()
     }
     document.body.classList.toggle('is-locked', locked)
   }
