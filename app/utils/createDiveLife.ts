@@ -1,9 +1,10 @@
 import * as THREE from 'three'
 import { createDiveHabitat } from './createDiveHabitat'
+import { createSwimmingSchools } from './createSwimmingSchools'
 
 /** World-space marine snow, bubbles, fish and deep-water jellyfish.
  * Camera descent is reversible; ambient swimming uses a separate clock.
- * Everything is procedural, with deterministic placement and no asset fetches.
+ * Procedural life is supplemented by imported coral and animated fish collections.
  */
 export function createDiveLife(onReady?: () => void) {
   const scene = new THREE.Scene()
@@ -171,6 +172,7 @@ export function createDiveLife(onReady?: () => void) {
   resources.push(jellyGeometry, jellyMaterial)
 
   const habitat = createDiveHabitat(scene, onReady)
+  const swimmingSchools = createSwimmingSchools(scene, onReady)
 
   return {
     scene, camera,
@@ -179,12 +181,14 @@ export function createDiveLife(onReady?: () => void) {
       camera.updateProjectionMatrix()
       uniforms.uPixelRatio.value = pixelRatio
       habitat.resize()
+      swimmingSchools.resize(width, height)
     },
     update(depth: number, entry: number, time: number, look: THREE.Vector2) {
       uniforms.uTime.value = time
       uniforms.uDepth.value = depth
       uniforms.uWet.value = THREE.MathUtils.smoothstep(entry, 0.65, 1)
       habitat.update(depth, uniforms.uWet.value, time)
+      swimmingSchools.update(depth, uniforms.uWet.value, time)
       camera.position.set(look.x * 0.3, -depth * 82, 0)
       camera.lookAt(look.x * 0.65, camera.position.y + look.y * 0.25, -15)
     },
@@ -192,6 +196,7 @@ export function createDiveLife(onReady?: () => void) {
       resources.forEach(resource => resource.dispose())
       fish.dispose()
       habitat.dispose()
+      swimmingSchools.dispose()
       scene.clear()
     }
   }

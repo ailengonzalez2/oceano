@@ -331,6 +331,18 @@ onBeforeUnmount(() => media?.revert())
             rel="noopener noreferrer"
           >CC BY 4.0</a>
         </p>
+        <p>
+          <a
+            href="https://sketchfab.com/3d-models/school-of-fish-7d2d816ab3a34130b51e0bb42247700c"
+            target="_blank"
+            rel="noopener noreferrer"
+          >School Of Fish — seth the yutyrannus</a>
+          · <a
+            href="https://creativecommons.org/licenses/by/4.0/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >CC BY 4.0</a>
+        </p>
         <a
           href="/models/CREDITS.md"
           target="_blank"
