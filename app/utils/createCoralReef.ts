@@ -34,15 +34,15 @@ export function createCoralReef(parent: THREE.Group, onReady?: () => void) {
   sun.target.position.set(0, -4, -14)
   group.add(fill, sun, sun.target)
 
-  // Three staggered shelves on each side leave an open channel for the descent.
+  // Three staggered shelves on each side form an open channel through the reef.
   const banks = Array.from({ length: 12 }, (_, i) => {
     const side = i % 2 ? 1 : -1
     const row = Math.floor(i / 4)
     const outer = Math.floor(i / 2) % 2
     return {
-      x: side * (6.8 + outer * 4 + row * 1.3),
+      x: side * (6.8 + outer * 4 + row * 0.4),
       y: -7.2 - row * 0.65,
-      z: -11 - row * 5 - outer * 1.2,
+      z: -11 - row * 11 - outer * 2,
       side
     }
   })

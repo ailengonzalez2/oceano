@@ -187,11 +187,11 @@ export function createDiveLife(onReady?: () => void) {
       swimmingSchools.resize(width, height)
       hammerhead.resize(width, height)
     },
-    update(depth: number, entry: number, time: number, look: THREE.Vector2) {
+    update(depth: number, entry: number, time: number, look: THREE.Vector2, reduced = false) {
       uniforms.uTime.value = time
       uniforms.uDepth.value = depth
       uniforms.uWet.value = THREE.MathUtils.smoothstep(entry, 0.65, 1)
-      habitat.update(depth, uniforms.uWet.value, time)
+      habitat.update(depth, uniforms.uWet.value, time, reduced)
       swimmingSchools.update(depth, uniforms.uWet.value, time)
       hammerhead.update(depth, uniforms.uWet.value, time)
       camera.position.set(look.x * 0.3, -depth * 82, 0)

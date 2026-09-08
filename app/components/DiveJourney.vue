@@ -28,14 +28,14 @@ onMounted(() => {
   media = gsap.matchMedia()
   media.add('(prefers-reduced-motion: no-preference)', () => {
     context = gsap.context(() => {
-      gsap.utils.toArray<HTMLElement>('[data-drift]').forEach((el) => {
+      gsap.utils.toArray<HTMLElement>('[data-drift]:not(.reef [data-drift])').forEach((el) => {
         const distance = Number(el.dataset.drift)
         gsap.fromTo(el, { y: distance }, {
           y: -distance, ease: 'none',
           scrollTrigger: { trigger: el.closest('section'), start: 'top bottom', end: 'bottom top', scrub: 0.8 }
         })
       })
-      gsap.utils.toArray<HTMLElement>('.chapter__copy').forEach((el) => {
+      gsap.utils.toArray<HTMLElement>('.chapter__copy:not(.reef__copy)').forEach((el) => {
         // Only the drift tween owns y. Measure entry against the stationary section,
         // so the reveal cannot overwrite the parallax or measure its moving target.
         gsap.fromTo(el, { opacity: 0.2 }, {
@@ -48,6 +48,27 @@ onMounted(() => {
             invalidateOnRefresh: true
           }
         })
+      })
+      const passage = gsap.timeline({
+        scrollTrigger: {
+          trigger: '#portfolio', start: 'top top', end: 'bottom bottom',
+          scrub: 0.8, invalidateOnRefresh: true
+        }
+      })
+      passage.to('.reef__copy', { autoAlpha: 0, scale: 1.08, duration: 0.2, ease: 'none' }, 0.06)
+      gsap.utils.toArray<HTMLElement>('.reef__photo').forEach((photo, i) => {
+        const start = 0.17 + i * 0.2
+        const side = i === 1 ? -1 : 1
+        passage.fromTo(photo, {
+          x: () => -side * window.innerWidth * 0.13,
+          y: 30, scale: 0.45, autoAlpha: 0
+        }, {
+          x: 0, y: 0, scale: 1, autoAlpha: 1, duration: 0.15, ease: 'none'
+        }, start)
+        passage.to(photo, {
+          x: () => side * window.innerWidth * 0.2,
+          y: -25, scale: 1.45, autoAlpha: 0, duration: 0.2, ease: 'none'
+        }, start + 0.18)
       })
       gsap.fromTo('.whale__image', { xPercent: 10, scale: 0.91 }, {
         xPercent: -9, scale: 1.1, ease: 'none',
@@ -96,47 +117,49 @@ onBeforeUnmount(() => media?.revert())
       class="chapter reef"
       :aria-label="t('journey.reef.title')"
     >
-      <div
-        class="chapter__copy reef__copy"
-        data-drift="55"
-      >
-        <p class="eyebrow">
-          01 / {{ t('journey.reef.label') }}
-        </p>
-        <h2 class="chapter__title font-display">
-          {{ t('journey.reef.title') }}<br><em>{{ t('journey.reef.end') }}</em>
-        </h2>
-        <p class="chapter__body">
-          {{ t('journey.reef.body') }}
-        </p>
-        <p class="field-note">
-          <span />{{ t('journey.reef.note') }}
-        </p>
-      </div>
-      <div class="reef__photos">
-        <button
-          v-for="photo in reefPhotos"
-          :key="photo.key"
-          class="photo reef__photo"
-          :data-drift="photo.drift"
-          :aria-label="t('journey.view', { photo: t(`journey.photos.${photo.key}`) })"
-          @click="selected = photo.key"
+      <div class="reef__stage">
+        <div
+          class="chapter__copy reef__copy"
+          data-drift="55"
         >
-          <img
-            :src="`/img/${photo.key}.jpg`"
-            :alt="t(`journey.photos.${photo.key}`)"
-            width="1200"
-            height="800"
-            loading="lazy"
+          <p class="eyebrow">
+            01 / {{ t('journey.reef.label') }}
+          </p>
+          <h2 class="chapter__title font-display">
+            {{ t('journey.reef.title') }}<br><em>{{ t('journey.reef.end') }}</em>
+          </h2>
+          <p class="chapter__body">
+            {{ t('journey.reef.body') }}
+          </p>
+          <p class="field-note">
+            <span />{{ t('journey.reef.note') }}
+          </p>
+        </div>
+        <div class="reef__photos">
+          <button
+            v-for="photo in reefPhotos"
+            :key="photo.key"
+            class="photo reef__photo"
+            :data-drift="photo.drift"
+            :aria-label="t('journey.view', { photo: t(`journey.photos.${photo.key}`) })"
+            @click="selected = photo.key"
           >
-          <span class="photo__caption"><span>{{ t(`journey.photos.${photo.key}`) }}</span><span aria-hidden="true">↗</span></span>
-        </button>
+            <img
+              :src="`/img/${photo.key}.jpg`"
+              :alt="t(`journey.photos.${photo.key}`)"
+              width="1200"
+              height="800"
+              loading="lazy"
+            >
+            <span class="photo__caption"><span>{{ t(`journey.photos.${photo.key}`) }}</span><span aria-hidden="true">↗</span></span>
+          </button>
+        </div>
+        <span
+          class="chapter__word font-display"
+          aria-hidden="true"
+          data-drift="-35"
+        >{{ t('journey.reef.word') }}</span>
       </div>
-      <span
-        class="chapter__word font-display"
-        aria-hidden="true"
-        data-drift="-35"
-      >{{ t('journey.reef.word') }}</span>
     </section>
 
     <section
@@ -503,6 +526,29 @@ em { font-weight: 300; color: #b4e6e7; }
   .perspective__photo { height: 48svh; width: 75vw; align-self: flex-end; margin-top: 8svh; }
   .journey-end { padding-top: 0; }
   .journey-end h2 { font-size: 3.2rem; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .reef { height: 420svh; min-height: 0; padding: 0; }
+  .reef__stage { position: sticky; top: 0; height: 100svh; overflow: clip; }
+  .reef__copy { position: absolute; left: 24vw; top: 21svh; margin: 0; width: min(65vw, 39rem); transform-origin: center; }
+  .reef__photos { position: absolute; inset: 0; display: block; margin: 0; padding: 0; pointer-events: none; }
+  .reef__photo { position: absolute; pointer-events: auto; will-change: transform, opacity; }
+  .reef__photo:nth-child(1) { width: 34vw; top: 24svh; right: 9vw; }
+  .reef__photo:nth-child(2) { width: 37vw; top: 36svh; left: 16vw; margin: 0; }
+  .reef__photo:nth-child(3) { width: 40vw; top: 27svh; right: 7vw; }
+  .reef .chapter__word { bottom: 4svh; }
+}
+@media (prefers-reduced-motion: no-preference) and (max-width: 800px) {
+  .reef__copy { left: 16vw; top: 28svh; width: 78vw; }
+  .reef__photo:nth-child(1) { width: 58vw; right: 7vw; top: 38svh; }
+  .reef__photo:nth-child(2) { width: 64vw; left: 7vw; top: 42svh; }
+  .reef__photo:nth-child(3) { width: 68vw; right: 6vw; top: 39svh; }
+}
+@media (prefers-reduced-motion: no-preference) and (max-width: 560px) {
+  .reef__copy { left: 6vw; top: 32svh; width: 88vw; }
+  .reef__copy .chapter__title { font-size: 2.8rem; }
+  .reef__copy .chapter__body { font-size: .85rem; line-height: 1.65; }
+  .reef__copy .field-note { margin-top: 1rem; }
 }
 .is-reduced .whale__stage { position: relative; top: 0; }
 .is-reduced .whale__copy { margin-top: 0; }

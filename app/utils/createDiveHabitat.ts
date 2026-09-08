@@ -142,6 +142,9 @@ export function createDiveHabitat(scene: THREE.Scene, onReady?: () => void) {
   })
   let reefDepth = 0.2
   let openDepth = 0.4
+  let passageStart = 0.2
+  let passageEnd = 0.4
+  let viewportDepth = 0.08
   return {
     resize() {
       corals.resize(window.innerWidth / window.innerHeight)
@@ -151,18 +154,35 @@ export function createDiveHabitat(scene: THREE.Scene, onReady?: () => void) {
         const el = document.getElementById(id)
         return el && max > 0 ? Math.max(0, (el.getBoundingClientRect().top + window.scrollY + el.offsetHeight * 0.35 - window.innerHeight * 0.5) / max) : fallback
       }
+      const reef = document.getElementById('portfolio')
+      if (reef && max > 0) {
+        passageStart = (reef.getBoundingClientRect().top + window.scrollY) / max
+        passageEnd = passageStart + Math.max(1, reef.offsetHeight - window.innerHeight) / max
+        viewportDepth = window.innerHeight / max
+      }
       reefDepth = anchorDepth('portfolio', 0.2)
       openDepth = anchorDepth('open-water', 0.4)
       group.position.y = -reefDepth * 82
     },
-    update(depth: number, wet: number, time: number) {
+    update(depth: number, wet: number, time: number, reduced: boolean) {
       uniforms.uTime.value = time
       uniforms.uWet.value = wet * (1 - THREE.MathUtils.smoothstep(Math.abs(depth - openDepth), 0.1, 0.2))
       uniforms.uReefWet.value = wet * (1 - THREE.MathUtils.smoothstep(Math.abs(depth - reefDepth), 0.045, 0.13))
+      if (!reduced) {
+        const approach = THREE.MathUtils.smootherstep(depth, passageStart - viewportDepth, passageStart)
+        const progress = THREE.MathUtils.clamp((depth - passageStart) / Math.max(0.001, passageEnd - passageStart), 0, 1)
+        // Moving the habitat toward the lens gives a true perspective fly-through,
+        // while the other ocean zones retain their existing camera coordinates.
+        group.position.y = THREE.MathUtils.lerp(-reefDepth * 82, -depth * 82 + 3.8, approach)
+        group.position.z = progress * 29
+        uniforms.uReefWet.value = wet * approach * (1 - THREE.MathUtils.smoothstep(progress, 0.86, 1))
+      } else {
+        group.position.set(0, -reefDepth * 82, 0)
+      }
       corals.update(time, uniforms.uReefWet.value)
       branches.visible = !corals.ready
       tips.visible = !corals.ready
-      group.visible = wet > 0 && Math.abs(depth - reefDepth) < 0.22
+      group.visible = uniforms.uReefWet.value > 0.001
       rays.forEach((ray, i) => {
         ray.visible = wet > 0 && Math.abs(depth - openDepth) < 0.2
         ray.position.set(Math.sin(time * 0.09 + i * 2) * 8, -openDepth * 82 + i * 3 + Math.sin(time * 0.3) * 0.4, -13 - i * 9)

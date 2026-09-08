@@ -208,7 +208,7 @@ function draw(now: number) {
   renderer.clear()
   renderer.render(scene, camera)
   if (life && entry.value > 0.65) {
-    life.update(depth, entry.value, elapsed, look)
+    life.update(depth, entry.value, elapsed, look, reduced.value)
     renderer.clearDepth()
     renderer.render(life.scene, life.camera)
     foregroundRenderer?.render(life.foreground, life.camera)
