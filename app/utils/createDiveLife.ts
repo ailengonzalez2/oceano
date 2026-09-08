@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { createDiveHabitat } from './createDiveHabitat'
 import { createSwimmingSchools } from './createSwimmingSchools'
+import { createHammerheadShark } from './createHammerheadShark'
 
 /** World-space marine snow, bubbles, fish and deep-water jellyfish.
  * Camera descent is reversible; ambient swimming uses a separate clock.
@@ -173,15 +174,18 @@ export function createDiveLife(onReady?: () => void) {
 
   const habitat = createDiveHabitat(scene, onReady)
   const swimmingSchools = createSwimmingSchools(scene, onReady)
+  const foreground = new THREE.Scene()
+  const hammerhead = createHammerheadShark(foreground, onReady)
 
   return {
-    scene, camera,
+    scene, foreground, camera,
     resize(width: number, height: number, pixelRatio: number) {
       camera.aspect = width / height
       camera.updateProjectionMatrix()
       uniforms.uPixelRatio.value = pixelRatio
       habitat.resize()
       swimmingSchools.resize(width, height)
+      hammerhead.resize(width, height)
     },
     update(depth: number, entry: number, time: number, look: THREE.Vector2) {
       uniforms.uTime.value = time
@@ -189,6 +193,7 @@ export function createDiveLife(onReady?: () => void) {
       uniforms.uWet.value = THREE.MathUtils.smoothstep(entry, 0.65, 1)
       habitat.update(depth, uniforms.uWet.value, time)
       swimmingSchools.update(depth, uniforms.uWet.value, time)
+      hammerhead.update(depth, uniforms.uWet.value, time)
       camera.position.set(look.x * 0.3, -depth * 82, 0)
       camera.lookAt(look.x * 0.65, camera.position.y + look.y * 0.25, -15)
     },
@@ -197,6 +202,7 @@ export function createDiveLife(onReady?: () => void) {
       fish.dispose()
       habitat.dispose()
       swimmingSchools.dispose()
+      hammerhead.dispose()
       scene.clear()
     }
   }

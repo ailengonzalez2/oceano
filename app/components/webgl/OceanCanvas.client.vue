@@ -5,6 +5,7 @@ import { createDiveLife } from '~/utils/createDiveLife'
 // Procedural sea: world-space wave intersections, sky reflection and Fresnel.
 // The viewpoint floats just above the local surface, like a swimmer's eyes.
 const canvas = ref<HTMLCanvasElement | null>(null)
+const foregroundCanvas = ref<HTMLCanvasElement | null>(null)
 const reduced = useReducedMotion()
 const { progress } = useScrollDepth()
 const ready = ref(false)
@@ -15,6 +16,7 @@ const fallbackStyle = computed(() => ({
 }))
 let life: ReturnType<typeof createDiveLife> | undefined
 let renderer: THREE.WebGLRenderer | undefined
+let foregroundRenderer: THREE.WebGLRenderer | undefined
 let geometry: THREE.PlaneGeometry | undefined
 let material: THREE.ShaderMaterial | undefined
 let observer: IntersectionObserver | undefined
@@ -202,12 +204,14 @@ function draw(now: number) {
   uniforms.uEntry.value = entry.value
   if (reduced.value) look.set(0, 0)
   else look.lerp(pointer, 1 - Math.exp(-delta * 2))
+  foregroundRenderer?.clear()
   renderer.clear()
   renderer.render(scene, camera)
   if (life && entry.value > 0.65) {
     life.update(depth, entry.value, elapsed, look)
     renderer.clearDepth()
     renderer.render(life.scene, life.camera)
+    foregroundRenderer?.render(life.foreground, life.camera)
   }
   if (!reduced.value) frame = requestAnimationFrame(draw)
 }
@@ -222,6 +226,8 @@ function resize() {
   // Bound fragment cost on large/retina displays and phones.
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25, 1500 / Math.max(width, height)))
   renderer.setSize(width, height, false)
+  foregroundRenderer?.setPixelRatio(renderer.getPixelRatio())
+  foregroundRenderer?.setSize(width, height, false)
   uniforms.uResolution.value.set(width, height)
   life?.resize(width, height, renderer.getPixelRatio())
   syncScroll()
@@ -251,10 +257,13 @@ function contextRestored() {
 onMounted(async () => {
   // Nuxt renders `.client.vue` templates only after mount, so the ref is empty until the next tick.
   await nextTick()
-  if (!canvas.value) return
+  if (!canvas.value || !foregroundCanvas.value) return
   try {
     renderer = new THREE.WebGLRenderer({ canvas: canvas.value, antialias: false, powerPreference: 'low-power' })
     renderer.autoClear = false
+    foregroundRenderer = new THREE.WebGLRenderer({ canvas: foregroundCanvas.value, alpha: true, antialias: false, powerPreference: 'low-power' })
+    foregroundRenderer.setClearColor(0x000000, 0)
+    foregroundRenderer.autoClear = false
     life = createDiveLife(resume)
     material = new THREE.ShaderMaterial({
       uniforms, fragmentShader,
@@ -278,10 +287,14 @@ onMounted(async () => {
     document.addEventListener('visibilitychange', resume)
     canvas.value.addEventListener('webglcontextlost', contextLost)
     canvas.value.addEventListener('webglcontextrestored', contextRestored)
+    foregroundCanvas.value.addEventListener('webglcontextlost', contextLost)
+    foregroundCanvas.value.addEventListener('webglcontextrestored', contextRestored)
   } catch (error) {
     console.error('[OceanCanvas] WebGL init failed, using photo fallback', error)
     ready.value = false
     renderer?.dispose()
+    foregroundRenderer?.dispose()
+    foregroundRenderer = undefined
     renderer = undefined
   }
 })
@@ -299,9 +312,12 @@ onBeforeUnmount(() => {
   document.removeEventListener('visibilitychange', resume)
   canvas.value?.removeEventListener('webglcontextlost', contextLost)
   canvas.value?.removeEventListener('webglcontextrestored', contextRestored)
+  foregroundCanvas.value?.removeEventListener('webglcontextlost', contextLost)
+  foregroundCanvas.value?.removeEventListener('webglcontextrestored', contextRestored)
   geometry?.dispose()
   material?.dispose()
   renderer?.dispose()
+  foregroundRenderer?.dispose()
   life?.dispose()
 })
 </script>
@@ -317,6 +333,12 @@ onBeforeUnmount(() => {
       :class="{ 'is-ready': ready }"
     />
   </div>
+  <canvas
+    ref="foregroundCanvas"
+    class="ocean-foreground"
+    :class="{ 'is-ready': ready }"
+    aria-hidden="true"
+  />
 </template>
 
 <style scoped>
@@ -329,4 +351,5 @@ onBeforeUnmount(() => {
 }
 canvas { display: block; width: 100%; height: 100%; opacity: 0; transition: opacity 1s; }
 canvas.is-ready { opacity: 1; }
+.ocean-foreground { position: fixed; inset: 0; z-index: 10; pointer-events: none; }
 </style>

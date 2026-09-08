@@ -343,6 +343,18 @@ onBeforeUnmount(() => media?.revert())
             rel="noopener noreferrer"
           >CC BY 4.0</a>
         </p>
+        <p>
+          <a
+            href="https://sketchfab.com/3d-models/model-73a-great-hammerhead-shark-77d52f2b0e084fe7bcefbc86b920f080"
+            target="_blank"
+            rel="noopener noreferrer"
+          >Great Hammerhead Shark — DigitalLife3D</a>
+          · <a
+            href="https://creativecommons.org/licenses/by-nc/4.0/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >CC BY-NC 4.0</a>
+        </p>
         <a
           href="/models/CREDITS.md"
           target="_blank"

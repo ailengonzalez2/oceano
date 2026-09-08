@@ -18,6 +18,8 @@ export function createSwimmingSchools(scene: THREE.Scene, onReady?: () => void) 
   let disposed = false
   let started = false
   let aspect = 1.5
+  let sharkSection: HTMLElement | null = null
+  let twilightSection: HTMLElement | null = null
 
   function track(model: THREE.Object3D) {
     model.traverse((object) => {
@@ -114,21 +116,34 @@ export function createSwimmingSchools(scene: THREE.Scene, onReady?: () => void) 
       aspect = width / height
     },
     update(depth: number, wet: number, time: number) {
-      // Begin the larger asset download as the visitor enters the water.
-      if (!started && wet > 0) {
+      // Use the actual section positions so the transition also matches mobile
+      // layouts and translated copy. Fish are gone when twilight enters view.
+      sharkSection ??= document.getElementById('open-water')
+      twilightSection ??= document.getElementById('stories')
+      let habitatVisibility = 1 - THREE.MathUtils.smoothstep(depth, 0.35, 0.55)
+      if (sharkSection && twilightSection) {
+        const sharkTop = sharkSection.getBoundingClientRect().top
+        const twilightTop = twilightSection.getBoundingClientRect().top
+        const transition = (window.innerHeight - sharkTop) / Math.max(1, twilightTop - sharkTop)
+        habitatVisibility = 1 - THREE.MathUtils.smoothstep(transition, 0, 1)
+      }
+      const visibility = wet * habitatVisibility
+      // Skip the download when opening the page directly in deep water.
+      if (!started && visibility > 0) {
         started = true
         void load()
       }
-      wetness.value = wet
+      wetness.value = visibility
       darkness.value = depth
-      root.visible = wet > 0 && schools.length > 0
+      root.visible = visibility > 0 && schools.length > 0
+      if (!root.visible) return
       const cameraY = -depth * 82
       schools.forEach((school, i) => {
         const phase = time * (0.065 + i * 0.003) + school.phase
         const span = Math.min(11, Math.max(4, aspect * 6))
         school.group.position.set(Math.sin(phase) * span, school.depth + Math.sin(time * 0.22 + i) * 0.45, -13 - (i % 2) * 5 + Math.cos(phase) * 2)
         school.group.rotation.y = Math.atan2(Math.cos(phase) * span, -Math.sin(phase) * 2)
-        school.group.visible = wet > 0 && Math.abs(cameraY - school.depth) < 29
+        school.group.visible = visibility > 0 && Math.abs(cameraY - school.depth) < 29
         if (school.group.visible) school.mixer.setTime(time * 0.85 + i * 5.7)
       })
     },

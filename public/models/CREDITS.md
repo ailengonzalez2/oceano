@@ -29,3 +29,21 @@ Attribution and license information above are preserved from each GLB's embedded
 - File: school_of_fish.glb
 - Adaptation: legacy specular/glossiness materials approximated with metallic/roughness materials; diffuse, normal, occlusion and emissive textures retained. Unused specular maps removed. Geometry, skin weights and original swimming animation preserved. Six schools are arranged and lit for the underwater scene.
 - Reproduction: run `python3 scripts/prepare-fish-model.py /path/to/original/school_of_fish.glb` from the repository root.
+
+## Model 99A - Whale Shark
+
+- Author: DigitalLife3D — https://sketchfab.com/DigitalLife3D
+- Source: https://sketchfab.com/3d-models/model-99a-whale-shark-8893d07e44964a8a934521e06cf51854
+- License: Creative Commons Attribution-NonCommercial 4.0 (CC BY-NC 4.0)
+- License URL: https://creativecommons.org/licenses/by-nc/4.0/
+- File: whale_shark.glb (original download, unchanged; currently inactive in the site)
+- Scene adaptation: scaled and positioned in the foreground directly below the banner, retaining the original Swim Cycle animation with underwater shading and a slow, close swimming path.
+
+## Model 73A - Great Hammerhead Shark
+
+- Author: DigitalLife3D — https://sketchfab.com/DigitalLife3D
+- Source: https://sketchfab.com/3d-models/model-73a-great-hammerhead-shark-77d52f2b0e084fe7bcefbc86b920f080
+- License: Creative Commons Attribution-NonCommercial 4.0 (CC BY-NC 4.0)
+- License URL: https://creativecommons.org/licenses/by-nc/4.0/
+- File: hammerhead_shark.glb (original download, unchanged)
+- Scene adaptation: scaled, given underwater shading and a foreground swimming path that crosses the shark chapter and approaches the camera. The original skeletal animation is retained.

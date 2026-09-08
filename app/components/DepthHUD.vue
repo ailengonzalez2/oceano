@@ -78,84 +78,98 @@ onBeforeUnmount(() => observer?.disconnect())
     aria-live="polite"
   >
     <!-- Instruments (top-left) -->
-    <dl class="hud__instruments">
-      <div class="hud__row">
-        <dt class="hud__label tracking-hud">
-          {{ t('hud.depth') }}
-        </dt>
-        <dd class="hud__value font-display">
-          {{ depth }}<span class="hud__unit">m</span>
-        </dd>
-      </div>
-      <div class="hud__row">
-        <dt class="hud__label tracking-hud">
-          {{ t('hud.temp') }}
-        </dt>
-        <dd class="hud__value font-display">
-          {{ temp }}<span class="hud__unit">°C</span>
-        </dd>
-      </div>
-      <div class="hud__row">
-        <dt class="hud__label tracking-hud">
-          {{ t('hud.progress') }}
-        </dt>
-        <dd class="hud__value font-display">
-          {{ discovery }}<span class="hud__unit">%</span>
-        </dd>
-      </div>
-      <!-- Discovery meter -->
+    <div class="hud__computer">
       <div
-        class="hud__meter"
+        class="hud__bezel-label"
         aria-hidden="true"
       >
+        OCEANO <span>DIVE COMPUTER</span>
+      </div>
+      <dl class="hud__instruments">
+        <div class="hud__row">
+          <dt class="hud__label tracking-hud">
+            {{ t('hud.depth') }}
+          </dt>
+          <dd class="hud__value font-display">
+            {{ depth }}<span class="hud__unit">m</span>
+          </dd>
+        </div>
+        <div class="hud__row">
+          <dt class="hud__label tracking-hud">
+            {{ t('hud.temp') }}
+          </dt>
+          <dd class="hud__value font-display">
+            {{ temp }}<span class="hud__unit">°C</span>
+          </dd>
+        </div>
+        <div class="hud__row">
+          <dt class="hud__label tracking-hud">
+            {{ t('hud.progress') }}
+          </dt>
+          <dd class="hud__value font-display">
+            {{ discovery }}<span class="hud__unit">%</span>
+          </dd>
+        </div>
+        <!-- Discovery meter -->
         <div
-          class="hud__meter-fill"
-          :style="{ width: discovery + '%' }"
-        />
-      </div>
-
-      <div
-        class="hud__divider"
-        aria-hidden="true"
-      />
-
-      <!-- Dive-computer readouts -->
-      <div class="hud__sub-row">
-        <dt class="hud__sub-label tracking-hud">
-          {{ t('hud.diveTime') }}
-        </dt>
-        <dd class="hud__sub-value">
-          {{ diveTime }}
-        </dd>
-      </div>
-      <div class="hud__sub-row">
-        <dt class="hud__sub-label tracking-hud">
-          {{ t('hud.ndl') }}
-        </dt>
-        <dd class="hud__sub-value">
-          {{ ndl }}
-        </dd>
-      </div>
-      <div class="hud__sub-row">
-        <dt class="hud__sub-label tracking-hud">
-          {{ t('hud.safety') }}
-        </dt>
-        <dd class="hud__sub-value">
-          {{ safety }}
-        </dd>
-      </div>
-      <div class="hud__sub-row">
-        <dt class="hud__sub-label tracking-hud">
-          {{ t('hud.air') }}
-        </dt>
-        <dd
-          class="hud__sub-value"
-          :class="{ 'is-warn': airLow }"
+          class="hud__meter"
+          aria-hidden="true"
         >
-          {{ air }}<span class="hud__unit">bar</span>
-        </dd>
+          <div
+            class="hud__meter-fill"
+            :style="{ width: discovery + '%' }"
+          />
+        </div>
+
+        <div
+          class="hud__divider"
+          aria-hidden="true"
+        />
+
+        <!-- Dive-computer readouts -->
+        <div class="hud__sub-row">
+          <dt class="hud__sub-label tracking-hud">
+            {{ t('hud.diveTime') }}
+          </dt>
+          <dd class="hud__sub-value">
+            {{ diveTime }}
+          </dd>
+        </div>
+        <div class="hud__sub-row">
+          <dt class="hud__sub-label tracking-hud">
+            {{ t('hud.ndl') }}
+          </dt>
+          <dd class="hud__sub-value">
+            {{ ndl }}
+          </dd>
+        </div>
+        <div class="hud__sub-row">
+          <dt class="hud__sub-label tracking-hud">
+            {{ t('hud.safety') }}
+          </dt>
+          <dd class="hud__sub-value">
+            {{ safety }}
+          </dd>
+        </div>
+        <div class="hud__sub-row">
+          <dt class="hud__sub-label tracking-hud">
+            {{ t('hud.air') }}
+          </dt>
+          <dd
+            class="hud__sub-value"
+            :class="{ 'is-warn': airLow }"
+          >
+            {{ air }}<span class="hud__unit">bar</span>
+          </dd>
+        </div>
+      </dl>
+      <div
+        class="hud__bezel-grip"
+        aria-hidden="true"
+      >
+        <i /><i /><i />
       </div>
-    </dl>
+    </div>
 
     <!-- Controls (top-right) -->
     <div class="hud__controls">
@@ -213,21 +227,52 @@ onBeforeUnmount(() => observer?.disconnect())
   font-variant-numeric: tabular-nums;
 }
 
-.hud__instruments {
+.hud__computer {
   position: fixed;
   top: 1.4rem;
   left: 1.4rem;
-  width: 14.5rem;
-  max-width: 78vw;
+  width: 15rem;
+  max-width: calc(100vw - 2rem);
+  padding: .65rem .65rem .5rem;
+  border-radius: 1.6rem;
+  border: 1px solid #54717b;
+  background: linear-gradient(145deg, #34454d, #14272f 45%, #091c25);
+  box-shadow: inset 0 1px 1px #b7d4db55, inset 0 -3px 5px #0008, 0 8px 24px #00131b55;
+}
+.hud__computer::before,
+.hud__computer::after {
+  content: '';
+  position: absolute;
+  right: -.3rem;
+  width: .3rem;
+  height: 1.6rem;
+  border-radius: 0 .2rem .2rem 0;
+  background: linear-gradient(90deg, #183039, #6b8a92, #2b424b);
+  border: 1px solid #213841;
+}
+.hud__computer::before { top: 3.6rem; }
+.hud__computer::after { bottom: 3.6rem; }
+.hud__bezel-label {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 .4rem .55rem;
+  font: 500 .47rem / 1.2 ui-monospace, monospace;
+  letter-spacing: .2em;
+  color: #b0c8cf;
+}
+.hud__bezel-label span { color: #7f9da7; letter-spacing: .08em; }
+.hud__bezel-grip { display: flex; justify-content: center; gap: .22rem; padding-top: .5rem; }
+.hud__bezel-grip i { width: 1.2rem; height: 2px; border-radius: 2px; background: #68838b66; }
+.hud__instruments {
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
-  padding: 0.9rem 1.1rem;
-  border-radius: 0.75rem;
-  background: rgba(6, 31, 54, 0.32);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(169, 232, 242, 0.14);
+  gap: .55rem;
+  margin: 0;
+  padding: .9rem .85rem;
+  border-radius: .85rem;
+  background: linear-gradient(145deg, #102f3c, #041721);
+  border: 1px solid #749ca333;
+  box-shadow: inset 0 2px 8px #0007, 0 1px 0 #a9e8f21a;
 }
 .hud__row {
   display: grid;
@@ -237,15 +282,18 @@ onBeforeUnmount(() => observer?.disconnect())
 }
 .hud__label {
   font-size: 0.52rem;
-  color: rgba(169, 232, 242, 0.65);
+  color: rgba(190, 228, 237, 0.85);
 }
 .hud__value {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
   font-size: 1.15rem;
   line-height: 1;
   color: #eafbff;
   text-align: right;
   text-shadow: 0 1px 8px rgba(2, 10, 20, 0.5);
 }
+.hud__row:first-child { padding-bottom: .45rem; border-bottom: 1px solid #a9e8f21c; }
+.hud__row:first-child .hud__value { font-size: 2rem; color: #b4f7e5; font-weight: 500; }
 .hud__unit {
   font-size: 0.62rem;
   margin-left: 0.12rem;
@@ -281,11 +329,11 @@ onBeforeUnmount(() => observer?.disconnect())
 .hud__sub-label {
   font-size: 0.46rem;
   line-height: 1.3;
-  color: rgba(169, 232, 242, 0.6);
+  color: rgba(190, 228, 237, 0.8);
 }
 .hud__sub-value {
-  font-family: var(--font-serif);
-  font-size: 0.92rem;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.8rem;
   line-height: 1;
   color: #eafbff;
   white-space: nowrap;
@@ -370,12 +418,9 @@ onBeforeUnmount(() => observer?.disconnect())
 }
 
 @media (max-width: 640px) {
-  .hud__instruments {
-    top: 1rem;
-    left: 1rem;
-    padding: 0.7rem 0.85rem;
-    gap: 0.4rem;
-  }
+  .hud__computer { top: 1rem; left: .75rem; width: 14rem; }
+  .hud__instruments { padding: .75rem .65rem; gap: .4rem; }
+  .hud__row:first-child .hud__value { font-size: 1.7rem; }
   .hud__value { font-size: 1rem; }
   .hud__controls { top: 1rem; right: 1rem; }
   /* The 5-item text nav can't fit a phone alongside ES/EN + audio; on phones the
