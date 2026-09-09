@@ -1,4 +1,6 @@
 import * as THREE from 'three'
+import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js'
+import { createReefRockMaterial } from './createReefRockMaterial'
 import { createCoralReef } from './createCoralReef'
 
 /** Small, shared-draw-call reef and swimming rays inside the existing water column. */
@@ -41,11 +43,25 @@ export function createDiveHabitat(scene: THREE.Scene, onReady?: () => void) {
   let seed = 47
   const random = () => ((seed = seed * 16807 % 2147483647) - 1) / 2147483646
   const branchGeometry = new THREE.CylinderGeometry(0.7, 1, 1, 8)
-  const rockGeometry = new THREE.IcosahedronGeometry(1, 3)
+  const rockSource = new THREE.IcosahedronGeometry(1, 7)
+  rockSource.deleteAttribute('normal')
+  rockSource.deleteAttribute('uv')
+  const rockGeometry = mergeVertices(rockSource)
+  rockSource.dispose()
+  const rockPosition = rockGeometry.getAttribute('position')
+  for (let i = 0; i < rockPosition.count; i++) {
+    const x = rockPosition.getX(i), y = rockPosition.getY(i), z = rockPosition.getZ(i)
+    const erosion = Math.sin(x * 5.7 + z * 2.3) * Math.cos(y * 4.1 - z * 3.8) * 0.12
+      + Math.sin(x * 13.1 + y * 9.2) * Math.sin(z * 11.4 - y * 5.3) * 0.035
+    const radius = 1 + erosion
+    rockPosition.setXYZ(i, x * radius, y * radius, z * radius)
+  }
+  rockGeometry.computeVertexNormals()
+  const rockMaterial = createReefRockMaterial(uniforms.uReefWet)
   const tipGeometry = new THREE.SphereGeometry(1, 6, 4)
   const tips = new THREE.InstancedMesh(tipGeometry, material, 700)
   const branches = new THREE.InstancedMesh(branchGeometry, material, 700)
-  const rocks = new THREE.InstancedMesh(rockGeometry, material, corals.banks.length)
+  const rocks = new THREE.InstancedMesh(rockGeometry, rockMaterial, corals.banks.length * 3)
   const dummy = new THREE.Object3D()
   const up = new THREE.Vector3(0, 1, 0)
   const color = new THREE.Color()
@@ -80,12 +96,24 @@ export function createDiveHabitat(scene: THREE.Scene, onReady?: () => void) {
   tips.count = branchIndex
   function arrangeRocks() {
     corals.banks.forEach((bank, i) => {
-      dummy.position.set(bank.x * corals.spread, bank.y, bank.z)
-      dummy.rotation.set(0, i * 1.37, 0)
-      dummy.scale.set(2.7 * Math.sqrt(corals.spread), 1.2, 2.6)
-      dummy.updateMatrix()
-      rocks.setMatrixAt(i, dummy.matrix)
-      rocks.setColorAt(i, color.setHSL(0.48, 0.2, 0.14 + (i % 4) * 0.02))
+      for (let piece = 0; piece < 3; piece++) {
+        const phase = i * 1.37 + piece * 2.1
+        const main = piece === 0
+        // Smaller, partly buried stones break up the outline of each broad ledge.
+        dummy.position.set(
+          (bank.x + (main ? 0 : Math.cos(phase) * 2)) * corals.spread,
+          bank.y - (main ? 0 : 0.45),
+          bank.z + (main ? 0 : Math.sin(phase) * 1.7)
+        )
+        dummy.rotation.set(Math.sin(phase) * 0.13, phase, Math.cos(phase) * 0.12)
+        dummy.scale.set(
+          (main ? 2.7 : 1.25) * Math.sqrt(corals.spread),
+          main ? 1.2 : 0.85,
+          main ? 2.6 : 1.4
+        )
+        dummy.updateMatrix()
+        rocks.setMatrixAt(i * 3 + piece, dummy.matrix)
+      }
     })
     rocks.instanceMatrix.needsUpdate = true
     rocks.computeBoundingSphere()
@@ -195,6 +223,7 @@ export function createDiveHabitat(scene: THREE.Scene, onReady?: () => void) {
       tipGeometry.dispose()
       tips.dispose()
       rockGeometry.dispose()
+      rockMaterial.dispose()
       rayGeometry.dispose()
       material.dispose()
       rayMaterial.dispose()

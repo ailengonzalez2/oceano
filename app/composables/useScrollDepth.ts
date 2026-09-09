@@ -22,7 +22,7 @@
  */
 
 // ——— Tunable depth/temperature mapping ———
-const MAX_DEPTH = 1000 // metres at the very bottom (abyss)
+const MAX_DEPTH = 30 // metres at the bottom of the footer
 const SURFACE_TEMP = 20 // °C at the surface
 const ABYSS_TEMP = 2 // °C at the bottom
 
@@ -44,7 +44,7 @@ export function useScrollDepth() {
     progress.value = clamp01(p)
   }
 
-  // Whole metres descending: "Profundidad: 0m" → "1000m"
+  // Whole metres descending: "Profundidad: 0m" → "30m"
   const depth = computed(() => Math.round(progress.value * MAX_DEPTH))
 
   // Temperature drops with depth, one decimal: "20.0°C" → "2.0°C"

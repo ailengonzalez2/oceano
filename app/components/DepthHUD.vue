@@ -6,7 +6,7 @@
  * instruments from useScrollDepth (so it never touches scroll math itself) and
  * shows them as live readouts:
  *
- *   Profundidad: 0m → 1000m   (increases as you descend)
+ *   Profundidad: 0m → 30m     (increases as you descend)
  *   Temp: 20.0°C → 2.0°C      (decreases with depth)
  *   Progreso: 0% → 100%       (discovery meter)
  *
