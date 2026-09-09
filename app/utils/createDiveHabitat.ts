@@ -62,6 +62,33 @@ export function createDiveHabitat(scene: THREE.Scene, onReady?: () => void) {
   const tips = new THREE.InstancedMesh(tipGeometry, material, 700)
   const branches = new THREE.InstancedMesh(branchGeometry, material, 700)
   const rocks = new THREE.InstancedMesh(rockGeometry, rockMaterial, corals.banks.length * 3)
+  // A single connected seabed extends underneath every bank and the swim lane.
+  // Its edges stay outside the camera view; distance fog softens the horizon.
+  const seabedGeometry = new THREE.PlaneGeometry(110, 120, 88, 112)
+  seabedGeometry.rotateX(-Math.PI / 2)
+  seabedGeometry.translate(0, 0, -40)
+  const seabed = new THREE.InstancedMesh(seabedGeometry, rockMaterial, 1)
+  seabed.setMatrixAt(0, new THREE.Matrix4())
+  seabed.name = 'Continuous reef floor'
+  function arrangeSeabed() {
+    const positions = seabedGeometry.getAttribute('position')
+    for (let i = 0; i < positions.count; i++) {
+      const x = positions.getX(i), z = positions.getZ(i)
+      let elevation = -9.7 + Math.sin(x * 0.32 + z * 0.14) * 0.18
+        + Math.cos(z * 0.43 - x * 0.16) * 0.12
+      corals.banks.forEach((bank) => {
+        const dx = (x - bank.x * corals.spread) / (4.8 * Math.sqrt(corals.spread))
+        const dz = (z - bank.z) / 7
+        const mound = Math.exp(-(dx * dx + dz * dz))
+        elevation = Math.max(elevation, -9.7 + (bank.y - 0.35 + 9.7) * mound)
+      })
+      positions.setY(i, elevation)
+    }
+    positions.needsUpdate = true
+    seabedGeometry.computeVertexNormals()
+    seabedGeometry.computeBoundingSphere()
+    seabed.computeBoundingSphere()
+  }
   const dummy = new THREE.Object3D()
   const up = new THREE.Vector3(0, 1, 0)
   const color = new THREE.Color()
@@ -117,9 +144,10 @@ export function createDiveHabitat(scene: THREE.Scene, onReady?: () => void) {
     })
     rocks.instanceMatrix.needsUpdate = true
     rocks.computeBoundingSphere()
+    arrangeSeabed()
   }
   arrangeRocks()
-  group.add(rocks, branches, tips)
+  group.add(seabed, rocks, branches, tips)
 
   // Curved wing sections form a volumetric manta silhouette; the wings flap in the shader.
   const rayGeometry = new THREE.BufferGeometry()
@@ -260,6 +288,8 @@ export function createDiveHabitat(scene: THREE.Scene, onReady?: () => void) {
       branchGeometry.dispose()
       tipGeometry.dispose()
       tips.dispose()
+      seabed.dispose()
+      seabedGeometry.dispose()
       rockGeometry.dispose()
       rockMaterial.dispose()
       rayGeometry.dispose()
