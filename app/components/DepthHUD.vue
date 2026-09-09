@@ -36,7 +36,6 @@ const navItems = [
   { id: 'surface', key: 'nav.surface' },
   { id: 'portfolio', key: 'nav.portfolio' },
   { id: 'stories', key: 'nav.stories' },
-  { id: 'about', key: 'nav.about' },
   { id: 'contact', key: 'nav.contact' }
 ]
 const activeId = ref('surface')
@@ -423,7 +422,7 @@ onBeforeUnmount(() => observer?.disconnect())
   .hud__row:first-child .hud__value { font-size: 1.7rem; }
   .hud__value { font-size: 1rem; }
   .hud__controls { top: 1rem; right: 1rem; }
-  /* The 5-item text nav can't fit a phone alongside ES/EN + audio; on phones the
+  /* The text nav can't fit a phone alongside ES/EN + audio; on phones the
      descent scroll is the primary navigation, so the section nav is hidden here. */
   .hud__nav { display: none; }
 }

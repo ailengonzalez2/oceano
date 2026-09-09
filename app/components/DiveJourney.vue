@@ -17,7 +17,7 @@ const reefPhotos = [
   { key: 'reef-squid', drift: -70 },
   { key: 'reef-window', drift: 65 }
 ]
-const photoKeys = [...reefPhotos.map(photo => photo.key), 'shark', 'whale', 'jellyfish']
+const photoKeys = [...reefPhotos.map(photo => photo.key), 'shark', 'whale']
 const photoTitle = computed(() => selected.value ? t(`journey.photos.${selected.value}`) : '')
 let context: gsap.Context | undefined
 let media: gsap.MatchMedia | undefined
@@ -243,50 +243,6 @@ onBeforeUnmount(() => media?.revert())
     </section>
 
     <section
-      id="about"
-      class="chapter perspective"
-      :aria-label="t('journey.about.label')"
-    >
-      <div
-        class="perspective__orb"
-        aria-hidden="true"
-      />
-      <div
-        class="chapter__copy perspective__copy"
-        data-drift="55"
-      >
-        <p class="eyebrow">
-          04 / {{ t('journey.about.label') }}
-        </p>
-        <h2 class="chapter__title font-display">
-          {{ t('journey.about.title') }}<br><em>{{ t('journey.about.end') }}</em>
-        </h2>
-        <p class="chapter__body">
-          {{ t('journey.about.body') }}
-        </p>
-        <div class="perspective__signature">
-          <span class="font-display">{{ t('surface.name') }}</span>
-          <span class="eyebrow">{{ t('journey.about.role') }}</span>
-        </div>
-      </div>
-      <button
-        class="photo perspective__photo"
-        data-drift="-65"
-        :aria-label="t('journey.view', { photo: t('journey.photos.jellyfish') })"
-        @click="selected = 'jellyfish'"
-      >
-        <img
-          src="/img/jellyfish.jpg"
-          :alt="t('journey.photos.jellyfish')"
-          width="900"
-          height="1100"
-          loading="lazy"
-        >
-        <span class="photo__caption"><span>{{ t('journey.about.caption') }}</span><span aria-hidden="true">↗</span></span>
-      </button>
-    </section>
-
-    <section
       id="contact"
       class="journey-end"
       :aria-label="t('journey.contact.title')"
@@ -446,14 +402,6 @@ em { font-weight: 300; color: #b4e6e7; }
 .whale__annotation { position: absolute; right: 12vw; bottom: 7svh; }
 .whale__copy { margin-top: -4svh; margin-left: 15vw; max-width: 45rem; padding-bottom: 15svh; }
 .whale__copy .chapter__body { background: radial-gradient(ellipse at left, #03263c99, transparent); }
-.perspective { min-height: 150svh; display: grid; grid-template-columns: 1.2fr .8fr; gap: 7vw; align-items: center; padding-left: 22vw; }
-.perspective__copy .chapter__title { font-size: clamp(3.2rem, 5.8vw, 6rem); }
-.perspective__signature { margin-top: 2.5rem; display: flex; flex-direction: column; gap: .65rem; }
-.perspective__signature .font-display { font-size: 1.65rem; }
-.perspective__signature .eyebrow { font-size: .5rem; }
-.perspective__photo { width: 100%; height: 65svh; }
-.perspective__photo img { mask-image: radial-gradient(ellipse, #000 22%, transparent 71%); }
-.perspective__orb { position: absolute; inset: 10% 0; background: radial-gradient(ellipse at 70% 50%, #1c897719, transparent 65%); pointer-events: none; }
 .journey-end { min-height: 110svh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 1.5rem 3rem; background: linear-gradient(to bottom, transparent, #0005 40svh, #000d 95svh, #000 140svh); }
 .journey-end__wreck { width: calc(100% + 3rem); flex-shrink: 0; }
 .journey-end__headline { max-width: 60rem; font-size: clamp(2rem, 4.5vw, 4.5rem); line-height: 1.12; margin: 0; color: #d8e9e9; }
@@ -482,7 +430,6 @@ em { font-weight: 300; color: #b4e6e7; }
   .whale { padding-top: 0; }
   .whale__copy { margin-left: 10vw; }
   .whale__image { width: 115vw; left: -5vw; }
-  .perspective { padding-left: 12vw; gap: 3vw; }
 }
 @media (max-width: 560px) {
   .entry { padding-top: 32svh; }
@@ -504,8 +451,6 @@ em { font-weight: 300; color: #b4e6e7; }
   .whale__image { height: 62svh; width: 140vw; left: -20vw; }
   .whale__copy { margin: 8svh 0 0; }
   .whale__annotation { right: 7vw; bottom: 4svh; font-size: .5rem; }
-  .perspective { display: flex; flex-direction: column; min-height: 175svh; padding-left: 6vw; }
-  .perspective__photo { height: 48svh; width: 75vw; align-self: flex-end; margin-top: 8svh; }
   .journey-end { padding-top: 0; }
   .journey-end__headline { font-size: 2rem; }
 }
