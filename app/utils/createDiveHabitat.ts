@@ -168,6 +168,21 @@ export function createDiveHabitat(scene: THREE.Scene, onReady?: () => void) {
     ray.rotation.set(0.65, -0.4, 0.15)
     scene.add(ray)
   })
+  // Distant shadows introduce marine life just below the surface.
+  const entryRays = Array.from({ length: 3 }, (_, i) => {
+    const shadow = rayMaterial.clone()
+    shadow.uniforms = { uTime: { value: 0 }, uWet: { value: 0 } }
+    const ray = new THREE.Mesh(rayGeometry, shadow)
+    ray.scale.setScalar([1.15, 0.85, 0.7][i]!)
+    ray.visible = false
+    // Shader-driven fins extend beyond the undeformed geometry bounds.
+    ray.frustumCulled = false
+    scene.add(ray)
+    return ray
+  })
+  let entryStart = 0
+  let entryEnd = 0
+  let aspect = 1
   let reefDepth = 0.2
   let openDepth = 0.4
   let passageStart = 0.2
@@ -175,12 +190,18 @@ export function createDiveHabitat(scene: THREE.Scene, onReady?: () => void) {
   let viewportDepth = 0.08
   return {
     resize() {
-      corals.resize(window.innerWidth / window.innerHeight)
+      aspect = window.innerWidth / window.innerHeight
+      corals.resize(aspect)
       arrangeRocks()
       const max = document.documentElement.scrollHeight - window.innerHeight
       const anchorDepth = (id: string, fallback: number) => {
         const el = document.getElementById(id)
         return el && max > 0 ? Math.max(0, (el.getBoundingClientRect().top + window.scrollY + el.offsetHeight * 0.35 - window.innerHeight * 0.5) / max) : fallback
+      }
+      const entry = document.querySelector<HTMLElement>('.journey .entry')
+      if (entry && max > 0) {
+        entryStart = (entry.getBoundingClientRect().top + window.scrollY) / max
+        entryEnd = entryStart + entry.offsetHeight / max
       }
       const reef = document.getElementById('portfolio')
       if (reef && max > 0) {
@@ -211,6 +232,23 @@ export function createDiveHabitat(scene: THREE.Scene, onReady?: () => void) {
       branches.visible = !corals.ready
       tips.visible = !corals.ready
       group.visible = uniforms.uReefWet.value > 0.001
+      const entryVisibility = wet
+        * THREE.MathUtils.smoothstep(depth, entryStart - viewportDepth * 0.25, entryStart + viewportDepth * 0.15)
+        * (1 - THREE.MathUtils.smoothstep(depth, entryEnd - viewportDepth * 0.4, entryEnd + viewportDepth * 0.1))
+      entryRays.forEach((ray, i) => {
+        const phase = time * (0.075 + i * 0.012) + i * 2.3
+        const distance = 14 + i * 5
+        const halfWidth = Math.tan(THREE.MathUtils.degToRad(29)) * distance * aspect
+        ray.material.uniforms.uTime!.value = time + i * 2.7
+        ray.material.uniforms.uWet!.value = entryVisibility * (0.9 - i * 0.1)
+        ray.visible = entryVisibility > 0.001
+        ray.position.set(
+          Math.sin(phase) * halfWidth * 0.85,
+          -depth * 82 + [3.5, -3.2, 5][i]! + Math.sin(phase * 1.4) * 0.7,
+          -distance
+        )
+        ray.rotation.set(0.65, -0.4, Math.sin(time * 0.18 + i) * 0.14)
+      })
       rays.forEach((ray, i) => {
         ray.visible = wet > 0 && Math.abs(depth - openDepth) < 0.2
         ray.position.set(Math.sin(time * 0.09 + i * 2) * 8, -openDepth * 82 + i * 3 + Math.sin(time * 0.3) * 0.4, -13 - i * 9)
@@ -227,9 +265,10 @@ export function createDiveHabitat(scene: THREE.Scene, onReady?: () => void) {
       rayGeometry.dispose()
       material.dispose()
       rayMaterial.dispose()
+      entryRays.forEach(ray => ray.material.dispose())
       branches.dispose()
       rocks.dispose()
-      scene.remove(group, ...rays)
+      scene.remove(group, ...rays, ...entryRays)
     }
   }
 }
