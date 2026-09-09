@@ -28,6 +28,9 @@ const pointer = new THREE.Vector2(0, 0)
 const ray = new THREE.Raycaster()
 const floor = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0)
 const aim = new THREE.Vector3()
+const projectedLight = new THREE.Vector3()
+let viewportWidth = 1
+let viewportHeight = 1
 const lamp = new THREE.SpotLight(0xc4e7f2, 200, 60, 0.22, 0.85, 1)
 scene.add(lamp, lamp.target)
 
@@ -62,6 +65,13 @@ function draw(now: number) {
   if (ray.ray.intersectPlane(floor, aim)) {
     lamp.target.position.lerp(aim, reduced.value ? 1 : 1 - Math.exp(-delta * 8))
   }
+  // Project the actual smoothed beam, so the lettering follows the torch
+  // for pointer, touch and keyboard input alike.
+  projectedLight.copy(lamp.target.position).project(camera)
+  const radius = Math.tan(lamp.angle) / Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * viewportHeight / 2
+  host.value?.style.setProperty('--beam-x', `${(projectedLight.x + 1) * viewportWidth / 2}px`)
+  host.value?.style.setProperty('--beam-y', `${(1 - projectedLight.y) * viewportHeight / 2}px`)
+  host.value?.style.setProperty('--beam-radius', `${radius}px`)
   renderer.render(scene, camera)
   if (!reduced.value && ready.value) frame = requestAnimationFrame(draw)
 }
@@ -73,6 +83,8 @@ function resume() {
 function resize() {
   if (!renderer || !host.value) return
   const { width, height } = host.value.getBoundingClientRect()
+  viewportWidth = width
+  viewportHeight = height
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5, 1500 / Math.max(width, height)))
   renderer.setSize(width, height, false)
   camera.aspect = width / height
@@ -202,8 +214,10 @@ onBeforeUnmount(() => {
       ref="canvas"
       aria-hidden="true"
     />
+    <div class="wreck__illuminated-text">
+      <slot />
+    </div>
     <div class="wreck__caption">
-      <span class="eyebrow">LINDA ROSE</span>
       <p>{{ failed ? t('journey.wreck.unavailable') : ready ? t('journey.wreck.instructions') : t('journey.wreck.loading') }}</p>
     </div>
     <span
@@ -219,6 +233,8 @@ onBeforeUnmount(() => {
 .wreck { position: relative; width: 100%; height: 95svh; min-height: 32rem; background: transparent; outline: none; touch-action: pan-y; }
 .wreck:focus-visible { outline: 1px solid #6aa0ae; outline-offset: -3px; }
 .wreck canvas { width: 100%; height: 100%; display: block; mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 85%, transparent); }
+.wreck__illuminated-text { position: absolute; inset: 0; display: grid; place-items: center; padding: 8svh 7vw; pointer-events: none; opacity: 0; mask-image: radial-gradient(circle var(--beam-radius, 0px) at var(--beam-x, 50%) var(--beam-y, 50%), #000 0%, #000e 20%, #0008 55%, transparent 100%); }
+.wreck.is-ready .wreck__illuminated-text { opacity: 1; }
 .wreck__caption { position: absolute; bottom: 2.5rem; inset-inline: 1rem; color: #7a949b; pointer-events: none; }
 .wreck__caption p { margin-top: .7rem; font-size: .75rem; }
 .wreck__cursor { position: absolute; left: 0; top: 0; width: 20px; height: 20px; margin: -10px; border: 1px solid #c4e7f266; border-radius: 50%; pointer-events: none; }

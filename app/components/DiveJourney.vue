@@ -3,7 +3,6 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 const { t } = useI18n()
-const { scrollTo } = useLenis()
 const reduced = useReducedMotion()
 const root = ref<HTMLElement | null>(null)
 const selected = ref<string | null>(null)
@@ -295,27 +294,17 @@ onBeforeUnmount(() => media?.revert())
       class="journey-end"
       :aria-label="t('journey.contact.title')"
     >
-      <WreckScene class="journey-end__wreck" />
-      <h2 class="font-display">
-        {{ t('journey.contact.title') }}<br><em>{{ t('journey.contact.end') }}</em>
-      </h2>
-      <div class="journey-end__disciplines eyebrow">
-        <span>{{ t('journey.contact.editorial') }}</span><span>{{ t('journey.contact.expeditions') }}</span><span>{{ t('journey.contact.conservation') }}</span>
-      </div>
-      <a
-        class="contact-link font-display"
-        href="https://www.instagram.com/oceanomartina/"
-        target="_blank"
-        rel="noopener noreferrer"
-      >{{ t('journey.contact.instagram') }} <span aria-hidden="true">↗</span></a>
-      <button
-        class="surface-link"
-        @click="scrollTo(0)"
-      >
-        <span aria-hidden="true">↑</span>{{ t('contact.back') }}
-      </button>
+      <WreckScene class="journey-end__wreck">
+        <h2 class="journey-end__headline font-display">
+          {{ t('journey.contact.title') }}<br><em>{{ t('journey.contact.end') }}</em>
+        </h2>
+      </WreckScene>
       <p class="journey-end__footer eyebrow">
-        {{ t('surface.name') }} <span>·</span> {{ t('journey.about.role') }}
+        <span>{{ t('surface.name') }}</span>
+        <span
+          v-for="role in t('journey.about.role').split('·')"
+          :key="role"
+        >{{ role.trim() }}</span>
       </p>
       <details class="model-credits">
         <summary>{{ t('journey.modelCredits') }}</summary>
@@ -432,7 +421,7 @@ em { font-weight: 300; color: #b4e6e7; }
 .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .photo__caption { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-top: 1.2rem; color: #c5e0e4; font-size: .6rem; letter-spacing: .17em; text-transform: uppercase; }
 .photo__caption > span:last-child { font-size: 1.15rem; }
-.photo:focus-visible, .whale__image:focus-visible, .surface-link:focus-visible { outline: 2px solid #b4e6e7; outline-offset: 8px; }
+.photo:focus-visible, .whale__image:focus-visible { outline: 2px solid #b4e6e7; outline-offset: 8px; }
 .photo img { transition: filter .5s; }
 .photo:hover img { filter: brightness(1.1); }
 .reef__copy { margin-left: 17vw; max-width: 39rem; }
@@ -471,17 +460,13 @@ em { font-weight: 300; color: #b4e6e7; }
 .perspective__orb { position: absolute; inset: 10% 0; background: radial-gradient(ellipse at 70% 50%, #1c897719, transparent 65%); pointer-events: none; }
 .journey-end { min-height: 110svh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 1.5rem 3rem; background: linear-gradient(to bottom, transparent, #0005 40svh, #000d 95svh, #000 140svh); }
 .journey-end__wreck { width: calc(100% + 3rem); flex-shrink: 0; }
-.journey-end h2 { max-width: 65rem; font-size: clamp(3rem, 6vw, 6rem); line-height: 1.05; margin: 2rem 0; }
-.journey-end__disciplines { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin-top: 2.5rem; font-size: .5rem; }
-.surface-link { margin-top: 4rem; display: flex; align-items: center; gap: 1.1rem; font-size: .7rem; letter-spacing: .14em; cursor: pointer; }
-.surface-link > span { display: grid; place-items: center; border: 1px solid #9fcbd366; border-radius: 50%; width: 3rem; height: 3rem; font-size: 1.2rem; transition: transform .3s; }
-.surface-link:hover > span { transform: translateY(-5px); }
-.journey-end__footer { margin-top: 12svh; font-size: .48rem; }
-.journey-end__footer span { margin: 0 1rem; }
+.journey-end__headline { max-width: 60rem; font-size: clamp(2rem, 4.5vw, 4.5rem); line-height: 1.12; margin: 0; color: #d8e9e9; }
+.journey-end__footer { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .9rem; margin-top: 12svh; font-size: .48rem; }
+.journey-end__footer span { display: inline-flex; align-items: center; gap: .9rem; }
+.journey-end__footer span + span::before { content: '·'; }
 .story-link { display: inline-flex; align-items: center; gap: 1rem; margin-top: 1.6rem; padding-bottom: .4rem; border-bottom: 1px solid #b4dce155; font-size: .75rem; color: #d4e8eb; }
-.contact-link { display: inline-flex; gap: 1rem; align-items: center; margin-top: 2.8rem; font-size: 1.8rem; border-bottom: 1px solid #b4dce177; padding-bottom: .45rem; }
-.story-link:hover, .contact-link:hover { color: #b4e6e7; }
-.story-link:focus-visible, .contact-link:focus-visible { outline: 2px solid #b4e6e7; outline-offset: 6px; }
+.story-link:hover { color: #b4e6e7; }
+.story-link:focus-visible { outline: 2px solid #b4e6e7; outline-offset: 6px; }
 .model-credits { margin-top: 1.4rem; max-width: 36rem; font-size: .65rem; line-height: 1.9; color: #b4dce1; }
 .model-credits summary { cursor: pointer; }
 .model-credits p { margin-top: .6rem; }
@@ -525,7 +510,7 @@ em { font-weight: 300; color: #b4e6e7; }
   .perspective { display: flex; flex-direction: column; min-height: 175svh; padding-left: 6vw; }
   .perspective__photo { height: 48svh; width: 75vw; align-self: flex-end; margin-top: 8svh; }
   .journey-end { padding-top: 0; }
-  .journey-end h2 { font-size: 3.2rem; }
+  .journey-end__headline { font-size: 2rem; }
 }
 @media (prefers-reduced-motion: no-preference) {
   .reef { height: 420svh; min-height: 0; padding: 0; }
