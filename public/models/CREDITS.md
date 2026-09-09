@@ -57,3 +57,11 @@ Attribution and license information above are preserved from each GLB's embedded
 - File: linda_rose.glb
 - Adaptation: legacy materials converted, geometry and textures optimized for the web, scaled and lit with an interactive flashlight in the footer.
 - Reproduction: `python3 scripts/prepare-wreck-model.py /path/to/wreckage_of_the_linda_rose.glb /tmp/wreck-materials.glb`, then `npx --yes @gltf-transform/cli@4.5.0 optimize /tmp/wreck-materials.glb public/models/linda_rose.glb --compress meshopt --texture-compress webp --texture-size 2048 --simplify-ratio 0.15 --simplify-error 0.002`. See https://gltf-transform.dev/cli.
+
+## Coral Piece
+
+- Author: [Sharon Kunne](https://sketchfab.com/sharonkunne)
+- Source: https://sketchfab.com/3d-models/coral-piece-bd879158d2c9496fa40eb9a8fd8e75f8
+- License: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+- File: `coral_piece.glb`, supplied by the user; original GLB preserved.
+- Display adaptations: normalized scale, repeated placements and rotations, underwater lighting, subtle current deformation and alpha masking for textured planes.

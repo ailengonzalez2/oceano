@@ -98,7 +98,7 @@ export function createCoralReef(parent: THREE.Group, onReady?: () => void) {
     return material
   }
 
-  async function loadSet(url: string, soft: boolean) {
+  async function loadSet(url: string, soft: boolean, specimen = false) {
     const gltf = await new GLTFLoader().loadAsync(url)
     if (disposed) {
       releaseSource(gltf.scene)
@@ -109,13 +109,13 @@ export function createCoralReef(parent: THREE.Group, onReady?: () => void) {
       return
     }
     gltf.scene.updateMatrixWorld(true)
-    const root = gltf.scene.getObjectByName(soft ? 'RootNode' : 'GLTF_SceneRootNode')
+    const root = specimen ? gltf.scene : gltf.scene.getObjectByName(soft ? 'RootNode' : 'GLTF_SceneRootNode')
     if (!root) {
       releaseSource(gltf.scene)
       throw new Error(`Coral collection root missing: ${url}`)
     }
     // Rayaa's first nodes are the display plinth; numbered groups are the usable corals.
-    const pieces = soft ? root.children : root.children.filter(child => child.name.startsWith('node_group_'))
+    const pieces = specimen ? [root] : soft ? root.children : root.children.filter(child => child.name.startsWith('node_group_'))
     const materialCache = new Map<THREE.Material, THREE.MeshStandardMaterial>()
     const dummy = new THREE.Object3D()
     pieces.forEach((piece, pieceIndex) => {
@@ -132,17 +132,23 @@ export function createCoralReef(parent: THREE.Group, onReady?: () => void) {
         geometries.add(geometry)
         const sourceMaterials = Array.isArray(object.material) ? object.material : [object.material]
         const mapped = sourceMaterials.map((source) => {
-          if (!materialCache.has(source)) materialCache.set(source, makeMaterial(source as THREE.MeshStandardMaterial, soft))
+          if (!materialCache.has(source)) {
+            const material = makeMaterial(source as THREE.MeshStandardMaterial, soft || (specimen && source.transparent))
+            // The specimen includes textured planes: discard their empty pixels
+            // so they do not hide neighbouring branches in the depth buffer.
+            if (specimen && source.transparent) material.alphaTest = 0.18
+            materialCache.set(source, material)
+          }
           return materialCache.get(source)!
         })
-        const count = soft ? 3 : 4
+        const count = specimen ? banks.length : soft ? 3 : 4
         const mesh = new THREE.InstancedMesh(geometry, mapped.length === 1 ? mapped[0]! : mapped, count)
-        mesh.name = `${soft ? 'Soft' : 'Rayaa'} / ${piece.name}`
+        mesh.name = `${specimen ? 'Coral Piece' : soft ? 'Soft' : 'Rayaa'} / ${piece.name}`
         for (let copy = 0; copy < count; copy++) {
-          const bank = banks[(pieceIndex * (soft ? 5 : 3) + copy * 5 + (soft ? 0 : 1)) % banks.length]!
+          const bank = banks[specimen ? copy : (pieceIndex * (soft ? 5 : 3) + copy * 5 + (soft ? 0 : 1)) % banks.length]!
           const phase = pieceIndex * 2.399 + copy * 1.7
           const spread = soft ? 1.25 : 0.85
-          const scale = soft ? 1.6 + (pieceIndex % 5) * 0.25 : 2.8 + (pieceIndex % 3) * 0.8
+          const scale = specimen ? 3.8 + (copy % 3) * 0.45 : soft ? 1.6 + (pieceIndex % 5) * 0.25 : 2.8 + (pieceIndex % 3) * 0.8
           dummy.position.set(bank.x + Math.sin(phase) * spread, bank.y + 1.1, bank.z + Math.cos(phase) * spread)
           dummy.rotation.set(0, phase, bank.side * -0.04)
           dummy.scale.setScalar(scale * (1 - Math.floor((pieceIndex + copy) % 3) * 0.1))
@@ -163,7 +169,7 @@ export function createCoralReef(parent: THREE.Group, onReady?: () => void) {
 
   // Start after the hero has mounted; neither download blocks the ocean's first frame.
   void Promise.allSettled([
-    loadSet('/models/corals_by_rayaa.glb', false),
+    loadSet('/models/coral_piece.glb', false, true),
     loadSet('/models/soft_coral_set.glb', true)
   ]).then((results) => {
     if (disposed) return

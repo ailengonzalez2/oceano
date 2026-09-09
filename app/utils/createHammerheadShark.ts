@@ -7,7 +7,6 @@ export function createHammerheadShark(scene: THREE.Scene, onReady?: () => void) 
   root.name = 'Hammerhead encounter'
   root.visible = false
   scene.add(root)
-  const wetness = { value: 0 }
   const darkness = { value: 0 }
   const geometries = new Set<THREE.BufferGeometry>()
   const materials = new Set<THREE.MeshStandardMaterial>()
@@ -68,25 +67,27 @@ export function createHammerheadShark(scene: THREE.Scene, onReady?: () => void) 
       }
       materials.forEach((material) => {
         material.emissiveIntensity = 0.08
-        material.transparent = true
+        material.transparent = false
+        material.opacity = 1
         material.depthWrite = true
         material.onBeforeCompile = (shader) => {
-          shader.uniforms.uSchoolWet = wetness
           shader.uniforms.uSchoolDepth = darkness
-          shader.vertexShader = `varying float vSchoolDistance; varying float vSharkViewDepth;\n${shader.vertexShader}`
-          shader.vertexShader = shader.vertexShader.replace('#include <project_vertex>', '#include <project_vertex>\nvSchoolDistance = length(mvPosition.xyz); vSharkViewDepth = -mvPosition.z;')
-          shader.fragmentShader = `uniform float uSchoolWet; uniform float uSchoolDepth; varying float vSchoolDistance; varying float vSharkViewDepth;\n${shader.fragmentShader}`
+          shader.vertexShader = `varying float vSchoolDistance;\n${shader.vertexShader}`
+          shader.vertexShader = shader.vertexShader.replace('#include <project_vertex>', '#include <project_vertex>\nvSchoolDistance = length(mvPosition.xyz);')
+          shader.fragmentShader = `uniform float uSchoolDepth; varying float vSchoolDistance;\n${shader.fragmentShader}`
           shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `
             // Local water lighting uses the model's normal maps without adding
             // scene lights that would change the existing coral materials.
             float fishLight = .4 + .6 * max(dot(normal, normalize(vec3(-.4, .7, .8))), 0.0);
             outgoingLight = diffuseColor.rgb * fishLight * exp(-uSchoolDepth * 2.0);
             outgoingLight = mix(outgoingLight, vec3(.006, .035, .055), 1.0 - exp(-vSchoolDistance * .026));
-            diffuseColor.a *= smoothstep(0.4, 2.5, vSharkViewDepth) * uSchoolWet * (1.0 - smoothstep(24.0, 38.0, vSchoolDistance));
+            // The shark stays solid, including as it crosses the camera plane.
+            // Underwater distance affects colour, never the body opacity.
+            diffuseColor.a = 1.0;
             #include <opaque_fragment>
           `)
         }
-        material.customProgramCacheKey = () => 'hammerhead-water-v2'
+        material.customProgramCacheKey = () => 'hammerhead-water-opaque-v3'
       })
       gltf.scene.updateMatrixWorld(true)
       const bounds = new THREE.Box3().setFromObject(gltf.scene)
@@ -139,7 +140,6 @@ export function createHammerheadShark(scene: THREE.Scene, onReady?: () => void) 
       const arrival = 1 - THREE.MathUtils.smoothstep(top / height, 0.2, 0.95)
       const departure = THREE.MathUtils.smoothstep(end / height, 0.5, 1.05)
       const visibility = wet * arrival * departure
-      wetness.value = visibility
       darkness.value = depth
       root.visible = visibility > 0 && !!encounter
       if (encounter && root.visible) {
