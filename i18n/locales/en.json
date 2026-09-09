@@ -106,7 +106,7 @@
       "title": "Everything seems still.",
       "end": "Everything is alive.",
       "body": "A landscape within a landscape. Tiny forms, textures and encounters emerge when we pause to look. The first image begins long before the shutter.",
-      "note": "Explore the photographs to see every detail.",
+      "note": "Explore the cards to discover Martina's services.",
       "caption": "Reef / forms of life",
       "detail": "Coral / another scale",
       "word": "inhabit"
@@ -163,6 +163,30 @@
       "unavailable": "The wreck is currently unavailable."
     },
     "modelCredits": "3D model credits",
-    "modelAdaptations": "Adaptations and license details"
+    "modelAdaptations": "Adaptations and license details",
+    "services": {
+      "label": "Services",
+      "more": "Explore service",
+      "open": "Explore service: {service}",
+      "women": {
+        "title": "Women's trips",
+        "intro": "Share the sea. Discover together.",
+        "body": "Ocean-focused trips for women: an invitation to explore, connect with marine life and share the experience with other women.",
+        "detail": "A space to meet the sea and build community through curiosity, respect and the stories each traveller brings."
+      },
+      "photography": {
+        "title": "Underwater photography",
+        "intro": "A perspective that begins beneath the surface.",
+        "body": "Photography of marine life, underwater landscapes and encounters beneath the surface. Images that bring the ocean closer to those who have yet to discover it.",
+        "detail": "With a particular focus on sharks, this approach combines diving, observation and visual storytelling to tell each story from the water."
+      },
+      "documentary": {
+        "title": "Marine documentary filmmaking",
+        "intro": "Ocean stories worth telling.",
+        "body": "Visual stories about sharks, marine life and our relationship with the ocean. Underwater filmmaking as a way to observe, understand and share.",
+        "detail": "An approach that brings together underwater imagery and the voices of people who live alongside, study and protect the sea."
+      },
+      "close": "Close service"
+    }
   }
 }

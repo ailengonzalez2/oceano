@@ -13,12 +13,13 @@ const photoOpen = computed({
   }
 })
 const reefPhotos = [
-  { key: 'reef-texture', drift: 100 },
-  { key: 'reef-squid', drift: -70 },
-  { key: 'reef-window', drift: 65 }
+  { key: 'reef-texture', service: 'women', drift: 100 },
+  { key: 'reef-squid', service: 'photography', drift: -70 },
+  { key: 'reef-window', service: 'documentary', drift: 65 }
 ]
 const photoKeys = [...reefPhotos.map(photo => photo.key), 'shark', 'whale']
-const photoTitle = computed(() => selected.value ? t(`journey.photos.${selected.value}`) : '')
+const selectedService = computed(() => reefPhotos.find(photo => photo.key === selected.value)?.service)
+const photoTitle = computed(() => selectedService.value ? t(`journey.services.${selectedService.value}.title`) : selected.value ? t(`journey.photos.${selected.value}`) : '')
 let context: gsap.Context | undefined
 let media: gsap.MatchMedia | undefined
 
@@ -137,7 +138,8 @@ onBeforeUnmount(() => media?.revert())
             :key="photo.key"
             class="photo reef__photo"
             :data-drift="photo.drift"
-            :aria-label="t('journey.view', { photo: t(`journey.photos.${photo.key}`) })"
+            :aria-label="t('journey.services.open', { service: t(`journey.services.${photo.service}.title`) })"
+            aria-haspopup="dialog"
             @click="selected = photo.key"
           >
             <img
@@ -147,7 +149,11 @@ onBeforeUnmount(() => media?.revert())
               height="800"
               loading="lazy"
             >
-            <span class="photo__caption"><span>{{ t(`journey.photos.${photo.key}`) }}</span><span aria-hidden="true">↗</span></span>
+            <span class="service-card__content">
+              <span class="eyebrow">{{ t('journey.services.label') }}</span>
+              <span class="service-card__title font-display">{{ t(`journey.services.${photo.service}.title`) }}</span>
+              <span class="service-card__more">{{ t('journey.services.more') }} <span aria-hidden="true">↗</span></span>
+            </span>
           </button>
         </div>
         <span
@@ -332,7 +338,7 @@ onBeforeUnmount(() => media?.revert())
     <UModal
       v-model:open="photoOpen"
       :title="photoTitle"
-      :description="t('journey.photoDescription')"
+      :description="selectedService ? t(`journey.services.${selectedService}.intro`) : t('journey.photoDescription')"
       :ui="{ overlay: 'z-[80]', content: 'max-w-5xl z-[90]', body: 'p-2 sm:p-3' }"
     >
       <template #close>
@@ -341,12 +347,27 @@ onBeforeUnmount(() => media?.revert())
           color="neutral"
           variant="ghost"
           class="absolute top-4 end-4"
-          :aria-label="t('journey.close')"
+          :aria-label="selectedService ? t('journey.services.close') : t('journey.close')"
         />
       </template>
       <template #body>
+        <div
+          v-if="selectedService"
+          class="service-detail"
+        >
+          <img
+            :src="`/img/${selected}.jpg`"
+            :alt="t(`journey.photos.${selected}`)"
+            width="1200"
+            height="800"
+          >
+          <div class="service-detail__copy">
+            <p>{{ t(`journey.services.${selectedService}.body`) }}</p>
+            <p>{{ t(`journey.services.${selectedService}.detail`) }}</p>
+          </div>
+        </div>
         <img
-          v-if="selected && photoKeys.includes(selected)"
+          v-else-if="selected && photoKeys.includes(selected)"
           class="full-photo"
           :src="selected === 'shark' ? '/img/shark-front.jpg' : `/img/${selected}.jpg`"
           :alt="photoTitle"
@@ -382,6 +403,21 @@ em { font-weight: 300; color: #b4e6e7; }
 .reef__photo:nth-child(1) { grid-column: 2; grid-row: 1; width: 85%; justify-self: end; }
 .reef__photo:nth-child(2) { grid-column: 1; grid-row: 1 / 3; margin-top: 24svh; }
 .reef__photo:nth-child(3) { grid-column: 2; grid-row: 2; width: 88%; justify-self: end; }
+.reef__photo { overflow: hidden; border-radius: .75rem; border: 1px solid #b4dce133; cursor: pointer; background: #062e3f; }
+.reef__photo img { mask-image: none; }
+.service-card__content { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: clamp(1rem, 2.5vw, 2rem); background: linear-gradient(transparent 15%, #021924dd 100%); }
+.service-card__content .eyebrow { font-size: .5rem; }
+.service-card__title { font-size: clamp(1.5rem, 3vw, 3rem); line-height: 1.05; margin: .5rem 0 1rem; color: #eafbff; }
+.service-card__more { display: flex; justify-content: space-between; font-size: .7rem; color: #c5e0e4; }
+.service-detail { display: grid; grid-template-columns: 1.1fr 1fr; gap: 1.5rem; align-items: center; }
+.service-detail img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: .5rem; }
+.service-detail__copy { padding: .5rem 1rem .5rem 0; font-size: .95rem; line-height: 1.8; }
+.service-detail__copy p + p { margin-top: 1rem; }
+@media (max-width: 640px) {
+  .service-detail { grid-template-columns: 1fr; gap: .75rem; }
+  .service-detail__copy { padding: .5rem; }
+  .service-card__title { font-size: 1.5rem; margin-bottom: .65rem; }
+}
 .chapter__word { position: absolute; bottom: 0; left: 24vw; font-size: 16vw; line-height: 1; color: #c1f0e6; opacity: .08; pointer-events: none; }
 .open-water { min-height: 155svh; display: grid; grid-template-columns: 1fr 1fr; gap: 8vw; align-items: center; }
 .open-water__label { position: absolute; top: 18svh; left: 25vw; }

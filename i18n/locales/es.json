@@ -106,7 +106,7 @@
       "title": "Todo parece quieto.",
       "end": "Todo está vivo.",
       "body": "Un paisaje dentro de otro. Formas diminutas, texturas y encuentros que aparecen cuando nos detenemos a mirar. La primera imagen empieza mucho antes del disparo.",
-      "note": "Explorá las fotografías para ver cada detalle.",
+      "note": "Explorá las tarjetas para conocer los servicios de Martina.",
       "caption": "Arrecife / formas de la vida",
       "detail": "Coral / otra escala",
       "word": "habitar"
@@ -163,6 +163,30 @@
       "unavailable": "El naufragio no está disponible en este momento."
     },
     "modelCredits": "Créditos de los modelos 3D",
-    "modelAdaptations": "Detalle de las adaptaciones y licencias"
+    "modelAdaptations": "Detalle de las adaptaciones y licencias",
+    "services": {
+      "label": "Servicios",
+      "more": "Conocé más",
+      "open": "Conocer servicio: {service}",
+      "women": {
+        "title": "Viajes de mujeres",
+        "intro": "Compartir el mar, descubrir juntas.",
+        "body": "Viajes de mujeres alrededor del océano: una invitación a explorar, conectar con la vida marina y compartir la experiencia con otras mujeres.",
+        "detail": "Un espacio para encontrarse con el mar y construir comunidad desde la curiosidad, el respeto y las historias de cada viajera."
+      },
+      "photography": {
+        "title": "Fotografía submarina",
+        "intro": "Una mirada que empieza bajo el agua.",
+        "body": "Fotografía de la vida marina, sus paisajes y los encuentros que suceden bajo la superficie. Imágenes que acercan el océano a quienes todavía no lo conocen.",
+        "detail": "Una mirada especialmente dedicada a los tiburones, que reúne buceo, observación y narrativa visual para contar cada historia desde el agua."
+      },
+      "documentary": {
+        "title": "Documentalista marina",
+        "intro": "Historias del océano que merecen ser contadas.",
+        "body": "Relatos audiovisuales sobre tiburones, vida marina y nuestra relación con el océano. El registro submarino como una forma de observar, comprender y compartir.",
+        "detail": "Una propuesta que une imágenes bajo el agua y las voces de quienes habitan, estudian y protegen el mar."
+      },
+      "close": "Cerrar servicio"
+    }
   }
 }
