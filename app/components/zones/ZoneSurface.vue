@@ -100,6 +100,7 @@ onBeforeUnmount(() => ctx?.revert())
 }
 .surface__name {
   font-size: clamp(3rem, 11vw, 8rem);
+  font-style: italic;
   font-weight: 300;
   line-height: 0.95;
   color: #eafbff;

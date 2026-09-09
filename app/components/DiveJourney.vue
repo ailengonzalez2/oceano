@@ -101,9 +101,6 @@ onBeforeUnmount(() => media?.revert())
         <h2 class="font-display">
           {{ t('journey.entry.title') }}<br><em>{{ t('journey.entry.end') }}</em>
         </h2>
-        <p class="entry__note">
-          {{ t('journey.entry.note') }}
-        </p>
         <span
           class="descent-line"
           aria-hidden="true"
@@ -300,7 +297,7 @@ onBeforeUnmount(() => media?.revert())
         </h2>
       </WreckScene>
       <p class="journey-end__footer eyebrow">
-        <span>{{ t('surface.name') }}</span>
+        <span class="journey-end__name font-display">{{ t('surface.name') }}</span>
         <span
           v-for="role in t('journey.about.role').split('·')"
           :key="role"
@@ -409,7 +406,6 @@ onBeforeUnmount(() => media?.revert())
 .entry { min-height: 105svh; display: grid; place-items: center; padding: 15svh 1.5rem 8svh; text-align: center; }
 .entry h2 { margin: 1.6rem 0; font-size: clamp(2.8rem, 6vw, 6rem); line-height: 1.02; }
 em { font-weight: 300; color: #b4e6e7; }
-.entry__note { font-size: .85rem; color: #c0dbe0; }
 .descent-line { display: block; width: 1px; height: 14svh; margin: 3rem auto 0; background: linear-gradient(#b4e6e7, transparent); }
 .chapter { position: relative; min-height: 170svh; padding: 22svh 7vw 12svh; }
 .chapter__title { font-size: clamp(3.5rem, 6.8vw, 7rem); line-height: .95; letter-spacing: -.045em; margin: 1.6rem 0 2rem; }
@@ -461,9 +457,10 @@ em { font-weight: 300; color: #b4e6e7; }
 .journey-end { min-height: 110svh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 1.5rem 3rem; background: linear-gradient(to bottom, transparent, #0005 40svh, #000d 95svh, #000 140svh); }
 .journey-end__wreck { width: calc(100% + 3rem); flex-shrink: 0; }
 .journey-end__headline { max-width: 60rem; font-size: clamp(2rem, 4.5vw, 4.5rem); line-height: 1.12; margin: 0; color: #d8e9e9; }
-.journey-end__footer { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .9rem; margin-top: 12svh; font-size: .48rem; }
+.journey-end__footer { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .9rem; margin-top: 3svh; font-size: .48rem; }
 .journey-end__footer span { display: inline-flex; align-items: center; gap: .9rem; }
 .journey-end__footer span + span::before { content: '·'; }
+.journey-end__name { font-size: 1.15rem; font-style: italic; font-weight: 300; letter-spacing: normal; text-transform: none; color: #b4e6e7; }
 .story-link { display: inline-flex; align-items: center; gap: 1rem; margin-top: 1.6rem; padding-bottom: .4rem; border-bottom: 1px solid #b4dce155; font-size: .75rem; color: #d4e8eb; }
 .story-link:hover { color: #b4e6e7; }
 .story-link:focus-visible { outline: 2px solid #b4e6e7; outline-offset: 6px; }

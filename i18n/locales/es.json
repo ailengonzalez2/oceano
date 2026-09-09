@@ -19,7 +19,7 @@
     "ndl": "Límite de no descompresión",
     "safety": "Parada de seguridad",
     "air": "Gestión de aire",
-    "scrollHint": "Desplazá para descender"
+    "scrollHint": "Deslizá para sumergirte"
   },
   "nav": {
     "surface": "Superficie",
@@ -30,7 +30,7 @@
   },
   "surface": {
     "name": "Martina Álvarez",
-    "role": "Fotógrafa marina · Realizadora submarina",
+    "role": "Fotógrafa submarina · Documentarista Marina",
     "tagline": "El océano no se mira. Se desciende.",
     "hint": "Mantené presionado para revelar",
     "descent": "La superficie queda atrás. El azul nos rodea."
@@ -98,7 +98,7 @@
     "entry": {
       "label": "Una mirada bajo el agua",
       "title": "Bajá el ritmo.",
-      "end": "Entrá en el azul.",
+      "end": "Respira con el mar",
       "note": "Seguí el descenso. Dejá que la vida se acerque."
     },
     "reef": {

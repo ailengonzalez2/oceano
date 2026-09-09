@@ -19,7 +19,7 @@
     "ndl": "No-decompression limit",
     "safety": "Safety stop",
     "air": "Air management",
-    "scrollHint": "Scroll to descend"
+    "scrollHint": "Scroll to dive in"
   },
   "nav": {
     "surface": "Surface",
@@ -30,7 +30,7 @@
   },
   "surface": {
     "name": "Martina Álvarez",
-    "role": "Marine photographer · Underwater filmmaker",
+    "role": "Underwater photographer · Marine documentary filmmaker",
     "tagline": "You don't look at the ocean. You descend into it.",
     "hint": "Press and hold to reveal",
     "descent": "The surface slips away. The blue surrounds us."
@@ -98,7 +98,7 @@
     "entry": {
       "label": "A view beneath the surface",
       "title": "Slow down.",
-      "end": "Enter the blue.",
+      "end": "Breathe with the sea",
       "note": "Follow the descent. Let life come closer."
     },
     "reef": {
