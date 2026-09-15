@@ -10,13 +10,16 @@ export function createCoralReef(parent: THREE.Group, onReady?: () => void) {
   const materials = new Set<THREE.MeshStandardMaterial>()
   const textures = new Set<THREE.Texture>()
   const instances: THREE.InstancedMesh[] = []
-  const layouts: { mesh: THREE.InstancedMesh, matrices: Float32Array }[] = []
+  const layouts: { mesh: THREE.InstancedMesh, matrices: Float32Array, floorStart: number }[] = []
   let horizontalSpread = THREE.MathUtils.clamp(window.innerWidth / window.innerHeight / 1.5, 0.38, 1)
   function arrange(layout: typeof layouts[number]) {
     const matrix = new THREE.Matrix4()
     for (let i = 0; i < layout.mesh.count; i++) {
       matrix.fromArray(layout.matrices, i * 16)
       matrix.elements[12]! *= horizontalSpread
+      if (i >= layout.floorStart) {
+        matrix.elements[13] = plantingHeight(matrix.elements[12]!, matrix.elements[14]!) - 0.08
+      }
       layout.mesh.setMatrixAt(i, matrix)
     }
     layout.mesh.instanceMatrix.needsUpdate = true
@@ -46,6 +49,31 @@ export function createCoralReef(parent: THREE.Group, onReady?: () => void) {
       side
     }
   })
+
+  // Shared with the ground mesh: planted coral bases follow the same relief,
+  // including when the channel narrows on mobile.
+  function floorHeight(x: number, z: number) {
+    let elevation = -9.7 + Math.sin(x * 0.32 + z * 0.14) * 0.18
+      + Math.cos(z * 0.43 - x * 0.16) * 0.12
+    banks.forEach((bank) => {
+      const dx = (x - bank.x * horizontalSpread) / (4.8 * Math.sqrt(horizontalSpread))
+      const dz = (z - bank.z) / 7
+      const mound = Math.exp(-(dx * dx + dz * dz))
+      elevation = Math.max(elevation, -9.7 + (bank.y - 0.35 + 9.7) * mound)
+    })
+    return elevation
+  }
+
+  function plantingHeight(x: number, z: number) {
+    let height = floorHeight(x, z)
+    banks.forEach((bank) => {
+      const dx = (x - bank.x * horizontalSpread) / (2.7 * Math.sqrt(horizontalSpread))
+      const dz = (z - bank.z) / 2.6
+      const radius = dx * dx + dz * dz
+      if (radius < 1) height = Math.max(height, bank.y + 1.2 * Math.sqrt(1 - radius) - 0.12)
+    })
+    return height
+  }
 
   function trackTextures(material: THREE.Material) {
     Object.values(material).forEach((value) => {
@@ -141,21 +169,32 @@ export function createCoralReef(parent: THREE.Group, onReady?: () => void) {
           }
           return materialCache.get(source)!
         })
-        const count = specimen ? banks.length : soft ? 3 : 4
+        const floorStart = specimen ? banks.length : soft ? 3 : 4
+        const count = floorStart + (specimen ? 48 : soft ? 18 : 0)
         const mesh = new THREE.InstancedMesh(geometry, mapped.length === 1 ? mapped[0]! : mapped, count)
         mesh.name = `${specimen ? 'Coral Piece' : soft ? 'Soft' : 'Rayaa'} / ${piece.name}`
         for (let copy = 0; copy < count; copy++) {
-          const bank = banks[specimen ? copy : (pieceIndex * (soft ? 5 : 3) + copy * 5 + (soft ? 0 : 1)) % banks.length]!
+          const bank = banks[specimen ? copy % banks.length : (pieceIndex * (soft ? 5 : 3) + copy * 5 + (soft ? 0 : 1)) % banks.length]!
           const phase = pieceIndex * 2.399 + copy * 1.7
           const spread = soft ? 1.25 : 0.85
           const scale = specimen ? 3.8 + (copy % 3) * 0.45 : soft ? 1.6 + (pieceIndex % 5) * 0.25 : 2.8 + (pieceIndex % 3) * 0.8
           dummy.position.set(bank.x + Math.sin(phase) * spread, bank.y + 1.1, bank.z + Math.cos(phase) * spread)
           dummy.rotation.set(0, phase, bank.side * -0.04)
           dummy.scale.setScalar(scale * (1 - Math.floor((pieceIndex + copy) % 3) * 0.1))
+          if (copy >= floorStart) {
+            const planted = copy - floorStart
+            const side = (planted + pieceIndex) % 2 ? 1 : -1
+            const variation = (Math.sin(phase * 7.13) + 1) / 2
+            const x = side * (3.6 + variation * 12)
+            const z = -5 - (planted % 6) * 7.1 - (pieceIndex % 4) * 0.6 + Math.cos(phase) * 1.1
+            dummy.position.set(x, 0, z)
+            dummy.rotation.set(0, phase, side * -0.03)
+            dummy.scale.setScalar(specimen ? 1.8 + variation * 1.8 : 0.75 + variation * 1.35)
+          }
           dummy.updateMatrix()
           mesh.setMatrixAt(copy, dummy.matrix)
         }
-        const layout = { mesh, matrices: new Float32Array(mesh.instanceMatrix.array) }
+        const layout = { mesh, matrices: new Float32Array(mesh.instanceMatrix.array), floorStart }
         layouts.push(layout)
         arrange(layout)
         group.add(mesh)
@@ -180,6 +219,7 @@ export function createCoralReef(parent: THREE.Group, onReady?: () => void) {
 
   return {
     banks,
+    floorHeight,
     get spread() {
       return horizontalSpread
     },

@@ -74,15 +74,7 @@ export function createDiveHabitat(scene: THREE.Scene, onReady?: () => void) {
     const positions = seabedGeometry.getAttribute('position')
     for (let i = 0; i < positions.count; i++) {
       const x = positions.getX(i), z = positions.getZ(i)
-      let elevation = -9.7 + Math.sin(x * 0.32 + z * 0.14) * 0.18
-        + Math.cos(z * 0.43 - x * 0.16) * 0.12
-      corals.banks.forEach((bank) => {
-        const dx = (x - bank.x * corals.spread) / (4.8 * Math.sqrt(corals.spread))
-        const dz = (z - bank.z) / 7
-        const mound = Math.exp(-(dx * dx + dz * dz))
-        elevation = Math.max(elevation, -9.7 + (bank.y - 0.35 + 9.7) * mound)
-      })
-      positions.setY(i, elevation)
+      positions.setY(i, corals.floorHeight(x, z))
     }
     positions.needsUpdate = true
     seabedGeometry.computeVertexNormals()

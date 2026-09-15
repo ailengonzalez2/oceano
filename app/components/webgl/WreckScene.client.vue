@@ -26,12 +26,21 @@ scene.fog = new THREE.FogExp2(0x000000, 0.025)
 const camera = new THREE.PerspectiveCamera(43, 1, 0.1, 100)
 const pointer = new THREE.Vector2(0, 0)
 const ray = new THREE.Raycaster()
-const floor = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0)
+const aimPlane = new THREE.Plane()
+const viewDirection = new THREE.Vector3()
+const lampOrigin = new THREE.Vector3()
+const origin = new THREE.Vector3()
 const aim = new THREE.Vector3()
 const projectedLight = new THREE.Vector3()
 let viewportWidth = 1
 let viewportHeight = 1
-const lamp = new THREE.SpotLight(0xc4e7f2, 200, 60, 0.22, 0.85, 1)
+const lamp = new THREE.SpotLight(0xc4e7f2, 260, 65, 0.27, 0.9, 1)
+lamp.castShadow = true
+lamp.shadow.mapSize.set(1024, 1024)
+lamp.shadow.camera.near = 0.5
+lamp.shadow.camera.far = 65
+lamp.shadow.bias = -0.00015
+lamp.shadow.normalBias = 0.035
 scene.add(lamp, lamp.target)
 
 function disposeModel(object: THREE.Object3D) {
@@ -62,9 +71,13 @@ function draw(now: number) {
   const delta = previous ? Math.min((now - previous) / 1000, 0.05) : 0.05
   previous = now
   ray.setFromCamera(pointer, camera)
-  if (ray.ray.intersectPlane(floor, aim)) {
+  if (ray.ray.intersectPlane(aimPlane, aim)) {
     lamp.target.position.lerp(aim, reduced.value ? 1 : 1 - Math.exp(-delta * 8))
   }
+  // A handheld source sits beside the viewer, giving ribs and openings
+  // real cast shadows instead of flat illumination from the camera centre.
+  lampOrigin.set(-3.5 + pointer.x * 0.8, 2.2 + pointer.y * 0.4, -1).add(camera.position)
+  lamp.position.lerp(lampOrigin, reduced.value ? 1 : 1 - Math.exp(-delta * 5))
   // Project the actual smoothed beam, so the lettering follows the torch
   // for pointer, touch and keyboard input alike.
   projectedLight.copy(lamp.target.position).project(camera)
@@ -89,11 +102,13 @@ function resize() {
   renderer.setSize(width, height, false)
   camera.aspect = width / height
   const distance = camera.aspect < 1 ? 29 : 20
-  camera.position.set(0, distance * 0.22, distance)
+  camera.position.set(0, distance * 0.42, distance)
   camera.lookAt(0, 0, 0)
   camera.updateProjectionMatrix()
   camera.updateMatrixWorld()
-  lamp.position.copy(camera.position)
+  camera.getWorldDirection(viewDirection)
+  aimPlane.setFromNormalAndCoplanarPoint(viewDirection, origin)
+  lamp.position.copy(camera.position).add(new THREE.Vector3(-3.5, 2.2, -1))
   resume()
 }
 function move(event: PointerEvent) {
@@ -132,10 +147,12 @@ async function load() {
     model.position.sub(center)
     group.add(model)
     group.scale.setScalar(scale)
-    group.rotation.y = -Math.PI / 2
+    group.rotation.y = -Math.PI / 2 + 0.38
     scene.add(group)
     model.traverse((node) => {
       if (!(node instanceof THREE.Mesh)) return
+      node.castShadow = true
+      node.receiveShadow = true
       const materials = Array.isArray(node.material) ? node.material : [node.material]
       materials.forEach((material) => {
         if (material instanceof THREE.MeshStandardMaterial) {
@@ -166,6 +183,8 @@ onMounted(async () => {
   try {
     renderer = new THREE.WebGLRenderer({ canvas: canvas.value, alpha: true, antialias: true, powerPreference: 'low-power' })
     renderer.setClearColor(0x000000, 0)
+    renderer.shadowMap.enabled = true
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap
     renderer.toneMapping = THREE.ACESFilmicToneMapping
     renderer.toneMappingExposure = 1.2
     resizeObserver = new ResizeObserver(resize)
@@ -192,6 +211,7 @@ onBeforeUnmount(() => {
   canvas.value?.removeEventListener('webglcontextlost', contextLost)
   canvas.value?.removeEventListener('webglcontextrestored', contextRestored)
   if (model) disposeModel(model)
+  lamp.shadow.map?.dispose()
   renderer?.dispose()
   scene.clear()
 })

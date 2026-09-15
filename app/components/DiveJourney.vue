@@ -4,7 +4,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 const { t } = useI18n()
 const reduced = useReducedMotion()
+const { setLocked } = useLenis()
 const root = ref<HTMLElement | null>(null)
+const dialogContentAttrs = { 'data-lenis-prevent': '', 'disableOutsidePointerEvents': true }
 const selected = ref<string | null>(null)
 const photoOpen = computed({
   get: () => selected.value !== null,
@@ -12,6 +14,8 @@ const photoOpen = computed({
     if (!value) selected.value = null
   }
 })
+watch(photoOpen, open => setLocked(open))
+
 const reefPhotos = [
   { key: 'reef-texture', service: 'women', drift: 100 },
   { key: 'reef-squid', service: 'photography', drift: -70 },
@@ -79,7 +83,10 @@ onMounted(() => {
   })
   ScrollTrigger.refresh()
 })
-onBeforeUnmount(() => media?.revert())
+onBeforeUnmount(() => {
+  media?.revert()
+  if (photoOpen.value) setLocked(false)
+})
 </script>
 
 <template>
@@ -337,10 +344,34 @@ onBeforeUnmount(() => media?.revert())
 
     <UModal
       v-model:open="photoOpen"
+      :content="dialogContentAttrs"
       :title="photoTitle"
       :description="selectedService ? t(`journey.services.${selectedService}.intro`) : t('journey.photoDescription')"
-      :ui="{ overlay: 'z-[80]', content: 'max-w-5xl z-[90]', body: 'p-2 sm:p-3' }"
+      :scrollable="!!selectedService"
+      :ui="{
+        overlay: 'z-[80]',
+        content: selectedService ? 'service-dialog max-w-5xl z-[90]' : 'max-w-5xl z-[90]',
+        header: selectedService ? 'px-6 pt-10 pb-6 sm:px-10 sm:pt-12 sm:pb-8 items-start' : '',
+        body: selectedService ? 'p-6 pt-0 sm:p-10 sm:pt-0' : 'p-2 sm:p-3'
+      }"
     >
+      <template #title>
+        <span
+          v-if="selectedService"
+          class="service-heading"
+        >
+          <span class="eyebrow">{{ t('journey.services.label') }} / Martina Álvarez</span>
+          <span class="service-heading__title font-display">{{ photoTitle }}</span>
+        </span>
+        <span v-else>{{ photoTitle }}</span>
+      </template>
+      <template #description>
+        <span
+          v-if="selectedService"
+          class="service-heading__subtitle font-display"
+        >{{ t(`journey.services.${selectedService}.intro`) }}</span>
+        <span v-else>{{ t('journey.photoDescription') }}</span>
+      </template>
       <template #close>
         <UButton
           icon="i-lucide-x"
@@ -355,16 +386,29 @@ onBeforeUnmount(() => media?.revert())
           v-if="selectedService"
           class="service-detail"
         >
-          <img
-            :src="`/img/${selected}.jpg`"
-            :alt="t(`journey.photos.${selected}`)"
-            width="1200"
-            height="800"
-          >
+          <div class="service-detail__gallery">
+            <img
+              v-for="image in 3"
+              :key="image"
+              :src="`/img/${selected}.jpg`"
+              :alt="image === 1 ? t(`journey.photos.${selected}`) : ''"
+              width="1200"
+              height="800"
+            >
+          </div>
           <div class="service-detail__copy">
             <p>{{ t(`journey.services.${selectedService}.body`) }}</p>
             <p>{{ t(`journey.services.${selectedService}.detail`) }}</p>
           </div>
+          <a
+            class="service-detail__instagram"
+            href="https://www.instagram.com/oceanomartina/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span>{{ t('journey.services.instagram') }}</span>
+            <span class="service-detail__handle">@oceanomartina <span aria-hidden="true">↗</span></span>
+          </a>
         </div>
         <img
           v-else-if="selected && photoKeys.includes(selected)"
@@ -409,13 +453,26 @@ em { font-weight: 300; color: #b4e6e7; }
 .service-card__content .eyebrow { font-size: .5rem; }
 .service-card__title { font-size: clamp(1.5rem, 3vw, 3rem); line-height: 1.05; margin: .5rem 0 1rem; color: #eafbff; }
 .service-card__more { display: flex; justify-content: space-between; font-size: .7rem; color: #c5e0e4; }
-.service-detail { display: grid; grid-template-columns: 1.1fr 1fr; gap: 1.5rem; align-items: center; }
-.service-detail img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: .5rem; }
-.service-detail__copy { padding: .5rem 1rem .5rem 0; font-size: .95rem; line-height: 1.8; }
-.service-detail__copy p + p { margin-top: 1rem; }
+:global(.service-dialog) { background: radial-gradient(ellipse at 12% 0%, #205b66aa, transparent 52%), linear-gradient(125deg, #123d4877, transparent 42%), linear-gradient(160deg, #082e3c, #031721 75%); color: #deedf0; border: 1px solid #a4dee329; border-radius: 1.25rem; box-shadow: 0 30px 100px #0009; --tw-divide-opacity: 0; }
+:global(.service-dialog > *) { border-color: transparent; }
+.service-heading { display: block; padding-right: 1.25rem; }
+.service-heading .eyebrow { display: block; font-size: .55rem; margin-bottom: 1.3rem; font-weight: 400; }
+.service-heading__title { display: block; font-size: clamp(2.5rem, 5vw, 4.75rem); line-height: 1.02; color: #effbfc; text-wrap: balance; }
+.service-heading__subtitle { display: block; font-size: clamp(1.3rem, 2.4vw, 2rem); font-style: italic; line-height: 1.3; color: #b4e6e7; margin-top: .65rem; }
+.service-detail { display: flex; flex-direction: column; gap: 1.8rem; }
+.service-detail__gallery { display: grid; grid-template-columns: 1.5fr 1fr; grid-template-rows: repeat(2, minmax(0, 1fr)); height: clamp(16rem, 35vw, 23rem); gap: .75rem; }
+.service-detail__gallery img { display: block; width: 100%; height: 100%; min-height: 0; object-fit: cover; border-radius: .5rem; }
+.service-detail__gallery img:first-child { grid-row: 1 / 3; }
+.service-detail__gallery img:nth-child(2) { object-position: center 25%; }
+.service-detail__gallery img:nth-child(3) { object-position: center 75%; }
+.service-detail__copy { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; font-size: .95rem; line-height: 1.8; color: #c3dade; }
+.service-detail__instagram { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .75rem 1.5rem; padding-top: 1.4rem; border-top: 1px solid #9dd4dc40; font-size: .85rem; color: #d9f1f0; }
+.service-detail__handle { display: inline-flex; align-items: center; gap: 1rem; font-size: 1.1rem; }
+.service-detail__instagram:hover { color: #fff; }
+.service-detail__instagram:focus-visible { outline: 2px solid #b4e6e7; outline-offset: 6px; }
 @media (max-width: 640px) {
-  .service-detail { grid-template-columns: 1fr; gap: .75rem; }
-  .service-detail__copy { padding: .5rem; }
+  .service-detail__copy { grid-template-columns: 1fr; gap: 1rem; }
+  .service-detail__gallery { height: 17rem; grid-template-columns: 1.2fr 1fr; gap: .5rem; }
   .service-card__title { font-size: 1.5rem; margin-bottom: .65rem; }
 }
 .chapter__word { position: absolute; bottom: 0; left: 24vw; font-size: 16vw; line-height: 1; color: #c1f0e6; opacity: .08; pointer-events: none; }
