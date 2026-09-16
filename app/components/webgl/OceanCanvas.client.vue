@@ -7,12 +7,15 @@ import { createDiveLife } from '~/utils/createDiveLife'
 const canvas = ref<HTMLCanvasElement | null>(null)
 const foregroundCanvas = ref<HTMLCanvasElement | null>(null)
 const reduced = useReducedMotion()
+const sunset = useState('ocean-sunset', () => false)
 const { progress } = useScrollDepth()
 const ready = ref(false)
 const entry = ref(0)
 const fallbackStyle = computed(() => ({
   backgroundColor: `hsl(204 80% ${Math.max(3, 34 - Math.pow(progress.value, 1.7) * 31)}%)`,
-  backgroundImage: entry.value < 0.5 ? 'url(/img/hero.jpg)' : 'none'
+  backgroundImage: entry.value < 0.5
+    ? `${sunset.value ? 'linear-gradient(#c66c4b66, #32244855), ' : ''}url(/img/hero.jpg)`
+    : 'none'
 }))
 let life: ReturnType<typeof createDiveLife> | undefined
 let renderer: THREE.WebGLRenderer | undefined
@@ -32,6 +35,7 @@ const scene = new THREE.Scene()
 const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
 const uniforms = {
   uTime: { value: 0 },
+  uSunset: { value: 0 },
   uDepth: { value: 0 },
   uEntry: { value: 0 },
   uResolution: { value: new THREE.Vector2(1, 1) },
@@ -42,6 +46,7 @@ const fragmentShader = /* glsl */ `
 precision highp float;
 varying vec2 vUv;
 uniform float uTime;
+uniform float uSunset;
 uniform float uDepth;
 uniform float uEntry;
 uniform vec2 uResolution;
@@ -66,15 +71,25 @@ float detail(vec2 p) {
   return sea(p) + (noise(p * 9.0 + uTime * .3) - .5) * .018
     + sin(p.x * 21.0 + sin(p.y * 16.0 + uTime)) * .004;
 }
+vec3 sunDirection() {
+  return normalize(mix(vec3(-.65, .32, -1.4), vec3(-.65, .075, -1.4), uSunset));
+}
+vec3 horizonColor() {
+  return mix(vec3(.57, .74, .76), vec3(.67, .36, .30), uSunset);
+}
 vec3 sky(vec3 rd) {
   float y = max(rd.y, 0.0);
-  vec3 col = mix(vec3(.72, .84, .84), vec3(.19, .43, .59), pow(y, .48));
-  vec3 sun = normalize(vec3(-.65, .32, -1.4));
+  vec3 horizon = mix(vec3(.72, .84, .84), vec3(.95, .52, .30), uSunset);
+  vec3 zenith = mix(vec3(.19, .43, .59), vec3(.19, .20, .37), uSunset);
+  vec3 col = mix(horizon, zenith, pow(y, .48));
+  vec3 sun = sunDirection();
   float s = max(dot(rd, sun), 0.0);
-  col += vec3(1.0, .85, .62) * (pow(s, 380.0) * 1.2 + pow(s, 12.0) * .16);
+  col += mix(vec3(1.0, .85, .62), vec3(1.0, .46, .16), uSunset)
+    * (pow(s, 380.0) * 1.2 + pow(s, 12.0) * mix(.16, .3, uSunset));
+  col += vec3(1.0, .73, .38) * smoothstep(.99955, .99982, s) * uSunset * .85;
   vec2 cp = rd.xz / (y + .22) * 3.0;
   float clouds = noise(cp) * .6 + noise(cp * 2.2) * .3 + noise(cp * 4.4) * .1;
-  col = mix(col, vec3(.89, .91, .87), smoothstep(.51, .77, clouds) * smoothstep(.0, .15, y) * .55);
+  col = mix(col, mix(vec3(.89, .91, .87), vec3(.68, .39, .40), uSunset), smoothstep(.51, .77, clouds) * smoothstep(.0, .15, y) * .55);
   return col;
 }
 vec3 aboveWater(vec2 uv) {
@@ -87,7 +102,7 @@ vec3 aboveWater(vec2 uv) {
   vec3 color = sky(rd);
   // Unresolved distant intersections become hazy water, never holes of sky.
   if (rd.y < 0.0) {
-    color = mix(vec3(.57, .74, .76), sky(vec3(rd.x, -rd.y, rd.z)) * .72,
+    color = mix(horizonColor(), sky(vec3(rd.x, -rd.y, rd.z)) * .72,
                 smoothstep(0.0, .12, -rd.y));
   }
   float distance = .035;
@@ -116,13 +131,14 @@ vec3 aboveWater(vec2 uv) {
     float facing = clamp(dot(n, -rd), 0.0, 1.0);
     float fresnel = .035 + .965 * pow(1.0 - facing, 5.0);
     vec3 reflected = sky(reflect(rd, n));
-    vec3 water = mix(vec3(.008, .105, .14), vec3(.025, .31, .32), clamp(p.y * .8 + .45, 0.0, 1.0));
+    vec3 water = mix(mix(vec3(.008, .105, .14), vec3(.025, .047, .09), uSunset),
+                     mix(vec3(.025, .31, .32), vec3(.13, .19, .23), uSunset), clamp(p.y * .8 + .45, 0.0, 1.0));
     water += vec3(.025, .12, .105) * pow(1.0 - facing, 2.0);
     color = mix(water, reflected, fresnel);
-    vec3 sun = normalize(vec3(-.65, .32, -1.4));
+    vec3 sun = sunDirection();
     float sparkle = pow(max(dot(reflect(rd, n), sun), 0.0), 190.0);
-    color += vec3(1.0, .88, .65) * sparkle * .85;
-    color = mix(color, vec3(.57, .74, .76), 1.0 - exp(-distance * .005));
+    color += mix(vec3(1.0, .88, .65), vec3(1.0, .55, .24), uSunset) * sparkle * mix(.85, 1.15, uSunset);
+    color = mix(color, horizonColor(), 1.0 - exp(-distance * .005));
   }
   return color;
 }
@@ -199,6 +215,9 @@ function draw(now: number) {
   previous = now
   if (!reduced.value) elapsed += delta
   depth = reduced.value ? progress.value : THREE.MathUtils.lerp(depth, progress.value, 1 - Math.exp(-delta * 9))
+  uniforms.uSunset.value = reduced.value
+    ? Number(sunset.value)
+    : THREE.MathUtils.lerp(uniforms.uSunset.value, Number(sunset.value), 1 - Math.exp(-delta * 2.5))
   uniforms.uTime.value = elapsed
   uniforms.uDepth.value = depth
   uniforms.uEntry.value = entry.value
@@ -299,6 +318,7 @@ onMounted(async () => {
   }
 })
 watch(reduced, resume)
+watch(sunset, resume)
 watch(progress, () => {
   if (reduced.value) resume()
 })

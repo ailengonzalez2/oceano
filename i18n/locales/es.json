@@ -33,7 +33,10 @@
     "role": "Fotógrafa submarina · Documentarista Marina",
     "tagline": "El océano no se mira. Se desciende.",
     "hint": "Mantené presionado para revelar",
-    "descent": "La superficie queda atrás. El azul nos rodea."
+    "descent": "La superficie queda atrás. El azul nos rodea.",
+    "day": "Día",
+    "sunset": "Atardecer",
+    "sunsetToggle": "Vista de atardecer"
   },
   "portfolio": {
     "zone": "Epipelágico · 0–200 m",

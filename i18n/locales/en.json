@@ -33,7 +33,10 @@
     "role": "Underwater photographer · Marine documentary filmmaker",
     "tagline": "You don't look at the ocean. You descend into it.",
     "hint": "Press and hold to reveal",
-    "descent": "The surface slips away. The blue surrounds us."
+    "descent": "The surface slips away. The blue surrounds us.",
+    "day": "Day",
+    "sunset": "Sunset",
+    "sunsetToggle": "Sunset view"
   },
   "portfolio": {
     "zone": "Epipelagic · 0–200 m",
