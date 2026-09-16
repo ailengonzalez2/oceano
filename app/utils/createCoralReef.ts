@@ -1,38 +1,23 @@
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js'
 
-/** Imported coral pieces, normalized independently and planted on shared rock banks. */
+/** A complete, life-size reef: its original floor and colonies stay connected. */
 export function createCoralReef(parent: THREE.Group, onReady?: () => void) {
   const group = new THREE.Group()
-  group.name = 'Imported coral reef'
+  group.name = 'Coral reef passage'
   parent.add(group)
-  const geometries = new Set<THREE.BufferGeometry>()
   const materials = new Set<THREE.MeshStandardMaterial>()
+  const geometries = new Set<THREE.BufferGeometry>()
   const textures = new Set<THREE.Texture>()
-  const instances: THREE.InstancedMesh[] = []
-  const layouts: { mesh: THREE.InstancedMesh, matrices: Float32Array, floorStart: number }[] = []
-  let horizontalSpread = THREE.MathUtils.clamp(window.innerWidth / window.innerHeight / 1.5, 0.38, 1)
-  function arrange(layout: typeof layouts[number]) {
-    const matrix = new THREE.Matrix4()
-    for (let i = 0; i < layout.mesh.count; i++) {
-      matrix.fromArray(layout.matrices, i * 16)
-      matrix.elements[12]! *= horizontalSpread
-      if (i >= layout.floorStart) {
-        matrix.elements[13] = plantingHeight(matrix.elements[12]!, matrix.elements[14]!) - 0.08
-      }
-      layout.mesh.setMatrixAt(i, matrix)
-    }
-    layout.mesh.instanceMatrix.needsUpdate = true
-    layout.mesh.computeBoundingSphere()
-    if (layout.mesh.boundingSphere) layout.mesh.boundingSphere.radius += 0.3
-  }
-  const clock = { value: 0 }
+  let horizontalSpread = 1
   let disposed = false
-  let loadedSets = 0
-  let visibility = 0
-
-  const fill = new THREE.HemisphereLight(0xb6e9ed, 0x183645, 1.6)
-  const sun = new THREE.DirectionalLight(0xc4f2ef, 2.4)
+  let ready = false
+  let mixer: THREE.AnimationMixer | undefined
+  const visibility = { value: 0 }
+  const currentTime = { value: 0 }
+  const fill = new THREE.HemisphereLight(0xb6e9ed, 0x183645, 1.2)
+  const sun = new THREE.DirectionalLight(0xc4f2ef, 2.7)
   sun.position.set(-8, 14, 5)
   sun.target.position.set(0, -4, -14)
   group.add(fill, sun, sun.target)
@@ -64,189 +49,180 @@ export function createCoralReef(parent: THREE.Group, onReady?: () => void) {
     return elevation
   }
 
-  function plantingHeight(x: number, z: number) {
-    let height = floorHeight(x, z)
-    banks.forEach((bank) => {
-      const dx = (x - bank.x * horizontalSpread) / (2.7 * Math.sqrt(horizontalSpread))
-      const dz = (z - bank.z) / 2.6
-      const radius = dx * dx + dz * dz
-      if (radius < 1) height = Math.max(height, bank.y + 1.2 * Math.sqrt(1 - radius) - 0.12)
-    })
-    return height
-  }
-
-  function trackTextures(material: THREE.Material) {
-    Object.values(material).forEach((value) => {
-      if (value instanceof THREE.Texture) textures.add(value)
+  function releaseResources() {
+    geometries.forEach(geometry => geometry.dispose())
+    materials.forEach(material => material.dispose())
+    textures.forEach((texture) => {
+      texture.dispose()
+      if (typeof ImageBitmap !== 'undefined' && texture.source.data instanceof ImageBitmap) texture.source.data.close()
     })
   }
 
-  function releaseSource(root: THREE.Object3D) {
-    const sourceGeometries = new Set<THREE.BufferGeometry>()
-    const sourceMaterials = new Set<THREE.Material>()
-    root.traverse((object) => {
-      if (!(object instanceof THREE.Mesh)) return
-      sourceGeometries.add(object.geometry)
-      const list = Array.isArray(object.material) ? object.material : [object.material]
-      list.forEach((material) => {
-        trackTextures(material)
-        sourceMaterials.add(material)
-      })
-    })
-    sourceGeometries.forEach(geometry => geometry.dispose())
-    sourceMaterials.forEach(material => material.dispose())
-  }
-
-  function makeMaterial(source: THREE.MeshStandardMaterial, soft: boolean) {
-    const material = source.clone()
-    material.metalness = 0
-    material.roughness = Math.max(0.75, material.roughness)
-    material.transparent = true
-    material.opacity = visibility
-    material.depthWrite = true
-    material.onBeforeCompile = (shader) => {
-      shader.uniforms.uCoralTime = clock
-      shader.vertexShader = `uniform float uCoralTime; varying float vCoralDistance;\n${shader.vertexShader}`
-      shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', `
-        #include <begin_vertex>
-        // Each normalized piece has its base at y=0: the current never lifts its roots.
-        float flexibility = pow(clamp(position.y, 0.0, 1.0), 2.0);
-        transformed.x += sin(uCoralTime * .65 + position.y * 2.5 + instanceMatrix[3].x) * flexibility * ${soft ? '0.055' : '0.012'};
-        transformed.z += cos(uCoralTime * .43 + instanceMatrix[3].z) * flexibility * ${soft ? '0.025' : '0.005'};
-      `).replace('#include <project_vertex>', '#include <project_vertex>\nvCoralDistance = length(mvPosition.xyz);')
-      shader.fragmentShader = `varying float vCoralDistance;\n${shader.fragmentShader}`
-      shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `
-        outgoingLight = mix(outgoingLight, vec3(.009, .085, .115), 1.0 - exp(-vCoralDistance * .025));
-        diffuseColor.a *= 1.0 - smoothstep(30.0, 52.0, vCoralDistance);
-        #include <opaque_fragment>
-      `)
+  // Optimized meshes contain many colonies. Find each connected piece so the
+  // bend starts at its own roots instead of moving the entire reef together.
+  function addCurrentWeights(mesh: THREE.Mesh) {
+    const geometry = mesh.geometry
+    if (geometry.hasAttribute('reefCurrent')) return
+    const positions = geometry.getAttribute('position')
+    const weights = new Float32Array(positions.count * 2)
+    const names = [mesh.name, ...(Array.isArray(mesh.material) ? mesh.material : [mesh.material]).map(material => material.name)].join(' ')
+    const flexible = !(mesh instanceof THREE.SkinnedMesh)
+      && /fanCoral|huanghua|shuicao|xiaohaizao|Tree|ttip|lef|bod1|lvcao/i.test(names)
+    if (flexible) {
+      const roots = Int32Array.from({ length: positions.count }, (_, i) => i)
+      const find = (index: number): number => {
+        while (roots[index] !== index) {
+          roots[index] = roots[roots[index]!]!
+          index = roots[index]!
+        }
+        return index
+      }
+      const join = (a: number, b: number) => {
+        roots[find(a)] = find(b)
+      }
+      const seams = new Map<string, number>()
+      const world = new THREE.Vector3()
+      for (let i = 0; i < positions.count; i++) {
+        const key = `${positions.getX(i)},${positions.getY(i)},${positions.getZ(i)}`
+        const previous = seams.get(key)
+        if (previous !== undefined) join(i, previous)
+        else seams.set(key, i)
+      }
+      const index = geometry.getIndex()
+      for (let i = 0; i < (index?.count ?? positions.count); i += 3) {
+        const a = index ? index.getX(i) : i
+        join(a, index ? index.getX(i + 1) : i + 1)
+        join(a, index ? index.getX(i + 2) : i + 2)
+      }
+      const bounds = new Map<number, { min: number, max: number, phase: number }>()
+      for (let i = 0; i < positions.count; i++) {
+        world.fromBufferAttribute(positions, i).applyMatrix4(mesh.matrixWorld)
+        const root = find(i)
+        const bound = bounds.get(root)
+        if (bound) {
+          bound.min = Math.min(bound.min, world.y)
+          bound.max = Math.max(bound.max, world.y)
+        } else bounds.set(root, { min: world.y, max: world.y, phase: world.x * 0.13 + world.z * 0.09 })
+      }
+      for (let i = 0; i < positions.count; i++) {
+        world.fromBufferAttribute(positions, i).applyMatrix4(mesh.matrixWorld)
+        const bound = bounds.get(find(i))!
+        const height = bound.max - bound.min
+        weights[i * 2] = height > 0.1 ? Math.pow(THREE.MathUtils.smoothstep(world.y, bound.min + height * 0.15, bound.max), 1.5) : 0
+        weights[i * 2 + 1] = bound.phase
+      }
+      mesh.frustumCulled = false
     }
-    material.customProgramCacheKey = () => soft ? 'soft-coral-current-v1' : 'branch-coral-current-v1'
-    materials.add(material)
-    return material
+    geometry.setAttribute('reefCurrent', new THREE.BufferAttribute(weights, 2))
   }
 
-  async function loadSet(url: string, soft: boolean, specimen = false) {
-    const gltf = await new GLTFLoader().loadAsync(url)
-    if (disposed) {
-      releaseSource(gltf.scene)
-      textures.forEach((texture) => {
-        texture.dispose()
-        if (typeof ImageBitmap !== 'undefined' && texture.source.data instanceof ImageBitmap) texture.source.data.close()
+  void new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync('/models/coral_reef_small.glb').then((gltf) => {
+    gltf.scene.updateMatrixWorld(true)
+    gltf.scene.traverse((object) => {
+      if (!(object instanceof THREE.Mesh)) return
+      addCurrentWeights(object)
+      geometries.add(object.geometry)
+      const list = Array.isArray(object.material) ? object.material : [object.material]
+      list.forEach((material: THREE.MeshStandardMaterial) => {
+        if (materials.has(material)) return
+        materials.add(material)
+        Object.values(material).forEach((value) => {
+          if (value instanceof THREE.Texture) textures.add(value)
+        })
+        material.metalness = 0
+        material.roughness = Math.max(0.7, material.roughness)
+        material.transparent = false
+        material.opacity = 1
+        material.depthWrite = true
+        material.onBeforeCompile = (shader) => {
+          shader.uniforms.uReefVisibility = visibility
+          shader.uniforms.uReefTime = currentTime
+          shader.vertexShader = `uniform float uReefTime; attribute vec2 reefCurrent; varying float vReefDistance;\n${shader.vertexShader}`
+          shader.vertexShader = shader.vertexShader.replace('#include <project_vertex>', `
+            vec4 reefWorld = modelMatrix * vec4(transformed, 1.0);
+            float phase = uReefTime * .7 + reefCurrent.y;
+            reefWorld.x += (sin(phase) * .18 + sin(phase * .57 + 1.2) * .045) * reefCurrent.x;
+            reefWorld.z += cos(phase * .73) * .10 * reefCurrent.x;
+            vec4 mvPosition = viewMatrix * reefWorld;
+            gl_Position = projectionMatrix * mvPosition;
+            vReefDistance = length(mvPosition.xyz);
+          `)
+          shader.fragmentShader = `uniform float uReefVisibility; varying float vReefDistance;\n${shader.fragmentShader}`
+          shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `
+            outgoingLight = mix(outgoingLight, vec3(.009, .085, .115), 1.0 - exp(-vReefDistance * .009));
+            diffuseColor.a *= uReefVisibility;
+            #include <opaque_fragment>
+          `)
+        }
+        material.customProgramCacheKey = () => 'complete-reef-current-v3'
       })
+    })
+    if (disposed) {
+      releaseResources()
       return
     }
+    // Use the seabed's dimensions, not the decorative scene bounds. A uniform
+    // scale keeps rocks and coral proportions intact on every viewport.
+    // Mirror across the swim lane, keeping both banks at the same depth.
+    // Turning the copy 180 degrees also reversed its near/far arrangement,
+    // which placed the largest foreground rocks on the left of the camera.
+    // Reuse geometry/textures, leave the original connected floor in place and
+    // keep the animated vegetation on the original bank only.
     gltf.scene.updateMatrixWorld(true)
-    const root = specimen ? gltf.scene : gltf.scene.getObjectByName(soft ? 'RootNode' : 'GLTF_SceneRootNode')
-    if (!root) {
-      releaseSource(gltf.scene)
-      throw new Error(`Coral collection root missing: ${url}`)
+    const oppositeBank = new THREE.Group()
+    oppositeBank.name = 'Additional reef colonies'
+    gltf.scene.traverse((object) => {
+      if (!(object instanceof THREE.Mesh) || object instanceof THREE.SkinnedMesh) return
+      const list = Array.isArray(object.material) ? object.material : [object.material]
+      if (list.some(material => material.name === 'useBackground2')) return
+      const colony = new THREE.Mesh(object.geometry, object.material)
+      colony.frustumCulled = object.frustumCulled
+      colony.matrixAutoUpdate = false
+      colony.matrix.copy(object.matrixWorld)
+      oppositeBank.add(colony)
+    })
+    oppositeBank.scale.set(-0.52, 0.52, 0.52)
+    oppositeBank.position.set(1.04, -10.5, -34)
+    group.add(oppositeBank)
+    gltf.scene.scale.setScalar(0.52)
+    gltf.scene.position.set(-1.04, -10.5, -34)
+    group.add(gltf.scene)
+    if (gltf.animations.length) {
+      mixer = new THREE.AnimationMixer(gltf.scene)
+      gltf.animations.forEach(clip => mixer!.clipAction(clip).play())
     }
-    // Rayaa's first nodes are the display plinth; numbered groups are the usable corals.
-    const pieces = specimen ? [root] : soft ? root.children : root.children.filter(child => child.name.startsWith('node_group_'))
-    const materialCache = new Map<THREE.Material, THREE.MeshStandardMaterial>()
-    const dummy = new THREE.Object3D()
-    pieces.forEach((piece, pieceIndex) => {
-      const bounds = new THREE.Box3().setFromObject(piece)
-      const size = bounds.getSize(new THREE.Vector3())
-      const center = bounds.getCenter(new THREE.Vector3())
-      const extent = Math.max(size.x, size.y, size.z)
-      if (extent < 0.00001) return
-      const normalization = new THREE.Matrix4().makeScale(1 / extent, 1 / extent, 1 / extent)
-        .multiply(new THREE.Matrix4().makeTranslation(-center.x, -bounds.min.y, -center.z))
-      piece.traverse((object) => {
-        if (!(object instanceof THREE.Mesh)) return
-        const geometry = object.geometry.clone().applyMatrix4(normalization.clone().multiply(object.matrixWorld))
-        geometries.add(geometry)
-        const sourceMaterials = Array.isArray(object.material) ? object.material : [object.material]
-        const mapped = sourceMaterials.map((source) => {
-          if (!materialCache.has(source)) {
-            const material = makeMaterial(source as THREE.MeshStandardMaterial, soft || (specimen && source.transparent))
-            // The specimen includes textured planes: discard their empty pixels
-            // so they do not hide neighbouring branches in the depth buffer.
-            if (specimen && source.transparent) material.alphaTest = 0.18
-            materialCache.set(source, material)
-          }
-          return materialCache.get(source)!
-        })
-        const floorStart = specimen ? banks.length : soft ? 3 : 4
-        const count = floorStart + (specimen ? 48 : soft ? 18 : 0)
-        const mesh = new THREE.InstancedMesh(geometry, mapped.length === 1 ? mapped[0]! : mapped, count)
-        mesh.name = `${specimen ? 'Coral Piece' : soft ? 'Soft' : 'Rayaa'} / ${piece.name}`
-        for (let copy = 0; copy < count; copy++) {
-          const bank = banks[specimen ? copy % banks.length : (pieceIndex * (soft ? 5 : 3) + copy * 5 + (soft ? 0 : 1)) % banks.length]!
-          const phase = pieceIndex * 2.399 + copy * 1.7
-          const spread = soft ? 1.25 : 0.85
-          const scale = specimen ? 3.8 + (copy % 3) * 0.45 : soft ? 1.6 + (pieceIndex % 5) * 0.25 : 2.8 + (pieceIndex % 3) * 0.8
-          dummy.position.set(bank.x + Math.sin(phase) * spread, bank.y + 1.1, bank.z + Math.cos(phase) * spread)
-          dummy.rotation.set(0, phase, bank.side * -0.04)
-          dummy.scale.setScalar(scale * (1 - Math.floor((pieceIndex + copy) % 3) * 0.1))
-          if (copy >= floorStart) {
-            const planted = copy - floorStart
-            const side = (planted + pieceIndex) % 2 ? 1 : -1
-            const variation = (Math.sin(phase * 7.13) + 1) / 2
-            const x = side * (3.6 + variation * 12)
-            const z = -5 - (planted % 6) * 7.1 - (pieceIndex % 4) * 0.6 + Math.cos(phase) * 1.1
-            dummy.position.set(x, 0, z)
-            dummy.rotation.set(0, phase, side * -0.03)
-            dummy.scale.setScalar(specimen ? 1.8 + variation * 1.8 : 0.75 + variation * 1.35)
-          }
-          dummy.updateMatrix()
-          mesh.setMatrixAt(copy, dummy.matrix)
-        }
-        const layout = { mesh, matrices: new Float32Array(mesh.instanceMatrix.array), floorStart }
-        layouts.push(layout)
-        arrange(layout)
-        group.add(mesh)
-        instances.push(mesh)
-      })
-    })
-    releaseSource(gltf.scene)
-    loadedSets++
+    ready = true
     onReady?.()
-  }
-
-  // Start after the hero has mounted; neither download blocks the ocean's first frame.
-  void Promise.allSettled([
-    loadSet('/models/coral_piece.glb', false, true),
-    loadSet('/models/soft_coral_set.glb', true)
-  ]).then((results) => {
-    if (disposed) return
-    results.forEach((result) => {
-      if (result.status === 'rejected') console.warn('[CoralReef] Could not load collection; retaining available reef', result.reason)
-    })
-  })
+  }).catch(error => console.warn('[CoralReef] Could not load reef; retaining fallback', error))
 
   return {
     banks,
     floorHeight,
-    get spread() {
-      return horizontalSpread
-    },
+    get spread() { return horizontalSpread },
     resize(aspect: number) {
       horizontalSpread = THREE.MathUtils.clamp(aspect / 1.5, 0.38, 1)
-      layouts.forEach(arrange)
     },
-    get ready() {
-      return loadedSets > 0
-    },
+    get ready() { return ready },
     update(time: number, opacity: number) {
-      clock.value = time
-      visibility = opacity
-      group.visible = opacity > 0.001 && loadedSets > 0
+      visibility.value = opacity
+      currentTime.value = time
+      // Blend only while entering/leaving the chapter. Inside the reef, use the
+      // opaque depth pass so overlapping colonies remain solid and correctly sorted.
+      const transitioning = opacity < 0.999
       materials.forEach((material) => {
-        material.opacity = opacity
+        if (material.transparent !== transitioning) {
+          material.transparent = transitioning
+          material.needsUpdate = true
+        }
       })
+      group.visible = opacity > 0.001 && ready
+      if (group.visible) mixer?.setTime(time * 0.65)
     },
     dispose() {
       disposed = true
-      instances.forEach(mesh => mesh.dispose())
-      geometries.forEach(geometry => geometry.dispose())
-      materials.forEach(material => material.dispose())
-      textures.forEach((texture) => {
-        texture.dispose()
-        if (typeof ImageBitmap !== 'undefined' && texture.source.data instanceof ImageBitmap) texture.source.data.close()
-      })
+      mixer?.stopAllAction()
+      if (mixer) mixer.uncacheRoot(mixer.getRoot())
+      releaseResources()
       parent.remove(group)
       group.clear()
     }

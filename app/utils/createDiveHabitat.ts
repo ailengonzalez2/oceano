@@ -243,7 +243,7 @@ export function createDiveHabitat(scene: THREE.Scene, onReady?: () => void) {
         // Moving the habitat toward the lens gives a true perspective fly-through,
         // while the other ocean zones retain their existing camera coordinates.
         group.position.y = THREE.MathUtils.lerp(-reefDepth * 82, -depth * 82 + 3.8, approach)
-        group.position.z = progress * 29
+        group.position.z = progress * (corals.ready ? 42 : 29)
         uniforms.uReefWet.value = wet * approach * (1 - THREE.MathUtils.smoothstep(progress, 0.86, 1))
       } else {
         group.position.set(0, -reefDepth * 82, 0)
@@ -251,6 +251,8 @@ export function createDiveHabitat(scene: THREE.Scene, onReady?: () => void) {
       corals.update(time, uniforms.uReefWet.value)
       branches.visible = !corals.ready
       tips.visible = !corals.ready
+      rocks.visible = !corals.ready
+      seabed.visible = !corals.ready
       group.visible = uniforms.uReefWet.value > 0.001
       const entryVisibility = wet
         * THREE.MathUtils.smoothstep(depth, entryStart - viewportDepth * 0.25, entryStart + viewportDepth * 0.15)

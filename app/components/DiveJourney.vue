@@ -276,22 +276,10 @@ onBeforeUnmount(() => {
         <summary>{{ t('journey.modelCredits') }}</summary>
         <p>
           <a
-            href="https://sketchfab.com/3d-models/corals-by-rayaa-8e1e9eec16094494967b9a6d731cde3b"
+            href="https://sketchfab.com/3d-models/coral-reef-small-90b0429f22bc4df7b7e05ed827e7ea80"
             target="_blank"
             rel="noopener noreferrer"
-          >Corals by Rayaa — Rayaa</a>
-          · <a
-            href="https://creativecommons.org/licenses/by-sa/4.0/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >CC BY-SA 4.0</a>
-        </p>
-        <p>
-          <a
-            href="https://sketchfab.com/3d-models/soft-coral-set-256355f15fcb4095af17b75ae572bff0"
-            target="_blank"
-            rel="noopener noreferrer"
-          >Soft Coral Set — Kanna-Nakajima</a>
+          >Coral reef small — Miguelangelo Rosario</a>
           · <a
             href="https://creativecommons.org/licenses/by/4.0/"
             target="_blank"

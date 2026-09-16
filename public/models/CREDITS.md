@@ -65,3 +65,12 @@ Attribution and license information above are preserved from each GLB's embedded
 - License: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 - File: `coral_piece.glb`, supplied by the user; original GLB preserved.
 - Display adaptations: normalized scale, repeated placements and rotations, underwater lighting, subtle current deformation and alpha masking for textured planes.
+
+## Coral reef small
+
+- Author: Miguelangelo Rosario — https://sketchfab.com/miguelangelo2k
+- Source: https://sketchfab.com/3d-models/coral-reef-small-90b0429f22bc4df7b7e05ed827e7ea80
+- License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+- File: `coral_reef_small.glb`, supplied by the user; attribution preserved from embedded metadata.
+- Adaptation: removed the backdrop, loose particle meshes and remote outlying meshes, optimized geometry and textures, retained the connected seabed and animation, uniformly scaled and lit for a forward swim through the reef.
+- Reproduction: `node scripts/prepare-reef-model.mjs /path/to/coral_reef_small.glb /tmp/coral-reef-prepared.glb`, then `npx --yes @gltf-transform/cli@4.5.0 optimize /tmp/coral-reef-prepared.glb public/models/coral_reef_small.glb --compress meshopt --texture-compress webp --texture-size 2048 --simplify-ratio 0.5 --simplify-error 0.001`.
