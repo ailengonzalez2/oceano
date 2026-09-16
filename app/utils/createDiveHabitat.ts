@@ -265,14 +265,16 @@ export function createDiveHabitat(scene: THREE.Scene, onReady?: () => void) {
         ray.position.set(
           Math.sin(phase) * halfWidth * 0.85,
           -depth * 82 + [3.5, -3.2, 5][i]! + Math.sin(phase * 1.4) * 0.7,
-          -distance
+          -distance + Math.cos(phase) * 1.5
         )
-        ray.rotation.set(0.65, -0.4, Math.sin(time * 0.18 + i) * 0.14)
+        // Manta geometry faces -Z: orient it along the path's tangent.
+        ray.rotation.set(0.65, Math.atan2(-Math.cos(phase) * halfWidth * 0.85, Math.sin(phase) * 1.5), Math.sin(time * 0.18 + i) * 0.14, 'YXZ')
       })
       rays.forEach((ray, i) => {
         ray.visible = wet > 0 && Math.abs(depth - openDepth) < 0.2
-        ray.position.set(Math.sin(time * 0.09 + i * 2) * 8, -openDepth * 82 + i * 3 + Math.sin(time * 0.3) * 0.4, -13 - i * 9)
-        ray.rotation.z = Math.sin(time * 0.18 + i) * 0.14
+        const phase = time * 0.09 + i * 2
+        ray.position.set(Math.sin(phase) * 8, -openDepth * 82 + i * 3 + Math.sin(time * 0.3) * 0.4, -13 - i * 9 + Math.cos(phase) * 1.5)
+        ray.rotation.set(0.65, Math.atan2(-Math.cos(phase) * 8, Math.sin(phase) * 1.5), Math.sin(time * 0.18 + i) * 0.14, 'YXZ')
       })
     },
     dispose() {

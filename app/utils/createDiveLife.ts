@@ -93,8 +93,16 @@ export function createDiveLife(onReady?: () => void) {
         vec3 p = position;
         float seed = instanceMatrix[3].x;
         p.z += sin(uTime * 4.0 + seed + p.x * 3.0) * .2 * (1.0 - smoothstep(-.9, .1, p.x));
-        vec4 world = instanceMatrix * vec4(p, 1.0);
-        world.x += sin(uTime * .15 + world.y * .04) * 4.0;
+        vec3 center = instanceMatrix[3].xyz;
+        float phase = uTime * .15 + center.y * .04;
+        // The nose points along +X. Follow the tangent of the swim path,
+        // including a shallow depth turn at each end of the crossing.
+        float heading = atan(sin(phase) * .65, cos(phase) * 4.0);
+        vec3 local = mat3(instanceMatrix) * p;
+        local.xz = mat2(cos(heading), -sin(heading), sin(heading), cos(heading)) * local.xz;
+        vec4 world = vec4(center + local, 1.0);
+        world.x += sin(phase) * 4.0;
+        world.z += cos(phase) * .65;
         world.y += sin(uTime * .8 + seed) * .12;
         vec4 view = modelViewMatrix * world;
         vFog = exp(view.z * .025);
@@ -115,7 +123,7 @@ export function createDiveLife(onReady?: () => void) {
     const school = Math.floor(i / 25)
     dummy.position.set((random() - 0.5) * 22, -8 - school * 12 + (random() - 0.5) * 5, -12 - random() * 18)
     dummy.scale.setScalar(0.25 + random() * 0.5)
-    dummy.rotation.set(0, school % 2 ? Math.PI : 0, (random() - 0.5) * 0.2)
+    dummy.rotation.set(0, 0, (random() - 0.5) * 0.2)
     dummy.updateMatrix()
     fish.setMatrixAt(i, dummy.matrix)
   }
