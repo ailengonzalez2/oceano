@@ -84,9 +84,6 @@ useSeoMeta({ title: () => t('work.meta'), description: () => t('work.intro') })
       class="work-selection work-container"
     >
       <div class="work-section-heading">
-        <p class="work-label">
-          {{ t('work.selected') }}
-        </p>
         <h2 class="font-display">
           {{ t('work.galleryTitle') }}
         </h2>
@@ -134,9 +131,6 @@ useSeoMeta({ title: () => t('work.meta'), description: () => t('work.intro') })
           >
         </figure>
         <div class="work-copy">
-          <p class="work-label">
-            {{ t('work.specialty') }}
-          </p>
           <h2 class="font-display">
             {{ t('work.specialtyTitle') }}<br><em>{{ t('work.specialtyEm') }}</em>
           </h2>
@@ -153,9 +147,6 @@ useSeoMeta({ title: () => t('work.meta'), description: () => t('work.intro') })
 
     <section class="work-container work-practice">
       <div class="work-copy">
-        <p class="work-label">
-          {{ t('work.practice') }}
-        </p>
         <h2 class="font-display">
           {{ t('work.practiceTitle') }}<br><em>{{ t('work.practiceEm') }}</em>
         </h2>
@@ -163,10 +154,9 @@ useSeoMeta({ title: () => t('work.meta'), description: () => t('work.intro') })
       </div>
       <div class="work-services">
         <article
-          v-for="(service, index) in ['photo', 'film', 'travel']"
+          v-for="service in ['photo', 'film', 'travel']"
           :key="service"
         >
-          <span class="work-label">0{{ index + 1 }}</span>
           <div>
             <h3 class="font-display">
               {{ t(`work.${service}Title`) }}
@@ -178,9 +168,6 @@ useSeoMeta({ title: () => t('work.meta'), description: () => t('work.intro') })
 
     <footer class="work-footer">
       <div class="work-container">
-        <p class="work-label">
-          MARTINA ÁLVAREZ / OCEANO
-        </p>
         <h2 class="font-display">
           {{ t('work.footerTitle') }}
         </h2>
@@ -243,7 +230,19 @@ useSeoMeta({ title: () => t('work.meta'), description: () => t('work.intro') })
 </template>
 
 <style scoped>
-.work-page { position: relative; background: #041923; color: #eafbff; }
+.work-page {
+  position: relative;
+  color: #eafbff;
+  /* One continuous water column, shared by every transparent section. */
+  background: linear-gradient(180deg,
+    #175b70 0%,
+    #12495f 16%,
+    #0c354b 36%,
+    #082738 56%,
+    #051b2a 74%,
+    #03121f 89%,
+    #020a14 100%);
+}
 .work-container { width: min(1180px, 86%); margin-inline: auto; }
 .work-header {
   position: fixed;
@@ -292,11 +291,10 @@ useSeoMeta({ title: () => t('work.meta'), description: () => t('work.intro') })
 .work-header nav a:hover, .work-header nav a[aria-current], .work-language:hover { color: #eafbff; }
 .work-header nav a:hover::after, .work-header nav a[aria-current]::after { transform: scaleX(1); }
 .work-language { cursor: pointer; border-left: 1px solid #a9e8f22b; padding-left: 1.6rem; }
-.work-hero { position: relative; min-height: 750px; padding-top: 100px; display: flex; align-items: center; overflow: hidden; background: #073246; }
-.work-hero__image { position: absolute; width: 100%; height: 100%; inset: 0; object-fit: cover; object-position: 50% 75%; opacity: .5; }
-.work-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, #032538e8, #03253850 75%), linear-gradient(0deg, #041923, transparent 65%); }
+.work-hero { position: relative; min-height: 750px; padding-top: 100px; display: flex; align-items: center; overflow: hidden; }
+.work-hero__image { position: absolute; width: 100%; height: 100%; inset: 0; object-fit: cover; object-position: 50% 75%; opacity: .5; mask-image: linear-gradient(180deg, #000 0%, #000c 38%, #0006 68%, transparent 100%); }
+.work-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, #03253880, #03253810 75%); mask-image: linear-gradient(180deg, #000 25%, transparent 100%); }
 .work-hero__content { position: relative; z-index: 1; width: min(1180px, 86%); margin: 5rem auto 7rem; }
-.work-label { color: #a9d5dc; letter-spacing: .2em; font-size: .62rem; line-height: 1.8; }
 h1 { font-size: clamp(3.6rem, 6.6vw, 6.9rem); line-height: 1; max-width: 960px; margin: 1.8rem 0; }
 em { color: #b5e0e5; font-weight: inherit; }
 .work-hero__intro { max-width: 450px; font-size: .9rem; line-height: 1.9; color: #d1e3e9; }
@@ -304,7 +302,7 @@ em { color: #b5e0e5; font-weight: inherit; }
 .work-link:hover { background: #a9e8f215; }
 .work-section-heading { text-align: center; max-width: 660px; margin: 0 auto 4rem; }
 h2 { font-size: clamp(2.8rem, 4vw, 4rem); line-height: 1.07; margin: 1.2rem 0 1.5rem; }
-.work-section-heading > p:not(.work-label), .work-copy > p:not(.work-label) { font-size: .88rem; line-height: 1.95; color: #b7ccd5; }
+.work-section-heading > p, .work-copy > p { font-size: .88rem; line-height: 1.95; color: #b7ccd5; }
 .work-section-heading small { display: block; margin-top: 1.6rem; font-size: .64rem; color: #86a7b4; }
 .work-selection { padding-block: 7rem 9rem; scroll-margin-top: 120px; }
 .work-gallery { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: 3rem; row-gap: 4rem; align-items: start; }
@@ -321,7 +319,7 @@ h2 { font-size: clamp(2.8rem, 4vw, 4rem); line-height: 1.07; margin: 1.2rem 0 1.
 .work-photo__expand { position: absolute; bottom: 1rem; right: 1rem; display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid #fff5; border-radius: 50%; background: #04192366; }
 .work-photo figcaption { display: flex; justify-content: space-between; padding-top: 1rem; color: #a9c7d2; font-size: .67rem; letter-spacing: .04em; }
 .work-photo figcaption span:last-child { color: #7395a5; }
-.work-sharks { padding-block: 6rem; background: linear-gradient(130deg, #082c40, #051e2d); }
+.work-sharks { padding-block: 6rem; }
 .work-split { display: grid; grid-template-columns: 1.1fr 1fr; align-items: center; gap: 7%; }
 .work-sharks__image { margin: 0; }
 .work-sharks__image img { width: 100%; aspect-ratio: .95; height: auto; object-fit: cover; object-position: 55%; }
@@ -330,8 +328,8 @@ h2 { font-size: clamp(2.8rem, 4vw, 4rem); line-height: 1.07; margin: 1.2rem 0 1.
 .work-services article { display: flex; gap: 1.8rem; padding: 1.7rem 0; border-top: 1px solid #9dced22b; }
 .work-services h3 { font-size: 1.9rem; line-height: 1.2; margin-bottom: .6rem; }
 .work-services p { color: #b7ccd5; font-size: .8rem; line-height: 1.8; }
-.work-footer { padding-top: 6rem; background: radial-gradient(ellipse at top, #0a3545, #020a14 75%); text-align: center; }
-.work-footer > div > p:not(.work-label) { color: #b7ccd5; font-size: .85rem; }
+.work-footer { padding-top: 6rem; text-align: center; }
+.work-footer > div > p { color: #b7ccd5; font-size: .85rem; }
 .work-footer__bottom { display: flex; justify-content: space-between; gap: 1.5rem; text-align: left; padding-block: 2rem; margin-top: 6rem; border-top: 1px solid #a9e8f222; font-size: .65rem; color: #a2becb; }
 .work-page :is(a, button):focus-visible { outline: 2px solid #a9e8f2; outline-offset: 5px; }
 .work-lightbox { position: fixed; inset: 0; margin: auto; width: min(1100px, 94vw); max-height: 94svh; padding: 3.2rem 1.2rem 1rem; border: 1px solid #a9e8f22b; background: #031520; color: #eafbff; }
