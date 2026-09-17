@@ -2,14 +2,17 @@
 const { t, locale, setLocale } = useI18n()
 const { scrollTo, setLocked } = useLenis()
 const instagram = 'https://www.instagram.com/oceanomartina/'
-// Provisional local imagery; replace these entries when Martina's selection arrives.
+// Martina's photographs, alongside the retained shark and whale images.
 const photographs = [
-  { src: '/img/shark-front.jpg', key: 'shark', shape: 'wide' },
-  { src: '/img/reef.jpg', key: 'coral', shape: 'portrait' },
-  { src: '/img/turtle.jpg', key: 'turtle', shape: 'portrait' },
-  { src: '/img/whale.jpg', key: 'whale', shape: 'wide' },
-  { src: '/img/jellyfish.jpg', key: 'jellyfish', shape: 'wide' },
-  { src: '/img/kelp.jpg', key: 'kelp', shape: 'wide' }
+  { src: '/img/shark-front.jpg', key: 'shark', shape: 'wide', w: 1920, h: 1280 },
+  { src: '/img/martina/reef-fish.jpg', key: 'reefFish', shape: 'portrait', w: 1200, h: 1800 },
+  { src: '/img/martina/marine-detail.jpg', key: 'marineDetail', shape: 'portrait', w: 1200, h: 1800 },
+  { src: '/img/whale.jpg', key: 'whale', shape: 'wide', w: 1034, h: 594 },
+  { src: '/img/martina/coral-texture.jpg', key: 'coralTexture', shape: 'portrait', w: 1200, h: 1800 },
+  { src: '/img/martina/reef-life.jpg', key: 'reefLife', shape: 'portrait', w: 1200, h: 1800 },
+  { src: '/img/martina/lionfish.jpg', key: 'lionfish', shape: 'portrait', w: 1200, h: 1800 },
+  { src: '/img/martina/squid.jpg', key: 'squid', shape: 'wide', w: 1200, h: 800 },
+  { src: '/img/martina/sand-dollar.jpg', key: 'sandDollar', shape: 'wide', w: 1200, h: 800 }
 ]
 const dialog = ref<HTMLDialogElement | null>(null)
 const selected = ref(0)
@@ -88,7 +91,6 @@ useSeoMeta({ title: () => t('work.meta'), description: () => t('work.intro') })
           {{ t('work.galleryTitle') }}
         </h2>
         <p>{{ t('work.galleryIntro') }}</p>
-        <small>{{ t('work.preview') }}</small>
       </div>
       <div class="work-gallery">
         <figure
@@ -106,8 +108,8 @@ useSeoMeta({ title: () => t('work.meta'), description: () => t('work.intro') })
               :alt="t(`work.${photo.key}`)"
               loading="lazy"
               decoding="async"
-              width="1400"
-              height="1000"
+              :width="photo.w"
+              :height="photo.h"
             >
             <span
               class="work-photo__expand"
@@ -311,10 +313,10 @@ h2 { font-size: clamp(2.8rem, 4vw, 4rem); line-height: 1.07; margin: 1.2rem 0 1.
 .work-photo:nth-child(2) { grid-column: span 4; margin-top: 5rem; }
 .work-photo:nth-child(3) { grid-column: span 4; }
 .work-photo:nth-child(4) { grid-column: span 8; margin-top: 5rem; }
+.work-photo:nth-child(n+5):nth-child(-n+7) { grid-column: span 4; }
 .work-photo:nth-child(6) { margin-top: 4rem; }
 .work-photo button { display: block; width: 100%; position: relative; overflow: hidden; cursor: zoom-in; }
-.work-photo img { width: 100%; aspect-ratio: 1.5; height: auto; object-fit: cover; transition: transform .6s; }
-.work-photo--portrait img { aspect-ratio: .72; }
+.work-photo img { display: block; width: 100%; height: auto; transition: transform .6s; }
 .work-photo button:hover img { transform: scale(1.025); }
 .work-photo__expand { position: absolute; bottom: 1rem; right: 1rem; display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid #fff5; border-radius: 50%; background: #04192366; }
 .work-photo figcaption { display: flex; justify-content: space-between; padding-top: 1rem; color: #a9c7d2; font-size: .67rem; letter-spacing: .04em; }
@@ -352,7 +354,10 @@ h2 { font-size: clamp(2.8rem, 4vw, 4rem); line-height: 1.07; margin: 1.2rem 0 1.
   .work-photo:first-child, .work-photo:nth-child(4) { grid-column: span 12; }
   .work-photo:nth-child(2), .work-photo:nth-child(3) { grid-column: span 6; margin-top: 0; }
   .work-photo:nth-child(4) { margin-top: 0; }
+  .work-photo:nth-child(n+5):nth-child(-n+7) { grid-column: span 6; }
   .work-photo:nth-child(6) { margin-top: 2rem; }
+  .work-photo:nth-child(7) { grid-column: 1 / -1; width: 72%; justify-self: center; }
+  .work-photo:nth-child(8), .work-photo:nth-child(9) { grid-column: span 12; }
   .work-photo figcaption { font-size: .6rem; }
   .work-selection { padding-block: 4.5rem; }
   .work-split, .work-practice { grid-template-columns: 1fr; gap: 3rem; }
