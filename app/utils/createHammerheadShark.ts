@@ -8,6 +8,7 @@ export function createHammerheadShark(scene: THREE.Scene, onReady?: () => void) 
   root.visible = false
   scene.add(root)
   const darkness = { value: 0 }
+  const evening = { value: 0 }
   const geometries = new Set<THREE.BufferGeometry>()
   const materials = new Set<THREE.MeshStandardMaterial>()
   const textures = new Set<THREE.Texture>()
@@ -72,14 +73,16 @@ export function createHammerheadShark(scene: THREE.Scene, onReady?: () => void) 
         material.depthWrite = true
         material.onBeforeCompile = (shader) => {
           shader.uniforms.uSchoolDepth = darkness
+          shader.uniforms.uSchoolEvening = evening
           shader.vertexShader = `varying float vSchoolDistance;\n${shader.vertexShader}`
           shader.vertexShader = shader.vertexShader.replace('#include <project_vertex>', '#include <project_vertex>\nvSchoolDistance = length(mvPosition.xyz);')
-          shader.fragmentShader = `uniform float uSchoolDepth; varying float vSchoolDistance;\n${shader.fragmentShader}`
+          shader.fragmentShader = `uniform float uSchoolDepth; uniform float uSchoolEvening; varying float vSchoolDistance;\n${shader.fragmentShader}`
           shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `
             // Local water lighting uses the model's normal maps without adding
             // scene lights that would change the existing coral materials.
             float fishLight = .4 + .6 * max(dot(normal, normalize(vec3(-.4, .7, .8))), 0.0);
             outgoingLight = diffuseColor.rgb * fishLight * exp(-uSchoolDepth * 2.0);
+            outgoingLight *= mix(vec3(1.0), vec3(1.0, .78, .62) * .85, uSchoolEvening);
             outgoingLight = mix(outgoingLight, vec3(.006, .035, .055), 1.0 - exp(-vSchoolDistance * .026));
             // The shark stays solid, including as it crosses the camera plane.
             // Underwater distance affects colour, never the body opacity.
@@ -125,7 +128,8 @@ export function createHammerheadShark(scene: THREE.Scene, onReady?: () => void) 
       path.v1.x = span * 0.8
       path.v2.x = 0
     },
-    update(depth: number, wet: number, time: number) {
+    update(depth: number, wet: number, time: number, sunset = 0) {
+      evening.value = sunset
       section ??= document.getElementById('open-water')
       twilight ??= document.getElementById('stories')
       const delta = previousTime === undefined ? 0 : Math.min(0.05, Math.max(0, time - previousTime))

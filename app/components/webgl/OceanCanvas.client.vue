@@ -146,6 +146,7 @@ vec3 aboveWater(vec2 uv) {
 vec3 underWater(vec2 uv) {
   float d = uDepth;
   float t = uTime;
+  float evening = uSunset * (1.0 - smoothstep(.12, .88, d));
   // Keep the first half sunlit; reserve near-darkness for the final descent.
   float darkness = smoothstep(.12, 1.0, pow(d, 1.55));
   float daylight = exp(-pow(d, 2.0) * 3.2);
@@ -157,6 +158,7 @@ vec3 underWater(vec2 uv) {
   vec2 waterUv = uv + flow;
   float height = clamp(vUv.y + flow.y, 0.0, 1.0);
   vec3 shallow = mix(vec3(.015, .25, .34), vec3(.07, .52, .59), pow(height, 1.25));
+  shallow = mix(shallow, mix(vec3(.018, .12, .20), vec3(.24, .31, .34), pow(height, 1.6)), evening);
   vec3 deep = mix(vec3(.001, .006, .015), vec3(.003, .028, .060), height);
   vec3 color = mix(shallow, deep, darkness);
 
@@ -165,10 +167,10 @@ vec3 underWater(vec2 uv) {
   float caustic = sin(ceiling.x * 5.0 + t * .45 + sin(ceiling.y * 3.0 - t * .3));
   caustic *= sin(ceiling.y * 8.0 + t * .7 + sin(ceiling.x * 2.0));
   float surface = pow(height, 5.0 + d * 12.0) * exp(-pow(d, 1.6) * 5.0);
-  color += vec3(.14, .48, .46) * surface * (.4 + .6 * pow(abs(caustic), 5.0));
+  color += mix(vec3(.14, .48, .46), vec3(.58, .32, .13), evening) * surface * (.4 + .6 * pow(abs(caustic), 5.0));
 
   // Broad shafts fan out from the moving surface, with depth-dependent scattering.
-  float shaftCoord = (waterUv.x + .45 - uLook.x * .08) / (1.7 - height);
+  float shaftCoord = (waterUv.x + mix(.45, 1.15, evening) - uLook.x * .08) / (mix(1.7, 2.1, evening) - height);
   float shafts = 0.0;
   for (int i = 0; i < 4; i++) {
     float f = float(i);
@@ -177,9 +179,9 @@ vec3 underWater(vec2 uv) {
   }
   float haze = noise(waterUv * vec2(2.5, 3.5) + vec2(t * .09, d * 12.0 - t * .12));
   color *= 1.0 + (haze - .5) * .16 * daylight;
-  color += vec3(.10, .38, .43) * shafts * daylight * (.35 + .65 * vUv.y) * (.6 + haze * .4);
-  vec2 lightPos = vec2(-.38 + uLook.x * .06, 1.18 + d * .9);
-  color += vec3(.08, .24, .27) * exp(-length(uv - lightPos) * 2.1) * daylight;
+  color += mix(vec3(.10, .38, .43), vec3(.46, .28, .12), evening) * shafts * daylight * mix(1.0, .75, evening) * (.35 + .65 * vUv.y) * (.6 + haze * .4);
+  vec2 lightPos = vec2(mix(-.38, -.95, evening) + uLook.x * .06, 1.18 + d * .9);
+  color += mix(vec3(.08, .24, .27), vec3(.28, .15, .065), evening) * exp(-length(uv - lightPos) * 2.1) * daylight;
 
   // At depth, a soft diver's torch replaces the vanishing sunlight.
   float torch = exp(-length((uv - uLook * vec2(.65, .35)) * vec2(.85, 1.0)) * 3.0);
@@ -227,7 +229,7 @@ function draw(now: number) {
   renderer.clear()
   renderer.render(scene, camera)
   if (life && entry.value > 0.65) {
-    life.update(depth, entry.value, elapsed, look, reduced.value)
+    life.update(depth, entry.value, elapsed, look, reduced.value, uniforms.uSunset.value)
     renderer.clearDepth()
     renderer.render(life.scene, life.camera)
     foregroundRenderer?.render(life.foreground, life.camera)

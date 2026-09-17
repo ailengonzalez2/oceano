@@ -16,6 +16,11 @@ export function createCoralReef(parent: THREE.Group, onReady?: () => void) {
   let mixer: THREE.AnimationMixer | undefined
   const visibility = { value: 0 }
   const currentTime = { value: 0 }
+  const evening = { value: 0 }
+  const daySun = new THREE.Color(0xc4f2ef)
+  const duskSun = new THREE.Color(0xffbc80)
+  const dayFill = new THREE.Color(0xb6e9ed)
+  const duskFill = new THREE.Color(0x8099b5)
   const fill = new THREE.HemisphereLight(0xb6e9ed, 0x183645, 1.2)
   const sun = new THREE.DirectionalLight(0xc4f2ef, 2.7)
   sun.position.set(-8, 14, 5)
@@ -136,6 +141,7 @@ export function createCoralReef(parent: THREE.Group, onReady?: () => void) {
         material.depthWrite = true
         material.onBeforeCompile = (shader) => {
           shader.uniforms.uReefVisibility = visibility
+          shader.uniforms.uReefEvening = evening
           shader.uniforms.uReefTime = currentTime
           shader.vertexShader = `uniform float uReefTime; attribute vec2 reefCurrent; varying float vReefDistance;\n${shader.vertexShader}`
           shader.vertexShader = shader.vertexShader.replace('#include <project_vertex>', `
@@ -147,9 +153,9 @@ export function createCoralReef(parent: THREE.Group, onReady?: () => void) {
             gl_Position = projectionMatrix * mvPosition;
             vReefDistance = length(mvPosition.xyz);
           `)
-          shader.fragmentShader = `uniform float uReefVisibility; varying float vReefDistance;\n${shader.fragmentShader}`
+          shader.fragmentShader = `uniform float uReefEvening; uniform float uReefVisibility; varying float vReefDistance;\n${shader.fragmentShader}`
           shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `
-            outgoingLight = mix(outgoingLight, vec3(.009, .085, .115), 1.0 - exp(-vReefDistance * .009));
+            outgoingLight = mix(outgoingLight, mix(vec3(.009, .085, .115), vec3(.015, .045, .08), uReefEvening), 1.0 - exp(-vReefDistance * .009));
             diffuseColor.a *= uReefVisibility;
             #include <opaque_fragment>
           `)
@@ -203,7 +209,13 @@ export function createCoralReef(parent: THREE.Group, onReady?: () => void) {
       horizontalSpread = THREE.MathUtils.clamp(aspect / 1.5, 0.38, 1)
     },
     get ready() { return ready },
-    update(time: number, opacity: number) {
+    update(time: number, opacity: number, sunset = 0) {
+      evening.value = sunset
+      sun.color.copy(daySun).lerp(duskSun, sunset)
+      sun.intensity = THREE.MathUtils.lerp(2.7, 1.8, sunset)
+      sun.position.set(THREE.MathUtils.lerp(-8, -18, sunset), THREE.MathUtils.lerp(14, 7, sunset), 5)
+      fill.color.copy(dayFill).lerp(duskFill, sunset)
+      fill.intensity = THREE.MathUtils.lerp(1.2, 0.85, sunset)
       visibility.value = opacity
       currentTime.value = time
       // Blend only while entering/leaving the chapter. Inside the reef, use the

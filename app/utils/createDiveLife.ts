@@ -13,6 +13,7 @@ export function createDiveLife(onReady?: () => void) {
   const uniforms = {
     uTime: { value: 0 },
     uDepth: { value: 0 },
+    uSunset: { value: 0 },
     uWet: { value: 0 },
     uPixelRatio: { value: 1 }
   }
@@ -54,7 +55,7 @@ export function createDiveLife(onReady?: () => void) {
       }
     `,
     fragmentShader: /* glsl */ `
-      uniform float uDepth, uTime;
+      uniform float uDepth, uTime, uSunset;
       varying float vSeed, vAlpha;
       void main() {
         vec2 p = gl_PointCoord * 2.0 - 1.0;
@@ -66,6 +67,7 @@ export function createDiveLife(onReady?: () => void) {
         float glint = exp(-length(p - vec2(-.35, .4)) * 12.0) * .65;
         float alpha = mix(snow, rim + glint, bubble) * vAlpha;
         vec3 color = mix(vec3(.54, .79, .9), vec3(.12, .85, .65), smoothstep(.6, 1.0, uDepth));
+        color = mix(color, vec3(.9, .66, .39), uSunset * .65);
         float pulse = .7 + .3 * sin(uTime * 1.1 + vSeed * 100.0);
         gl_FragColor = vec4(color, alpha * pulse);
       }
@@ -195,13 +197,14 @@ export function createDiveLife(onReady?: () => void) {
       swimmingSchools.resize(width, height)
       hammerhead.resize(width, height)
     },
-    update(depth: number, entry: number, time: number, look: THREE.Vector2, reduced = false) {
+    update(depth: number, entry: number, time: number, look: THREE.Vector2, reduced = false, sunset = 0) {
+      uniforms.uSunset.value = sunset * (1 - THREE.MathUtils.smoothstep(depth, 0.12, 0.88))
       uniforms.uTime.value = time
       uniforms.uDepth.value = depth
       uniforms.uWet.value = THREE.MathUtils.smoothstep(entry, 0.65, 1)
-      habitat.update(depth, uniforms.uWet.value, time, reduced)
-      swimmingSchools.update(depth, uniforms.uWet.value, time)
-      hammerhead.update(depth, uniforms.uWet.value, time)
+      habitat.update(depth, uniforms.uWet.value, time, reduced, uniforms.uSunset.value)
+      swimmingSchools.update(depth, uniforms.uWet.value, time, uniforms.uSunset.value)
+      hammerhead.update(depth, uniforms.uWet.value, time, uniforms.uSunset.value)
       camera.position.set(look.x * 0.3, -depth * 82, 0)
       camera.lookAt(look.x * 0.65, camera.position.y + look.y * 0.25, -15)
     },

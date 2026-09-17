@@ -3,6 +3,7 @@
     <OceanCanvas />
     <ZoneSurface />
     <DiveJourney />
+    <DaylightSwitch />
   </div>
 </template>
 

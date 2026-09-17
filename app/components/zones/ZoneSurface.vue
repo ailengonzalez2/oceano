@@ -10,7 +10,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
  */
 const { t } = useI18n()
 const reduced = useReducedMotion()
-const sunset = useState('ocean-sunset', () => false)
 
 const root = ref<HTMLElement | null>(null)
 const content = ref<HTMLElement | null>(null)
@@ -65,22 +64,6 @@ onBeforeUnmount(() => ctx?.revert())
         {{ t('surface.tagline') }}
       </p>
     </div>
-
-    <button
-      type="button"
-      role="switch"
-      :aria-checked="sunset"
-      :aria-label="t('surface.sunsetToggle')"
-      class="surface__light-switch"
-      @click="sunset = !sunset"
-    >
-      <span :class="{ 'is-active': !sunset }">{{ t('surface.day') }}</span>
-      <span
-        class="surface__switch-track"
-        aria-hidden="true"
-      ><span /></span>
-      <span :class="{ 'is-active': sunset }">{{ t('surface.sunset') }}</span>
-    </button>
 
     <!-- Scroll-to-descend hint -->
     <div
@@ -152,51 +135,6 @@ onBeforeUnmount(() => ctx?.revert())
   height: 40px;
   background: linear-gradient(rgba(234, 251, 255, 0.9), transparent);
   animation: drip 2.2s ease-in-out infinite;
-}
-.surface__light-switch {
-  position: absolute;
-  right: clamp(1.2rem, 4vw, 4rem);
-  bottom: 3.2rem;
-  z-index: 5;
-  display: flex;
-  align-items: center;
-  gap: .75rem;
-  min-height: 44px;
-  padding: .6rem 1rem;
-  border: 1px solid #eafbff40;
-  border-radius: 999px;
-  background: #071e2b85;
-  backdrop-filter: blur(12px);
-  color: #d8e6ec;
-  font-size: .65rem;
-  letter-spacing: .08em;
-  cursor: pointer;
-}
-.surface__light-switch .is-active { color: #fff3dc; }
-.surface__light-switch:focus-visible { outline: 2px solid #fff3dc; outline-offset: 5px; }
-.surface__switch-track {
-  width: 34px;
-  height: 20px;
-  padding: 3px;
-  border-radius: 999px;
-  background: #5b96a7;
-  transition: background .4s;
-}
-.surface__switch-track > span {
-  display: block;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: #fff3dc;
-  transition: transform .4s;
-}
-.surface__light-switch[aria-checked="true"] .surface__switch-track { background: #bd744f; }
-.surface__light-switch[aria-checked="true"] .surface__switch-track > span { transform: translateX(14px); }
-@media (max-width: 640px) {
-  .surface__light-switch { bottom: 7rem; right: 50%; transform: translateX(50%); white-space: nowrap; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .surface__switch-track, .surface__switch-track > span { transition: none; }
 }
 @keyframes drip {
   0%, 100% { transform: scaleY(0.5); transform-origin: top; opacity: 0.4; }

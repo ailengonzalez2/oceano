@@ -26,7 +26,8 @@
     "portfolio": "Reef",
     "stories": "Encounters",
     "about": "Perspective",
-    "contact": "Contact"
+    "contact": "Contact",
+    "work": "MY WORK"
   },
   "surface": {
     "name": "Martina Álvarez",
@@ -192,5 +193,48 @@
       "close": "Close service",
       "instagram": "Connect with Martina on Instagram"
     }
+  },
+  "work": {
+    "eyebrow": "PHOTOGRAPHY · UNDERWATER FILM",
+    "title": "Stories that begin",
+    "titleEm": "beneath the surface.",
+    "intro": "A view of the ocean, its inhabitants and the ways we encounter them. Underwater photography and documentary storytelling by Martina Álvarez.",
+    "explore": "Explore images",
+    "back": "The immersion",
+    "contact": "Let’s talk",
+    "selected": "01 / A VIEW OF THE OCEAN",
+    "galleryTitle": "The sea, on its own terms.",
+    "galleryIntro": "Come closer. Observe. Wait. From great encounters to the smallest forms, each image invites a closer look.",
+    "preview": "Provisional visual selection · stock images",
+    "open": "Enlarge photograph",
+    "close": "Close photograph",
+    "previous": "Previous photograph",
+    "next": "Next photograph",
+    "shark": "Sharks",
+    "whale": "Encounters in the blue",
+    "coral": "The underwater garden",
+    "turtle": "Life among reefs",
+    "jellyfish": "Shapes of silence",
+    "kelp": "A shared world",
+    "specialty": "02 / SHARKS",
+    "specialtyTitle": "Changing perspectives.",
+    "specialtyEm": "Closer to their world.",
+    "specialtyBody": "Sharks are at the heart of Martina’s work. Underwater photography and film open a conversation about these animals, their place in the ocean and our relationship with them.",
+    "instagram": "See stories on Instagram",
+    "practice": "03 / PHOTOGRAPHY AND DOCUMENTARY",
+    "practiceTitle": "Observe first.",
+    "practiceEm": "Tell the story next.",
+    "practiceBody": "Diver, underwater photographer and marine documentarian. Martina brings her experience beneath the surface to stories about sharks and marine life.",
+    "photoTitle": "Underwater photography",
+    "photoBody": "Encounters, landscapes and details of a world that changes with the light.",
+    "filmTitle": "Documentary storytelling",
+    "filmBody": "Stories about the ocean and the connections we build with it.",
+    "travelTitle": "Ocean experiences",
+    "travelBody": "Women’s trips and encounters with the underwater world.",
+    "footerTitle": "A story to tell?",
+    "footerBody": "Photography, underwater film and projects that bring us closer to the sea.",
+    "footerLink": "Let’s talk on Instagram",
+    "rights": "Martina Álvarez · Photography and underwater film",
+    "meta": "My work — Martina Álvarez"
   }
 }

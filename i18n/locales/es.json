@@ -26,7 +26,8 @@
     "portfolio": "Arrecife",
     "stories": "Encuentros",
     "about": "La mirada",
-    "contact": "Contacto"
+    "contact": "Contacto",
+    "work": "MY TRABAJO"
   },
   "surface": {
     "name": "Martina Álvarez",
@@ -192,5 +193,48 @@
       "close": "Cerrar servicio",
       "instagram": "Conectá con Martina en Instagram"
     }
+  },
+  "work": {
+    "eyebrow": "FOTOGRAFÍA · CINE SUBMARINO",
+    "title": "Historias que nacen",
+    "titleEm": "bajo el agua.",
+    "intro": "Una mirada al océano, sus habitantes y nuestra forma de encontrarnos con ellos. Fotografía submarina y narrativa documental por Martina Álvarez.",
+    "explore": "Explorar imágenes",
+    "back": "La inmersión",
+    "contact": "Conversemos",
+    "selected": "01 / UNA MIRADA AL OCÉANO",
+    "galleryTitle": "El mar, en sus propios términos.",
+    "galleryIntro": "Acercarse. Observar. Esperar. De los grandes encuentros a las formas más pequeñas, cada imagen invita a mirar un poco más.",
+    "preview": "Selección visual provisional · imágenes de stock",
+    "open": "Ampliar fotografía",
+    "close": "Cerrar fotografía",
+    "previous": "Fotografía anterior",
+    "next": "Fotografía siguiente",
+    "shark": "Tiburones",
+    "whale": "Encuentros en el azul",
+    "coral": "El jardín sumergido",
+    "turtle": "Vida entre arrecifes",
+    "jellyfish": "Formas del silencio",
+    "kelp": "Un mundo compartido",
+    "specialty": "02 / TIBURONES",
+    "specialtyTitle": "Cambiar la mirada.",
+    "specialtyEm": "Acercarnos a su mundo.",
+    "specialtyBody": "Los tiburones están en el centro del trabajo de Martina. La fotografía y el cine submarino abren una conversación sobre estos animales, su lugar en el océano y nuestra relación con ellos.",
+    "instagram": "Ver historias en Instagram",
+    "practice": "03 / FOTOGRAFÍA Y DOCUMENTAL",
+    "practiceTitle": "Observar primero.",
+    "practiceEm": "Contar después.",
+    "practiceBody": "Buzo, fotógrafa submarina y documentarista marina. Martina reúne la experiencia bajo el agua con una mirada que busca contar historias sobre tiburones y vida marina.",
+    "photoTitle": "Fotografía submarina",
+    "photoBody": "Encuentros, paisajes y detalles de un mundo que cambia con la luz.",
+    "filmTitle": "Narrativa documental",
+    "filmBody": "Historias sobre el océano y los vínculos que construimos con él.",
+    "travelTitle": "Experiencias en el mar",
+    "travelBody": "Viajes de mujeres y encuentros con el mundo submarino.",
+    "footerTitle": "¿Una historia por contar?",
+    "footerBody": "Fotografía, cine submarino y proyectos que nos acerquen al mar.",
+    "footerLink": "Hablemos en Instagram",
+    "rights": "Martina Álvarez · Fotografía y cine submarino",
+    "meta": "My trabajo — Martina Álvarez"
   }
 }

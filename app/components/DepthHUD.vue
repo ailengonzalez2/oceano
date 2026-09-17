@@ -172,6 +172,12 @@ onBeforeUnmount(() => observer?.disconnect())
 
     <!-- Controls (top-right) -->
     <div class="hud__controls">
+      <NuxtLink
+        to="/mi-trabajo"
+        class="hud__btn tracking-hud hud__work-link"
+      >
+        {{ t('nav.work') }}
+      </NuxtLink>
       <!-- Section nav — same frosted-pill UI as the language toggle -->
       <nav
         class="hud__btn hud__nav tracking-hud"
@@ -425,5 +431,6 @@ onBeforeUnmount(() => observer?.disconnect())
   /* The text nav can't fit a phone alongside ES/EN + audio; on phones the
      descent scroll is the primary navigation, so the section nav is hidden here. */
   .hud__nav { display: none; }
+  .hud__work-link { position: fixed; top: 4rem; right: 1rem; }
 }
 </style>

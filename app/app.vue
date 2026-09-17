@@ -8,6 +8,7 @@
  * autoplays).
  */
 const { t, locale } = useI18n()
+const route = useRoute()
 
 const { start, stop } = useLenis()
 const { begin: beginDiveClock } = useDiveClock()
@@ -41,7 +42,7 @@ onBeforeUnmount(() => stop())
     >{{ t('a11y.skip') }}</a>
 
     <!-- Persistent HUD: depth / temp / progress + nav + language toggle -->
-    <DepthHUD />
+    <DepthHUD v-if="route.path === '/'" />
 
     <main id="contenido">
       <NuxtPage />
