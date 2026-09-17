@@ -46,14 +46,15 @@ useSeoMeta({ title: () => t('work.meta'), description: () => t('work.intro') })
           target="_blank"
           rel="noopener noreferrer"
         >{{ t('work.contact') }} ↗</a>
-        <button
-          type="button"
-          :aria-label="t('a11y.langToggle')"
-          @click="setLocale(locale === 'es' ? 'en' : 'es')"
-        >
-          {{ locale.toUpperCase() }} / {{ locale === 'es' ? 'EN' : 'ES' }}
-        </button>
       </nav>
+      <button
+        class="work-language"
+        type="button"
+        :aria-label="t('a11y.langToggle')"
+        @click="setLocale(locale === 'es' ? 'en' : 'es')"
+      >
+        {{ locale.toUpperCase() }} / {{ locale === 'es' ? 'EN' : 'ES' }}
+      </button>
     </header>
 
     <section class="work-hero">
@@ -64,9 +65,6 @@ useSeoMeta({ title: () => t('work.meta'), description: () => t('work.intro') })
         class="work-hero__image"
       >
       <div class="work-hero__content">
-        <p class="work-label">
-          {{ t('work.eyebrow') }}
-        </p>
         <h1 class="font-display">
           {{ t('work.title') }}<br><em>{{ t('work.titleEm') }}</em>
         </h1>
@@ -79,10 +77,6 @@ useSeoMeta({ title: () => t('work.meta'), description: () => t('work.intro') })
           @click.prevent="scrollTo('#seleccion')"
         >{{ t('work.explore') }} <span aria-hidden="true">↓</span></a>
       </div>
-      <span
-        class="work-hero__index"
-        aria-hidden="true"
-      >OCEANO / PORTFOLIO</span>
     </section>
 
     <section
@@ -249,14 +243,56 @@ useSeoMeta({ title: () => t('work.meta'), description: () => t('work.intro') })
 </template>
 
 <style scoped>
-.work-page { background: #041923; color: #eafbff; }
+.work-page { position: relative; background: #041923; color: #eafbff; }
 .work-container { width: min(1180px, 86%); margin-inline: auto; }
-.work-header { display: flex; align-items: center; justify-content: space-between; gap: 2rem; padding: 1.6rem 4%; background: #041923; border-bottom: 1px solid #a9e8f21c; }
-.work-brand { font-size: 1.8rem; font-style: italic; white-space: nowrap; }
-.work-header nav { display: flex; gap: 2rem; align-items: center; font-size: .65rem; letter-spacing: .07em; }
-.work-header nav [aria-current] { color: #a9e8f2; border-bottom: 1px solid #a9e8f2; padding-bottom: .3rem; }
-.work-header button { cursor: pointer; }
-.work-hero { position: relative; min-height: 660px; display: flex; align-items: center; overflow: hidden; background: #073246; }
+.work-header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  min-height: 100px;
+  padding: 1.2rem max(7%, calc((100% - 1180px) / 2));
+  background: linear-gradient(180deg, #031a2a70, #031a2a20);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid #a9e8f21c;
+}
+.work-brand { font-size: 1.85rem; font-style: italic; white-space: nowrap; justify-self: start; line-height: 1.2; }
+.work-header nav { display: flex; gap: clamp(1.2rem, 2.4vw, 2.4rem); align-items: center; }
+.work-header nav a, .work-language {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: .65rem 0;
+  font-family: var(--font-sans);
+  font-size: .65rem;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #d1e3e9;
+  transition: color .2s;
+}
+.work-header nav a::after {
+  content: '';
+  position: absolute;
+  bottom: .25rem;
+  inset-inline: 0;
+  height: 1px;
+  background: #a9e8f2;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .2s;
+}
+.work-header nav a:hover, .work-header nav a[aria-current], .work-language:hover { color: #eafbff; }
+.work-header nav a:hover::after, .work-header nav a[aria-current]::after { transform: scaleX(1); }
+.work-language { cursor: pointer; border-left: 1px solid #a9e8f22b; padding-left: 1.6rem; }
+.work-hero { position: relative; min-height: 750px; padding-top: 100px; display: flex; align-items: center; overflow: hidden; background: #073246; }
 .work-hero__image { position: absolute; width: 100%; height: 100%; inset: 0; object-fit: cover; object-position: 50% 75%; opacity: .5; }
 .work-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, #032538e8, #03253850 75%), linear-gradient(0deg, #041923, transparent 65%); }
 .work-hero__content { position: relative; z-index: 1; width: min(1180px, 86%); margin: 5rem auto 7rem; }
@@ -266,12 +302,11 @@ em { color: #b5e0e5; font-weight: inherit; }
 .work-hero__intro { max-width: 450px; font-size: .9rem; line-height: 1.9; color: #d1e3e9; }
 .work-link { display: inline-flex; align-items: center; justify-content: space-between; gap: 2.5rem; border: 1px solid #aedbe260; border-radius: 999px; padding: .95rem 1.65rem; margin-top: 2rem; font-size: .7rem; transition: background .2s; }
 .work-link:hover { background: #a9e8f215; }
-.work-hero__index { position: absolute; z-index: 1; right: 4%; bottom: 2.4rem; font-size: .55rem; letter-spacing: .22em; color: #acd2dc; }
 .work-section-heading { text-align: center; max-width: 660px; margin: 0 auto 4rem; }
 h2 { font-size: clamp(2.8rem, 4vw, 4rem); line-height: 1.07; margin: 1.2rem 0 1.5rem; }
 .work-section-heading > p:not(.work-label), .work-copy > p:not(.work-label) { font-size: .88rem; line-height: 1.95; color: #b7ccd5; }
 .work-section-heading small { display: block; margin-top: 1.6rem; font-size: .64rem; color: #86a7b4; }
-.work-selection { padding-block: 7rem 9rem; scroll-margin-top: 2rem; }
+.work-selection { padding-block: 7rem 9rem; scroll-margin-top: 120px; }
 .work-gallery { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: 3rem; row-gap: 4rem; align-items: start; }
 .work-photo { grid-column: span 6; margin: 0; }
 .work-photo:first-child { grid-column: span 8; }
@@ -308,9 +343,12 @@ h2 { font-size: clamp(2.8rem, 4vw, 4rem); line-height: 1.07; margin: 1.2rem 0 1.
 .work-lightbox__nav p { font-size: .75rem; text-align: center; }
 .work-lightbox__nav span { margin-left: 1rem; color: #94b7c6; }
 @media (max-width: 760px) {
-  .work-header { flex-wrap: wrap; padding: 1.2rem 7%; gap: 1rem; }
-  .work-header nav { gap: 1.2rem; flex-wrap: wrap; font-size: .6rem; }
-  .work-hero { min-height: 590px; }
+  .work-header { grid-template-columns: 1fr auto; padding: .8rem 7% .65rem; gap: .3rem 1rem; }
+  .work-brand { font-size: 1.65rem; }
+  .work-header nav { grid-column: 1 / -1; grid-row: 2; justify-content: space-between; gap: .8rem; }
+  .work-header nav a, .work-language { font-size: .58rem; letter-spacing: .08em; }
+  .work-language { grid-column: 2; grid-row: 1; border-left: none; padding-left: .5rem; }
+  .work-hero { min-height: 700px; padding-top: 124px; }
   .work-hero__content { margin-block: 4rem 6rem; }
   .work-gallery { gap: 2rem 1.2rem; }
   .work-photo:first-child, .work-photo:nth-child(4) { grid-column: span 12; }
