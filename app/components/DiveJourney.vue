@@ -366,6 +366,7 @@ onBeforeUnmount(() => {
           color="neutral"
           variant="ghost"
           class="absolute top-4 end-4"
+          :class="{ 'service-dialog__close': selectedService }"
           :aria-label="selectedService ? t('journey.services.close') : t('journey.close')"
         />
       </template>
@@ -441,23 +442,26 @@ em { font-weight: 300; color: #b4e6e7; }
 .service-card__content .eyebrow { font-size: .5rem; }
 .service-card__title { font-size: clamp(1.5rem, 3vw, 3rem); line-height: 1.05; margin: .5rem 0 1rem; color: #eafbff; }
 .service-card__more { display: flex; justify-content: space-between; font-size: .7rem; color: #c5e0e4; }
-:global(.service-dialog) { background: radial-gradient(ellipse at 12% 0%, #205b66aa, transparent 52%), linear-gradient(125deg, #123d4877, transparent 42%), linear-gradient(160deg, #082e3c, #031721 75%); color: #deedf0; border: 1px solid #a4dee329; border-radius: 1.25rem; box-shadow: 0 30px 100px #0009; --tw-divide-opacity: 0; }
+:global(.service-dialog) { background: linear-gradient(145deg, #deedf2, #cbdfe7); color: #183946; border: 1px solid #b9d3de; border-radius: 1.25rem; box-shadow: 0 30px 100px #0009; --tw-divide-opacity: 0; }
 :global(.service-dialog > *) { border-color: transparent; }
+.service-dialog__close { color: #244d5a; background: #c5dce5; }
+.service-dialog__close:hover { color: #103949; background: #b8d2de; }
+.service-dialog__close:focus-visible { outline: 2px solid #205969; outline-offset: 3px; }
 .service-heading { display: block; padding-right: 1.25rem; }
-.service-heading .eyebrow { display: block; font-size: .55rem; margin-bottom: 1.3rem; font-weight: 400; }
-.service-heading__title { display: block; font-size: clamp(2.5rem, 5vw, 4.75rem); line-height: 1.02; color: #effbfc; text-wrap: balance; }
-.service-heading__subtitle { display: block; font-size: clamp(1.3rem, 2.4vw, 2rem); font-style: italic; line-height: 1.3; color: #b4e6e7; margin-top: .65rem; }
+.service-heading .eyebrow { display: block; font-size: .55rem; margin-bottom: 1.3rem; font-weight: 400; color: #526c73; }
+.service-heading__title { display: block; font-size: clamp(2.5rem, 5vw, 4.75rem); line-height: 1.02; color: #103949; text-wrap: balance; }
+.service-heading__subtitle { display: block; font-size: clamp(1.3rem, 2.4vw, 2rem); font-style: italic; line-height: 1.3; color: #356573; margin-top: .65rem; }
 .service-detail { display: flex; flex-direction: column; gap: 1.8rem; }
 .service-detail__gallery { display: grid; grid-template-columns: 1.5fr 1fr; grid-template-rows: repeat(2, minmax(0, 1fr)); height: clamp(16rem, 35vw, 23rem); gap: .75rem; }
 .service-detail__gallery img { display: block; width: 100%; height: 100%; min-height: 0; object-fit: cover; border-radius: .5rem; }
 .service-detail__gallery img:first-child { grid-row: 1 / 3; }
 .service-detail__gallery img:nth-child(2) { object-position: center 25%; }
 .service-detail__gallery img:nth-child(3) { object-position: center 75%; }
-.service-detail__copy { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; font-size: .95rem; line-height: 1.8; color: #c3dade; }
-.service-detail__instagram { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .75rem 1.5rem; padding-top: 1.4rem; border-top: 1px solid #9dd4dc40; font-size: .85rem; color: #d9f1f0; }
+.service-detail__copy { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; font-size: .95rem; line-height: 1.8; color: #3b5560; }
+.service-detail__instagram { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .75rem 1.5rem; padding-top: 1.4rem; border-top: 1px solid #cbdcde; font-size: .85rem; color: #205969; }
 .service-detail__handle { display: inline-flex; align-items: center; gap: 1rem; font-size: 1.1rem; }
-.service-detail__instagram:hover { color: #fff; }
-.service-detail__instagram:focus-visible { outline: 2px solid #b4e6e7; outline-offset: 6px; }
+.service-detail__instagram:hover { color: #0b3546; }
+.service-detail__instagram:focus-visible { outline: 2px solid #205969; outline-offset: 6px; }
 @media (max-width: 640px) {
   .service-detail__copy { grid-template-columns: 1fr; gap: 1rem; }
   .service-detail__gallery { height: 17rem; grid-template-columns: 1.2fr 1fr; gap: .5rem; }
