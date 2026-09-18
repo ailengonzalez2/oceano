@@ -148,11 +148,31 @@ useSeoMeta({ title: () => t('work.meta'), description: () => t('work.intro') })
     </section>
 
     <section class="work-container work-practice">
+      <figure class="work-about__image">
+        <img
+          src="/img/martina/martina-diving.jpg"
+          :alt="t('work.aboutAlt')"
+          width="1200"
+          height="800"
+          loading="lazy"
+          decoding="async"
+        >
+        <figcaption>{{ t('work.aboutCaption') }}</figcaption>
+      </figure>
       <div class="work-copy">
         <h2 class="font-display">
-          {{ t('work.practiceTitle') }}<br><em>{{ t('work.practiceEm') }}</em>
+          <em>Martina Álvarez</em>
         </h2>
-        <p>{{ t('work.practiceBody') }}</p>
+        <p class="work-about__role">
+          {{ t('work.aboutRole') }}
+        </p>
+        <p>{{ t('work.aboutBody') }}</p>
+        <a
+          :href="instagram"
+          class="work-link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >{{ t('work.aboutContact') }} <span aria-hidden="true">↗</span></a>
       </div>
       <div class="work-services">
         <article
@@ -326,7 +346,12 @@ h2 { font-size: clamp(2.8rem, 4vw, 4rem); line-height: 1.07; margin: 1.2rem 0 1.
 .work-sharks__image { margin: 0; }
 .work-sharks__image img { width: 100%; aspect-ratio: .95; height: auto; object-fit: cover; object-position: 55%; }
 .work-copy h2 { font-size: clamp(2.8rem, 3.7vw, 4.1rem); }
-.work-practice { display: grid; grid-template-columns: 1fr 1fr; gap: 10%; padding-block: 8rem; align-items: center; }
+.work-practice { display: grid; grid-template-columns: 1.25fr 1fr; gap: 4rem 6%; padding-block: 8rem; align-items: center; }
+.work-about__image { margin: 0; }
+.work-about__image img { display: block; width: 100%; height: auto; }
+.work-about__image figcaption { margin-top: 1rem; font-size: .67rem; color: #a9c7d2; }
+.work-copy > .work-about__role { color: #b5e0e5; font-size: 1rem; margin-bottom: 1.5rem; }
+.work-services { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
 .work-services article { display: flex; gap: 1.8rem; padding: 1.7rem 0; border-top: 1px solid #9dced22b; }
 .work-services h3 { font-size: 1.9rem; line-height: 1.2; margin-bottom: .6rem; }
 .work-services p { color: #b7ccd5; font-size: .8rem; line-height: 1.8; }
@@ -364,6 +389,7 @@ h2 { font-size: clamp(2.8rem, 4vw, 4rem); line-height: 1.07; margin: 1.2rem 0 1.
   .work-sharks { padding-block: 3rem; }
   .work-sharks__image img { aspect-ratio: 1.2; }
   .work-practice { padding-block: 4rem; }
+  .work-services { grid-template-columns: 1fr; gap: 0; }
   .work-footer__bottom { flex-direction: column; text-align: center; align-items: center; }
 }
 </style>

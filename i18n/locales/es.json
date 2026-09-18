@@ -176,20 +176,23 @@
       "women": {
         "title": "Viajes de mujeres",
         "intro": "Compartir el mar, descubrir juntas.",
-        "body": "Viajes de mujeres alrededor del océano: una invitación a explorar, conectar con la vida marina y compartir la experiencia con otras mujeres.",
-        "detail": "Un espacio para encontrarse con el mar y construir comunidad desde la curiosidad, el respeto y las historias de cada viajera."
+        "body": "Para mujeres que quieren compartir una experiencia alrededor del océano, conectar con la vida marina y descubrir el mar en compañía.",
+        "detail": "Escribile a Martina para conocer las propuestas de viaje, las fechas y la experiencia de buceo necesaria para cada salida.",
+        "cta": "Consultar por un viaje"
       },
       "photography": {
         "title": "Fotografía submarina",
         "intro": "Una mirada que empieza bajo el agua.",
-        "body": "Fotografía de la vida marina, sus paisajes y los encuentros que suceden bajo la superficie. Imágenes que acercan el océano a quienes todavía no lo conocen.",
-        "detail": "Una mirada especialmente dedicada a los tiburones, que reúne buceo, observación y narrativa visual para contar cada historia desde el agua."
+        "body": "Fotografía submarina para proyectos que buscan contar el mar a través de sus paisajes, su vida y los encuentros bajo la superficie. Una mirada especialmente dedicada a los tiburones.",
+        "detail": "Contale qué necesitás fotografiar y para qué proyecto. El primer paso es conversar sobre la idea, el lugar y el uso de las imágenes.",
+        "cta": "Consultar por fotografía"
       },
       "documentary": {
         "title": "Documentalista marina",
         "intro": "Historias del océano que merecen ser contadas.",
-        "body": "Relatos audiovisuales sobre tiburones, vida marina y nuestra relación con el océano. El registro submarino como una forma de observar, comprender y compartir.",
-        "detail": "Una propuesta que une imágenes bajo el agua y las voces de quienes habitan, estudian y protegen el mar."
+        "body": "Para quienes quieren desarrollar una historia audiovisual sobre tiburones, vida marina o nuestra relación con el océano. El registro submarino como punto de partida para observar y contar.",
+        "detail": "Compartí la historia que querés contar y en qué etapa está tu proyecto para conversar con Martina sobre una posible colaboración.",
+        "cta": "Hablemos de tu documental"
       },
       "close": "Cerrar servicio",
       "instagram": "Conectá con Martina en Instagram"
@@ -243,6 +246,11 @@
     "reefLife": "Un jardín bajo el agua",
     "lionfish": "Pez león",
     "squid": "Calamar en el azul",
-    "sandDollar": "Formas sobre la arena"
+    "sandDollar": "Formas sobre la arena",
+    "aboutAlt": "Martina Álvarez buceando con su cámara sobre el arrecife",
+    "aboutCaption": "Martina, del otro lado de la cámara.",
+    "aboutRole": "Fotógrafa submarina · Documentarista marina",
+    "aboutBody": "Buzo y especialista en tiburones, Martina reúne la fotografía y el cine submarino para contar historias sobre el océano. Su trabajo nace bajo el agua: entre la vida del arrecife, los encuentros con animales marinos y las personas que comparten esa experiencia.",
+    "aboutContact": "Conversá con Martina"
   }
 }

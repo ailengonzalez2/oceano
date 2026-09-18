@@ -413,7 +413,7 @@ onBeforeUnmount(() => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <span>{{ t('journey.services.instagram') }}</span>
+            <span>{{ t(`journey.services.${selectedService}.cta`) }}</span>
             <span class="service-detail__handle">@oceanomartina <span aria-hidden="true">↗</span></span>
           </a>
         </div>

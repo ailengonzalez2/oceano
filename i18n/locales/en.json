@@ -176,20 +176,23 @@
       "women": {
         "title": "Women's trips",
         "intro": "Share the sea. Discover together.",
-        "body": "Ocean-focused trips for women: an invitation to explore, connect with marine life and share the experience with other women.",
-        "detail": "A space to meet the sea and build community through curiosity, respect and the stories each traveller brings."
+        "body": "For women who want to share an ocean experience, connect with marine life and discover the sea together.",
+        "detail": "Contact Martina to learn about trip proposals, dates and the diving experience needed for each outing.",
+        "cta": "Ask about a trip"
       },
       "photography": {
         "title": "Underwater photography",
         "intro": "A perspective that begins beneath the surface.",
-        "body": "Photography of marine life, underwater landscapes and encounters beneath the surface. Images that bring the ocean closer to those who have yet to discover it.",
-        "detail": "With a particular focus on sharks, this approach combines diving, observation and visual storytelling to tell each story from the water."
+        "body": "Underwater photography for projects that explore the sea through its landscapes, wildlife and encounters beneath the surface, with a particular focus on sharks.",
+        "detail": "Tell Martina what you would like to photograph and about your project. Start with a conversation about the idea, location and how the images will be used.",
+        "cta": "Ask about photography"
       },
       "documentary": {
         "title": "Marine documentary filmmaking",
         "intro": "Ocean stories worth telling.",
-        "body": "Visual stories about sharks, marine life and our relationship with the ocean. Underwater filmmaking as a way to observe, understand and share.",
-        "detail": "An approach that brings together underwater imagery and the voices of people who live alongside, study and protect the sea."
+        "body": "For those developing a visual story about sharks, marine life or our relationship with the ocean. Underwater footage as a starting point for observation and storytelling.",
+        "detail": "Share the story you want to tell and the stage of your project to discuss a possible collaboration with Martina.",
+        "cta": "Talk about your documentary"
       },
       "close": "Close service",
       "instagram": "Connect with Martina on Instagram"
@@ -243,6 +246,11 @@
     "reefLife": "An underwater garden",
     "lionfish": "Lionfish",
     "squid": "Squid in the blue",
-    "sandDollar": "Shapes on the sand"
+    "sandDollar": "Shapes on the sand",
+    "aboutAlt": "Martina Álvarez diving with her camera above the reef",
+    "aboutCaption": "Martina, on the other side of the camera.",
+    "aboutRole": "Underwater photographer · Marine documentary filmmaker",
+    "aboutBody": "A diver and shark specialist, Martina brings together photography and underwater filmmaking to tell stories about the ocean. Her work begins beneath the surface: among reef life, encounters with marine animals and the people who share that experience.",
+    "aboutContact": "Talk to Martina"
   }
 }
