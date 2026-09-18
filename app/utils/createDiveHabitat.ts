@@ -234,6 +234,7 @@ export function createDiveHabitat(scene: THREE.Scene, onReady?: () => void) {
       group.position.y = -reefDepth * 82
     },
     update(depth: number, wet: number, time: number, reduced: boolean, sunset = 0) {
+      if (depth >= passageStart - viewportDepth * 2 && depth <= passageEnd + viewportDepth) corals.preload()
       uniforms.uTime.value = time
       uniforms.uWet.value = wet * (1 - THREE.MathUtils.smoothstep(Math.abs(depth - openDepth), 0.1, 0.2))
       uniforms.uReefWet.value = wet * (1 - THREE.MathUtils.smoothstep(Math.abs(depth - reefDepth), 0.045, 0.13))

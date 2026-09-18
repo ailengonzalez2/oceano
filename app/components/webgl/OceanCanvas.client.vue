@@ -28,6 +28,8 @@ let frame = 0
 let visible = true
 let elapsed = 0
 let previous = 0
+let renderScale = 1
+let slowFrames = 0
 let depth = 0
 const pointer = new THREE.Vector2()
 const look = new THREE.Vector2()
@@ -213,6 +215,15 @@ void main() {
 function draw(now: number) {
   frame = 0
   if (!renderer || !visible || document.hidden) return
+  // Lower pixel cost only after sustained slow frames, not a single model upload.
+  if (previous && now - previous > 40) slowFrames++
+  else slowFrames = Math.max(0, slowFrames - 1)
+  if (slowFrames > 90 && renderScale > 0.65) {
+    renderScale = Math.max(0.65, renderScale * 0.85)
+    slowFrames = 0
+    resize()
+    cancelAnimationFrame(frame)
+  }
   const delta = previous ? Math.min((now - previous) / 1000, 0.05) : 0
   previous = now
   if (!reduced.value) elapsed += delta
@@ -245,7 +256,7 @@ function resize() {
   if (!canvas.value || !renderer) return
   const { width, height } = canvas.value.getBoundingClientRect()
   // Bound fragment cost on large/retina displays and phones.
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25, 1500 / Math.max(width, height)))
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, width < 640 ? 1 : 1.25, 1500 / Math.max(width, height)) * renderScale)
   renderer.setSize(width, height, false)
   foregroundRenderer?.setPixelRatio(renderer.getPixelRatio())
   foregroundRenderer?.setSize(width, height, false)

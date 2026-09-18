@@ -74,7 +74,6 @@ onBeforeUnmount(() => observer?.disconnect())
 <template>
   <div
     class="hud"
-    aria-live="polite"
   >
     <!-- Instruments (top-left) -->
     <div class="hud__computer">
@@ -419,18 +418,23 @@ onBeforeUnmount(() => observer?.disconnect())
 
 /* Tablet: keep the nav but tighten it so it shares the row with ES/EN + audio */
 @media (max-width: 1024px) {
-  .hud__nav { gap: 0.7rem; padding: 0.55rem 0.9rem; font-size: 0.62rem; }
+  .hud__nav { display: none; }
 }
 
 @media (max-width: 640px) {
-  .hud__computer { top: 1rem; left: .75rem; width: 14rem; }
-  .hud__instruments { padding: .75rem .65rem; gap: .4rem; }
+  .hud__computer { top: max(.75rem, env(safe-area-inset-top)); left: .75rem; width: 10.75rem; padding: .5rem; }
+  .hud__bezel-label { font-size: .38rem; letter-spacing: .06em; }
+  .hud__instruments { padding: .6rem .5rem; gap: .3rem; }
+  .hud__sub-label { font-size: .43rem; letter-spacing: .04em; }
+  .hud__sub-row { gap: .3rem; }
   .hud__row:first-child .hud__value { font-size: 1.7rem; }
   .hud__value { font-size: 1rem; }
-  .hud__controls { top: 1rem; right: 1rem; }
+  .hud__controls { top: max(.75rem, env(safe-area-inset-top)); right: .75rem; max-width: calc(100vw - 12.5rem); gap: .35rem; }
+  .hud__btn { min-height: 44px; justify-content: center; padding: .5rem; }
+  .hud__btn--icon { min-width: 44px; }
   /* The text nav can't fit a phone alongside ES/EN + audio; on phones the
      descent scroll is the primary navigation, so the section nav is hidden here. */
   .hud__nav { display: none; }
-  .hud__work-link { position: fixed; top: 4rem; right: 1rem; }
+  .hud__work-link { order: 1; width: 100%; }
 }
 </style>

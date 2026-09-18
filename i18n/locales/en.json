@@ -145,7 +145,9 @@
       "editorial": "Editorial photography",
       "expeditions": "Expeditions",
       "conservation": "Conservation",
-      "instagram": "Connect with Martina"
+      "instagram": "Connect with Martina",
+      "invitation": "A trip, an image, a story to tell?",
+      "cta": "Let’s talk on Instagram"
     },
     "view": "View photograph: {photo}",
     "photoDescription": "Pause the descent to see the full image.",
@@ -163,9 +165,11 @@
     },
     "close": "Close photograph",
     "wreck": {
-      "instructions": "Move the light to explore. On mobile, slide your finger; with a keyboard, use the arrows.",
+      "instructions": "Move the light to explore. On mobile, activate Explore and move your finger; turn it off to keep scrolling. With a keyboard, use the arrows.",
       "loading": "Discovering the wreck…",
-      "unavailable": "The wreck is currently unavailable."
+      "unavailable": "The wreck is currently unavailable.",
+      "explore": "Explore with the flashlight",
+      "finish": "Finish and keep scrolling"
     },
     "modelCredits": "3D model credits",
     "modelAdaptations": "Adaptations and license details",

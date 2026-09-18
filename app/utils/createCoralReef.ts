@@ -13,6 +13,7 @@ export function createCoralReef(parent: THREE.Group, onReady?: () => void) {
   let horizontalSpread = 1
   let disposed = false
   let ready = false
+  let started = false
   let mixer: THREE.AnimationMixer | undefined
   const visibility = { value: 0 }
   const currentTime = { value: 0 }
@@ -121,30 +122,33 @@ export function createCoralReef(parent: THREE.Group, onReady?: () => void) {
     geometry.setAttribute('reefCurrent', new THREE.BufferAttribute(weights, 2))
   }
 
-  void new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync('/models/coral_reef_small.glb').then((gltf) => {
-    gltf.scene.updateMatrixWorld(true)
-    gltf.scene.traverse((object) => {
-      if (!(object instanceof THREE.Mesh)) return
-      addCurrentWeights(object)
-      geometries.add(object.geometry)
-      const list = Array.isArray(object.material) ? object.material : [object.material]
-      list.forEach((material: THREE.MeshStandardMaterial) => {
-        if (materials.has(material)) return
-        materials.add(material)
-        Object.values(material).forEach((value) => {
-          if (value instanceof THREE.Texture) textures.add(value)
-        })
-        material.metalness = 0
-        material.roughness = Math.max(0.7, material.roughness)
-        material.transparent = false
-        material.opacity = 1
-        material.depthWrite = true
-        material.onBeforeCompile = (shader) => {
-          shader.uniforms.uReefVisibility = visibility
-          shader.uniforms.uReefEvening = evening
-          shader.uniforms.uReefTime = currentTime
-          shader.vertexShader = `uniform float uReefTime; attribute vec2 reefCurrent; varying float vReefDistance;\n${shader.vertexShader}`
-          shader.vertexShader = shader.vertexShader.replace('#include <project_vertex>', `
+  function preload() {
+    if (started || disposed) return
+    started = true
+    void new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync('/models/coral_reef_small.glb').then((gltf) => {
+      gltf.scene.updateMatrixWorld(true)
+      gltf.scene.traverse((object) => {
+        if (!(object instanceof THREE.Mesh)) return
+        addCurrentWeights(object)
+        geometries.add(object.geometry)
+        const list = Array.isArray(object.material) ? object.material : [object.material]
+        list.forEach((material: THREE.MeshStandardMaterial) => {
+          if (materials.has(material)) return
+          materials.add(material)
+          Object.values(material).forEach((value) => {
+            if (value instanceof THREE.Texture) textures.add(value)
+          })
+          material.metalness = 0
+          material.roughness = Math.max(0.7, material.roughness)
+          material.transparent = false
+          material.opacity = 1
+          material.depthWrite = true
+          material.onBeforeCompile = (shader) => {
+            shader.uniforms.uReefVisibility = visibility
+            shader.uniforms.uReefEvening = evening
+            shader.uniforms.uReefTime = currentTime
+            shader.vertexShader = `uniform float uReefTime; attribute vec2 reefCurrent; varying float vReefDistance;\n${shader.vertexShader}`
+            shader.vertexShader = shader.vertexShader.replace('#include <project_vertex>', `
             vec4 reefWorld = modelMatrix * vec4(transformed, 1.0);
             float phase = uReefTime * .7 + reefCurrent.y;
             reefWorld.x += (sin(phase) * .18 + sin(phase * .57 + 1.2) * .045) * reefCurrent.x;
@@ -153,56 +157,58 @@ export function createCoralReef(parent: THREE.Group, onReady?: () => void) {
             gl_Position = projectionMatrix * mvPosition;
             vReefDistance = length(mvPosition.xyz);
           `)
-          shader.fragmentShader = `uniform float uReefEvening; uniform float uReefVisibility; varying float vReefDistance;\n${shader.fragmentShader}`
-          shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `
+            shader.fragmentShader = `uniform float uReefEvening; uniform float uReefVisibility; varying float vReefDistance;\n${shader.fragmentShader}`
+            shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `
             outgoingLight = mix(outgoingLight, mix(vec3(.009, .085, .115), vec3(.015, .045, .08), uReefEvening), 1.0 - exp(-vReefDistance * .009));
             diffuseColor.a *= uReefVisibility;
             #include <opaque_fragment>
           `)
-        }
-        material.customProgramCacheKey = () => 'complete-reef-current-v3'
+          }
+          material.customProgramCacheKey = () => 'complete-reef-current-v3'
+        })
       })
-    })
-    if (disposed) {
-      releaseResources()
-      return
-    }
-    // Use the seabed's dimensions, not the decorative scene bounds. A uniform
-    // scale keeps rocks and coral proportions intact on every viewport.
-    // Mirror across the swim lane, keeping both banks at the same depth.
-    // Turning the copy 180 degrees also reversed its near/far arrangement,
-    // which placed the largest foreground rocks on the left of the camera.
-    // Reuse geometry/textures, leave the original connected floor in place and
-    // keep the animated vegetation on the original bank only.
-    gltf.scene.updateMatrixWorld(true)
-    const oppositeBank = new THREE.Group()
-    oppositeBank.name = 'Additional reef colonies'
-    gltf.scene.traverse((object) => {
-      if (!(object instanceof THREE.Mesh) || object instanceof THREE.SkinnedMesh) return
-      const list = Array.isArray(object.material) ? object.material : [object.material]
-      if (list.some(material => material.name === 'useBackground2')) return
-      const colony = new THREE.Mesh(object.geometry, object.material)
-      colony.frustumCulled = object.frustumCulled
-      colony.matrixAutoUpdate = false
-      colony.matrix.copy(object.matrixWorld)
-      oppositeBank.add(colony)
-    })
-    oppositeBank.scale.set(-0.52, 0.52, 0.52)
-    oppositeBank.position.set(1.04, -10.5, -34)
-    group.add(oppositeBank)
-    gltf.scene.scale.setScalar(0.52)
-    gltf.scene.position.set(-1.04, -10.5, -34)
-    group.add(gltf.scene)
-    if (gltf.animations.length) {
-      mixer = new THREE.AnimationMixer(gltf.scene)
-      gltf.animations.forEach(clip => mixer!.clipAction(clip).play())
-    }
-    ready = true
-    onReady?.()
-  }).catch(error => console.warn('[CoralReef] Could not load reef; retaining fallback', error))
+      if (disposed) {
+        releaseResources()
+        return
+      }
+      // Use the seabed's dimensions, not the decorative scene bounds. A uniform
+      // scale keeps rocks and coral proportions intact on every viewport.
+      // Mirror across the swim lane, keeping both banks at the same depth.
+      // Turning the copy 180 degrees also reversed its near/far arrangement,
+      // which placed the largest foreground rocks on the left of the camera.
+      // Reuse geometry/textures, leave the original connected floor in place and
+      // keep the animated vegetation on the original bank only.
+      gltf.scene.updateMatrixWorld(true)
+      const oppositeBank = new THREE.Group()
+      oppositeBank.name = 'Additional reef colonies'
+      gltf.scene.traverse((object) => {
+        if (!(object instanceof THREE.Mesh) || object instanceof THREE.SkinnedMesh) return
+        const list = Array.isArray(object.material) ? object.material : [object.material]
+        if (list.some(material => material.name === 'useBackground2')) return
+        const colony = new THREE.Mesh(object.geometry, object.material)
+        colony.frustumCulled = object.frustumCulled
+        colony.matrixAutoUpdate = false
+        colony.matrix.copy(object.matrixWorld)
+        oppositeBank.add(colony)
+      })
+      oppositeBank.scale.set(-0.52, 0.52, 0.52)
+      oppositeBank.position.set(1.04, -10.5, -34)
+      group.add(oppositeBank)
+      gltf.scene.scale.setScalar(0.52)
+      gltf.scene.position.set(-1.04, -10.5, -34)
+      group.add(gltf.scene)
+      if (gltf.animations.length) {
+        mixer = new THREE.AnimationMixer(gltf.scene)
+        gltf.animations.forEach(clip => mixer!.clipAction(clip).play())
+      }
+      ready = true
+      onReady?.()
+    }).catch(error => console.warn('[CoralReef] Could not load reef; retaining fallback', error))
+  }
 
   return {
     banks,
+    preload,
     floorHeight,
     get spread() { return horizontalSpread },
     resize(aspect: number) {

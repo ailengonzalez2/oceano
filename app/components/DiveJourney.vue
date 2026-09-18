@@ -283,6 +283,15 @@ onBeforeUnmount(() => {
           {{ t('journey.contact.title') }}<br><em>{{ t('journey.contact.end') }}</em>
         </h2>
       </WreckScene>
+      <div class="journey-end__contact">
+        <p>{{ t('journey.contact.invitation') }}</p>
+        <a
+          href="https://www.instagram.com/oceanomartina/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="story-link"
+        >{{ t('journey.contact.cta') }} <span aria-hidden="true">↗</span></a>
+      </div>
       <p class="journey-end__footer eyebrow">
         <span class="journey-end__name font-display">{{ t('surface.name') }}</span>
         <span
@@ -397,10 +406,13 @@ onBeforeUnmount(() => {
             <img
               v-for="image in serviceGallery"
               :key="image.file"
-              :src="`/img/martina/${image.file}.jpg`"
+              :src="`/img/optimized/${image.file}-800.jpg`"
+              :srcset="`/img/optimized/${image.file}-480.jpg 480w, /img/optimized/${image.file}-800.jpg 800w`"
+              sizes="(max-width: 640px) 55vw, 550px"
               :alt="t(`work.${image.key}`)"
               width="1200"
               :height="image.height"
+              decoding="async"
             >
           </div>
           <div class="service-detail__copy">
@@ -505,6 +517,8 @@ em { font-weight: 300; color: #b4e6e7; }
 .whale__copy .chapter__body { background: radial-gradient(ellipse at left, #03263c99, transparent); }
 .journey-end { min-height: 110svh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 1.5rem 3rem; background: linear-gradient(to bottom, transparent, #0005 40svh, #000d 95svh, #000 140svh); }
 .journey-end__wreck { width: calc(100% + 3rem); flex-shrink: 0; }
+.journey-end__contact { max-width: 32rem; margin: 1rem auto 2rem; color: #b4dce1; font-size: .9rem; line-height: 1.8; }
+.journey-end__contact .story-link { min-height: 44px; margin-top: .8rem; font-size: .9rem; }
 .journey-end__headline { max-width: 60rem; font-size: clamp(2rem, 4.5vw, 4.5rem); line-height: 1.12; margin: 0; color: #d8e9e9; }
 .journey-end__footer { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .9rem; margin-top: 3svh; font-size: .48rem; }
 .journey-end__footer span { display: inline-flex; align-items: center; gap: .9rem; }
@@ -552,7 +566,7 @@ em { font-weight: 300; color: #b4e6e7; }
   .whale__image { height: 62svh; width: 140vw; left: -20vw; }
   .whale__copy { margin: 8svh 0 0; }
   .whale__annotation { right: 7vw; bottom: 4svh; font-size: .5rem; }
-  .journey-end { padding-top: 0; }
+  .journey-end { padding-top: 0; padding-bottom: calc(6rem + env(safe-area-inset-bottom)); }
   .journey-end__headline { font-size: 2rem; }
 }
 @media (prefers-reduced-motion: no-preference) {

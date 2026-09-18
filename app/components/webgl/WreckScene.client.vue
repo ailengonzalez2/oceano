@@ -8,6 +8,7 @@ const canvas = ref<HTMLCanvasElement | null>(null)
 const ready = ref(false)
 const failed = ref(false)
 const hovering = ref(false)
+const exploring = ref(false)
 const cursor = reactive({ x: 0, y: 0 })
 const reduced = useReducedMotion()
 const { t } = useI18n()
@@ -86,7 +87,8 @@ function draw(now: number) {
   host.value?.style.setProperty('--beam-y', `${(1 - projectedLight.y) * viewportHeight / 2}px`)
   host.value?.style.setProperty('--beam-radius', `${radius}px`)
   renderer.render(scene, camera)
-  if (!reduced.value && ready.value) frame = requestAnimationFrame(draw)
+  const moving = lamp.target.position.distanceToSquared(aim) > 0.0001 || lamp.position.distanceToSquared(lampOrigin) > 0.0001
+  if (!reduced.value && ready.value && moving) frame = requestAnimationFrame(draw)
 }
 function resume() {
   cancelAnimationFrame(frame)
@@ -113,12 +115,14 @@ function resize() {
 }
 function move(event: PointerEvent) {
   if (!host.value) return
+  if (event.pointerType !== 'mouse' && !exploring.value) return
+  if (event.type === 'pointerdown' && exploring.value) host.value.setPointerCapture(event.pointerId)
   const rect = host.value.getBoundingClientRect()
   cursor.x = event.clientX - rect.left
   cursor.y = event.clientY - rect.top
   pointer.set(cursor.x / rect.width * 2 - 1, 1 - cursor.y / rect.height * 2)
   hovering.value = event.pointerType === 'mouse'
-  if (reduced.value) resume()
+  if (!frame) resume()
 }
 function keyMove(event: KeyboardEvent) {
   const directions: Record<string, [number, number]> = { ArrowLeft: [-0.1, 0], ArrowRight: [0.1, 0], ArrowUp: [0, 0.1], ArrowDown: [0, -0.1] }
@@ -126,7 +130,7 @@ function keyMove(event: KeyboardEvent) {
   if (!step) return
   event.preventDefault()
   pointer.set(THREE.MathUtils.clamp(pointer.x + step[0], -1, 1), THREE.MathUtils.clamp(pointer.y + step[1], -1, 1))
-  if (reduced.value) resume()
+  if (!frame) resume()
 }
 async function load() {
   if (started || disposed) return
@@ -221,7 +225,7 @@ onBeforeUnmount(() => {
   <div
     ref="host"
     class="wreck"
-    :class="{ 'is-ready': ready }"
+    :class="{ 'is-ready': ready, 'is-exploring': exploring }"
     tabindex="0"
     role="region"
     :aria-label="t('journey.wreck.instructions')"
@@ -239,6 +243,16 @@ onBeforeUnmount(() => {
     </div>
     <div class="wreck__caption">
       <p>{{ failed ? t('journey.wreck.unavailable') : ready ? t('journey.wreck.instructions') : t('journey.wreck.loading') }}</p>
+      <button
+        v-if="ready"
+        type="button"
+        class="wreck__touch-toggle"
+        :aria-pressed="exploring"
+        @pointerdown.stop
+        @click.stop="exploring = !exploring"
+      >
+        {{ exploring ? t('journey.wreck.finish') : t('journey.wreck.explore') }}
+      </button>
     </div>
     <span
       v-if="ready && hovering"
@@ -257,6 +271,14 @@ onBeforeUnmount(() => {
 .wreck.is-ready .wreck__illuminated-text { opacity: 1; }
 .wreck__caption { position: absolute; bottom: 2.5rem; inset-inline: 1rem; color: #7a949b; pointer-events: none; }
 .wreck__caption p { margin-top: .7rem; font-size: .75rem; }
+.wreck__touch-toggle { display: none; min-height: 44px; margin: 1rem auto 0; padding: .6rem 1.2rem; border: 1px solid #c4e7f266; border-radius: 999px; color: #d8e9e9; background: #041721; pointer-events: auto; }
+.wreck__touch-toggle:focus-visible { outline: 2px solid #c4e7f2; outline-offset: 4px; }
+@media (pointer: coarse), (max-width: 640px) {
+  .wreck__touch-toggle { display: block; }
+  .wreck.is-exploring { touch-action: none; }
+  .wreck__caption { bottom: 1rem; padding-inline: 1rem; }
+}
+.wreck__touch-toggle { cursor: pointer; }
 .wreck__cursor { position: absolute; left: 0; top: 0; width: 20px; height: 20px; margin: -10px; border: 1px solid #c4e7f266; border-radius: 50%; pointer-events: none; }
 .wreck__cursor::after { content: ''; position: absolute; inset: 8px; border-radius: 50%; background: #dbf5ff; }
 @media (pointer: fine) { .wreck.is-ready { cursor: none; } }
