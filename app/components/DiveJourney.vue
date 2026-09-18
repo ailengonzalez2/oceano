@@ -17,12 +17,30 @@ const photoOpen = computed({
 watch(photoOpen, open => setLocked(open))
 
 const reefPhotos = [
-  { key: 'reef-texture', service: 'women', drift: 100 },
+  { key: 'women-diving', service: 'women', drift: 100 },
   { key: 'reef-squid', service: 'photography', drift: -70 },
   { key: 'reef-window', service: 'documentary', drift: 65 }
 ]
 const photoKeys = [...reefPhotos.map(photo => photo.key), 'shark', 'whale']
 const selectedService = computed(() => reefPhotos.find(photo => photo.key === selected.value)?.service)
+const serviceGalleries: Record<string, { file: string, key: string, height: number }[]> = {
+  women: [
+    { file: 'reef-fish', key: 'reefFish', height: 1800 },
+    { file: 'squid', key: 'squid', height: 800 },
+    { file: 'reef-life', key: 'reefLife', height: 1800 }
+  ],
+  photography: [
+    { file: 'marine-detail', key: 'marineDetail', height: 1800 },
+    { file: 'coral-texture', key: 'coralTexture', height: 1800 },
+    { file: 'lionfish', key: 'lionfish', height: 1800 }
+  ],
+  documentary: [
+    { file: 'reef-life', key: 'reefLife', height: 1800 },
+    { file: 'sand-dollar', key: 'sandDollar', height: 800 },
+    { file: 'reef-fish', key: 'reefFish', height: 1800 }
+  ]
+}
+const serviceGallery = computed(() => selectedService.value ? serviceGalleries[selectedService.value] : [])
 const photoTitle = computed(() => selectedService.value ? t(`journey.services.${selectedService.value}.title`) : selected.value ? t(`journey.photos.${selected.value}`) : '')
 let context: gsap.Context | undefined
 let media: gsap.MatchMedia | undefined
@@ -377,12 +395,12 @@ onBeforeUnmount(() => {
         >
           <div class="service-detail__gallery">
             <img
-              v-for="image in 3"
-              :key="image"
-              :src="`/img/${selected}.jpg`"
-              :alt="image === 1 ? t(`journey.photos.${selected}`) : ''"
+              v-for="image in serviceGallery"
+              :key="image.file"
+              :src="`/img/martina/${image.file}.jpg`"
+              :alt="t(`work.${image.key}`)"
               width="1200"
-              height="800"
+              :height="image.height"
             >
           </div>
           <div class="service-detail__copy">
@@ -455,8 +473,6 @@ em { font-weight: 300; color: #b4e6e7; }
 .service-detail__gallery { display: grid; grid-template-columns: 1.5fr 1fr; grid-template-rows: repeat(2, minmax(0, 1fr)); height: clamp(16rem, 35vw, 23rem); gap: .75rem; }
 .service-detail__gallery img { display: block; width: 100%; height: 100%; min-height: 0; object-fit: cover; border-radius: .5rem; }
 .service-detail__gallery img:first-child { grid-row: 1 / 3; }
-.service-detail__gallery img:nth-child(2) { object-position: center 25%; }
-.service-detail__gallery img:nth-child(3) { object-position: center 75%; }
 .service-detail__copy { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; font-size: .95rem; line-height: 1.8; color: #3b5560; }
 .service-detail__instagram { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .75rem 1.5rem; padding-top: 1.4rem; border-top: 1px solid #cbdcde; font-size: .85rem; color: #205969; }
 .service-detail__handle { display: inline-flex; align-items: center; gap: 1rem; font-size: 1.1rem; }
