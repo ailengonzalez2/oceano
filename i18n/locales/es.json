@@ -113,7 +113,7 @@
       "note": "Explorá las tarjetas para conocer los servicios de Martina.",
       "caption": "Arrecife / formas de la vida",
       "detail": "Coral / otra escala",
-      "word": "habitar"
+      "word": "conocer"
     },
     "open": {
       "label": "En el mundo de los tiburones",
@@ -122,14 +122,16 @@
       "body": "Los tiburones ocupan un lugar central en el trabajo de Martina. Como fotógrafa, buzo y realizadora submarina especializada en ellos, busca acercarnos a su mundo desde la observación, el respeto y las historias de quienes los protegen.",
       "note": "Conocerlos cambia nuestra forma de mirar el océano.",
       "caption": "Tiburón / frente a frente",
-      "project": "Una historia de amor por los tiburones"
+      "project": "Una historia de amor por los tiburones",
+      "word": "respetar"
     },
     "whale": {
       "label": "La zona crepuscular",
       "title": "De pronto,",
       "end": "somos pequeños.",
       "body": "El encuadre se abre. Una silueta atraviesa el agua y, por un instante, todo encuentra su escala. Fotografiar el océano también es aprender a esperar.",
-      "caption": "Un encuentro en el azul"
+      "caption": "Un encuentro en el azul",
+      "word": "conservar"
     },
     "about": {
       "label": "Detrás de la mirada",

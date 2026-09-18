@@ -71,6 +71,18 @@ onMounted(() => {
           }
         })
       })
+      gsap.utils.toArray<HTMLElement>('.chapter__word').forEach((word) => {
+        gsap.fromTo(word, { y: -60, xPercent: -5 }, {
+          y: 60, xPercent: 5, ease: 'none',
+          scrollTrigger: {
+            trigger: word.parentElement,
+            start: () => `top+=${word.offsetTop} bottom`,
+            end: () => `top+=${word.offsetTop + word.offsetHeight} top`,
+            scrub: 0.8,
+            invalidateOnRefresh: true
+          }
+        })
+      })
       const passage = gsap.timeline({
         scrollTrigger: {
           trigger: '#portfolio', start: 'top top', end: 'bottom bottom',
@@ -181,13 +193,15 @@ onBeforeUnmount(() => {
             </span>
           </button>
         </div>
-        <span
-          class="chapter__word font-display"
-          aria-hidden="true"
-          data-drift="-35"
-        >{{ t('journey.reef.word') }}</span>
       </div>
     </section>
+
+    <div
+      class="reef-exit"
+      aria-hidden="true"
+    >
+      <span class="chapter__word font-display">{{ t('journey.reef.word') }}</span>
+    </div>
 
     <section
       id="open-water"
@@ -232,6 +246,10 @@ onBeforeUnmount(() => {
           rel="noopener noreferrer"
         >{{ t('journey.open.project') }} <span aria-hidden="true">↗</span></a>
       </div>
+      <span
+        class="chapter__word font-display"
+        aria-hidden="true"
+      >{{ t('journey.open.word') }}</span>
     </section>
 
     <section
@@ -271,6 +289,10 @@ onBeforeUnmount(() => {
           {{ t('journey.whale.body') }}
         </p>
       </div>
+      <span
+        class="chapter__word chapter__word--wide font-display"
+        aria-hidden="true"
+      >{{ t('journey.whale.word') }}</span>
     </section>
 
     <section
@@ -496,6 +518,8 @@ em { font-weight: 300; color: #b4e6e7; }
   .service-card__title { font-size: 1.5rem; margin-bottom: .65rem; }
 }
 .chapter__word { position: absolute; bottom: 0; left: 24vw; font-size: 16vw; line-height: 1; color: #c1f0e6; opacity: .08; pointer-events: none; }
+.reef-exit { position: relative; height: 40svh; pointer-events: none; }
+.reef-exit .chapter__word { bottom: 10svh; }
 .open-water { min-height: 155svh; display: grid; grid-template-columns: 1fr 1fr; gap: 8vw; align-items: center; }
 .open-water__label { position: absolute; top: 18svh; left: 25vw; }
 .open-water__photo { width: 116%; margin-left: -8%; height: auto; aspect-ratio: 3 / 2; }
@@ -578,7 +602,6 @@ em { font-weight: 300; color: #b4e6e7; }
   .reef__photo:nth-child(1) { width: 34vw; top: 24svh; right: 9vw; }
   .reef__photo:nth-child(2) { width: 37vw; top: 36svh; left: 16vw; margin: 0; }
   .reef__photo:nth-child(3) { width: 40vw; top: 27svh; right: 7vw; }
-  .reef .chapter__word { bottom: 4svh; }
 }
 @media (prefers-reduced-motion: no-preference) and (max-width: 800px) {
   .reef__copy { left: 16vw; top: 28svh; width: 78vw; }
@@ -594,4 +617,5 @@ em { font-weight: 300; color: #b4e6e7; }
 }
 .is-reduced .whale__stage { position: relative; top: 0; }
 .is-reduced .whale__copy { margin-top: 0; }
+.chapter__word--wide { left: 10vw; }
 </style>

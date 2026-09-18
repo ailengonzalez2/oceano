@@ -113,7 +113,7 @@
       "note": "Explore the cards to discover Martina's services.",
       "caption": "Reef / forms of life",
       "detail": "Coral / another scale",
-      "word": "inhabit"
+      "word": "discover"
     },
     "open": {
       "label": "In the world of sharks",
@@ -122,14 +122,16 @@
       "body": "Sharks are central to Martina’s work. As a photographer, diver and underwater filmmaker specializing in them, she brings us closer through observation, respect and the stories of the people who protect them.",
       "note": "Getting to know them changes how we see the ocean.",
       "caption": "Shark / face to face",
-      "project": "A story of love for sharks"
+      "project": "A story of love for sharks",
+      "word": "respect"
     },
     "whale": {
       "label": "The twilight zone",
       "title": "Suddenly,",
       "end": "we are small.",
       "body": "The frame opens up. A silhouette crosses the water and, for a moment, everything finds its scale. Photographing the ocean is also learning to wait.",
-      "caption": "An encounter in the blue"
+      "caption": "An encounter in the blue",
+      "word": "conserve"
     },
     "about": {
       "label": "Behind the gaze",
